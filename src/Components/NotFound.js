@@ -8,14 +8,14 @@ const NotFound = () => {
 
     return (
         <div className='notfound'>
-            <div class="circles">
+            <div className="circles">
             <p>404<br/>
             <small>PAGE NOT FOUND</small>
             </p>
             <Button onClick={() => navigate(-1)}>Go Back</Button>
-            <span class="circle big"></span>
-            <span class="circle med"></span>
-            <span class="circle small"></span>
+            <span className="circle big"></span>
+            <span className="circle med"></span>
+            <span className="circle small"></span>
         </div>
         </div>
     );

@@ -1,16 +1,16 @@
-import * as React from 'react';
+import React, {useState} from 'react';
 import{ AppBar, Menu,Container,Avatar,MenuItem} from '@mui/material';
 import{ Box,Toolbar,IconButton,Typography, Button} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
 import logo from '../Assets/logo.svg';
 
-function MenuBar({info}) {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+function MenuBar() {
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
   const open = Boolean(anchorElUser);
   const open2 = Boolean(anchorElNav);
-
+  
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -80,20 +80,26 @@ function MenuBar({info}) {
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
                 <MenuItem>
-                  <Typography textAlign="center"><Link to="/requests" replace>Requests</Link></Typography>
+                  <Typography textAlign="center"><Link to="/upload" replace>Upload</Link></Typography>
                 </MenuItem>
                 <MenuItem>
-                  <Typography textAlign="center"><Link to="/database" replace>DataBase</Link></Typography>
+                  <Typography textAlign="center"><Link to="/annotation" replace>Annotation</Link></Typography>
+                </MenuItem>
+                <MenuItem>
+                  <Typography textAlign="center"><Link to="/patients" replace>Patients</Link></Typography>
                 </MenuItem>
                               
           </Menu>
          
             <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
                 <Button sx={{ my: 2, color: 'white', display: 'block' }}>
-                    <Link to="/requests" replace>Requests</Link>
+                    <Link to="/upload" replace>Upload</Link>
                 </Button>
                 <Button sx={{ my: 2, color: 'white', display: 'block' }}>
-                    <Link to="/database" replace>DataBase</Link>
+                    <Link to="/annotation" replace>Annotation</Link>
+                </Button>
+                <Button sx={{ my: 2, color: 'white', display: 'block' }}>
+                    <Link to="/patients" replace>Patients</Link>
                 </Button>
             </Box>
 
@@ -108,8 +114,8 @@ function MenuBar({info}) {
             aria-expanded={open ? 'true' : undefined}
             color="inherit"
           >
-            <Typography sx={{ m: 1, textTransform: 'none' }}> {info.displayName}</Typography>
-            <Avatar sx={{ width: 32, height: 32 }} alt={info.username} src={info.profile} />
+            <Typography sx={{ m: 1, textTransform: 'none' }}></Typography>
+            <Avatar sx={{ width: 32, height: 32 }} alt="o" src="" />
           </Button>
       </Box>
       <Menu

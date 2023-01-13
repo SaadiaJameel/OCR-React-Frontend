@@ -1,23 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import colors from './Components/ColorPalete';
 import './index.css';
 import App from './App';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#48A9E6',
-      contrastText: '#ffffff',
-    },
-    secondary: {
-      main: '#EDEEF7',
-    },
-    warning: {
-      main: '#F18F01',
-      contrastText: '#ffffff',
-    }
-  },
+  palette: colors,
 });
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
