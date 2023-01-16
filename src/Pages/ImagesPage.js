@@ -1,14 +1,14 @@
 import React, {useState} from 'react';
 import { Paper, TextField, Typography, FormControl, InputLabel, Select, MenuItem} from '@mui/material';
 import {Box, Grid, Button, OutlinedInput, Checkbox, ListItemText, useMediaQuery} from "@mui/material";
-import {AppBar, Toolbar, Slide, Dialog} from "@mui/material";
+import {AppBar, Toolbar, Slide, Dialog, DialogContentText, DialogContent} from "@mui/material";
 import mouth from '../Assets/mouth.png';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
 import IconButton from '@mui/material/IconButton';
-import {EditAttributes, EditAttributesOutlined, Close} from '@mui/icons-material';
-import Canvas from './Annotation/Canvas';
+import {StarOutline, Star, Close, Info} from '@mui/icons-material';
+import Canvas from '../Components/Annotation/Canvas';
 
 const AllRiskFactors = ['Smoking', 'Chewing Betel','Alcohol'];
 const AllCategories = ['OCA', 'OPMD', 'Benign', 'Healthy'];
@@ -22,19 +22,26 @@ const ImagesPage = () => {
     const [riskFactor, setRiskFactor] = useState([]);
     const [category, setCategory] = useState([]);
     const [open, setOpen] = useState(false);
+    const [openInfo, setOpenInfo] = useState(false);
     const [image, setImage] = useState(null);
+    const [info, setInfo] = useState({})
     
-    const handleClickOpen = () => {
-        setOpen(true);
-    };    
-
     const handleClose = () => {
         setOpen(false);
     };
 
+    const handleInfoClose = () => {
+        setOpenInfo(false);
+    };
+
     const annotation = (img)=>{
         setImage(img);
-        handleClickOpen();
+        setOpen(true);
+    }
+
+    const openInfoDialog = (details) =>{
+        setInfo(details)
+        setOpenInfo(true);
     }
 
     const handleRiskFactorChange = (event) => {
@@ -58,18 +65,18 @@ const ImagesPage = () => {
 
     return (
         <div className='body'>
-            <Paper sx={{p:2, my:1}}>
+            <Paper sx={{p:3, my:1}}>
             <Typography sx={{ fontWeight: 700, m: 1 }}>Image Filters</Typography>               
                 <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>                    
                                     
                     <Grid container spacing={{ xs: 2, md: 3 }}>
-                        <Grid item>
-                            <TextField margin="normal" size='small' label="Patients' Reg No" name="reg_no" sx={{width:'250px'}}/>
+                        <Grid item xs={12} sm={6} md={3}>
+                            <TextField margin="normal" size='small' label="Patients' Reg No" name="reg_no" fullWidth/>
                         </Grid>
-                        <Grid item>
-                            <FormControl margin="normal">
+                        <Grid item xs={12} sm={6} md={3}>
+                            <FormControl margin="normal" fullWidth>
                                 <InputLabel size='small' id="risk-factor-label">Risk Factor</InputLabel>
-                                <Select size='small' labelId="risk-factor-label" name='risk factor' label="Risk Factor"  multiple sx={{width:'250px'}}
+                                <Select size='small' labelId="risk-factor-label" name='risk factor' label="Risk Factor"  multiple
                                 value={riskFactor} onChange={handleRiskFactorChange} input={<OutlinedInput label="Risk Factor" />} renderValue={(selected) => selected.join(', ')}>
                                 {AllRiskFactors.map((name) => (
                                     <MenuItem key={name} value={name}>
@@ -80,10 +87,10 @@ const ImagesPage = () => {
                                 </Select>
                             </FormControl>
                         </Grid>
-                        <Grid item>
-                            <FormControl margin="normal">
+                        <Grid item xs={12} sm={6} md={3}>
+                            <FormControl margin="normal" fullWidth>
                                 <InputLabel size='small' id="category">Category</InputLabel>
-                                <Select size='small' labelId="category" name='category' label="Category"  multiple sx={{width:'250px'}}
+                                <Select size='small' labelId="category" name='category' label="Category"  multiple 
                                 value={category} onChange={handleCategoryChange} input={<OutlinedInput label="Category" />} renderValue={(selected) => selected.join(', ')}>
                                 {AllCategories.map((name) => (
                                     <MenuItem key={name} value={name}>
@@ -94,16 +101,16 @@ const ImagesPage = () => {
                                 </Select>
                             </FormControl>
                         </Grid>
-                        <Grid item>
-                            <Button type="submit" variant="contained" sx={{mt:2}} > Get Images </Button>
+                        <Grid item xs={12} sm={6} md={3}>
+                            <Button type="submit" variant="contained" sx={{mt:2}} fullWidth> Get Images </Button>
                         </Grid>
                     </Grid>
                     
                 </Box>
             </Paper>
-            <Paper sx={{p:2, my:1}}>
+            <Paper sx={{p:3, my:1}}>
                 
-                <ImageList cols={matches? 8:5}>
+                <ImageList cols={matches? 8:3}>
                     {itemData.map((item, index) => (
                         <ImageListItem key={index}>
                         <img
@@ -111,19 +118,20 @@ const ImagesPage = () => {
                             // srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
                             alt={item.title}
                             loading="lazy"
+                            style={{aspectRatio: '1/1'}}
                         />
                         <ImageListItemBar
                             sx={{background: 'transparent'}}
                             position="top"
                             actionIcon={
-                                
+                                <>
                                 <IconButton size='small' sx={{ color: 'white' }} aria-label={`star ${item.title}`} onClick={()=>annotation(item.img)}>
-                                    {item.annotated?
-                                    <EditAttributesOutlined />
-                                    :
-                                    <EditAttributes />
-                                    }
+                                    {item.annotated? <Star fontSize='small'/>:<StarOutline fontSize='small'/>}
                                 </IconButton>
+                                <IconButton size='small' sx={{ color: 'white' }} aria-label={`star ${item.title}`} onClick={()=>openInfoDialog(item)}>
+                                    <Info fontSize='small'/>
+                                </IconButton>
+                                </>
                             }
                             actionPosition="right"
                             />
@@ -144,6 +152,16 @@ const ImagesPage = () => {
                 <div style={{minHeight:"50px", width: "100px"}}></div>
                 <Canvas img={image} open={open} />
             </Dialog>
+
+          <Dialog open={openInfo} onClose={handleInfoClose} aria-labelledby="info-dialog" aria-describedby="info-dialog-description">
+              <DialogContent sx={{width: '500px'}}>
+                <img src={info.img} alt={info.title} style={{width: '500px'}}/>
+                <DialogContentText id="info-dialog-description">
+                  <Typography>Title: {info.title}</Typography>
+                  <Typography>Annotated: {info.annotated?info.annotated.toString(): 'false'}</Typography>
+                </DialogContentText>
+              </DialogContent>
+          </Dialog>
         </div>
     );
 };
@@ -154,7 +172,7 @@ export default ImagesPage;
 const itemData = [
     {
       img: mouth,
-      title: 'Breakfast',
+      title: 'mouth',
       author: '@bkristastucchio',
       annotated: true,
     },
