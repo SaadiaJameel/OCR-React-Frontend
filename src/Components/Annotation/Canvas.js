@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
-import {Drawer, IconButton, Typography} from '@mui/material';
-import {Close} from '@mui/icons-material';
-import mouth from '../../Assets/mouth.png';
+import {Drawer} from '@mui/material';
+import LoadingButton from '@mui/lab/LoadingButton';
+import { Save} from '@mui/icons-material';
 import colorPallete from '../ColorPalete'
 import RegionTable from './RegionTable';
 import Help from './Help';
@@ -12,7 +12,7 @@ import Select from '@mui/material/Select';
 
 // global variables 
 // todo: check whether we could use useStates instead
-const regionNames = ["teeth","Enemal","Hard Plate","Mole","Soft Plate","Tongue","Stain","Uvula","Gingiva","Lips"]
+const regionNames = ["Oral Cavity", "Teeth","Enemal","Hard Plate","Mole","Soft Plate","Tongue","Stain","Uvula","Gingiva","Lips"]
 const colors = colorPallete
 const mouse = {x : 0, y : 0, button : 0, cursor: 'crosshair'};
 var regions = []
@@ -145,7 +145,7 @@ class Polygon{
   }
 }
 
-const Canvas = () => {  
+const Canvas = ({img, open}) => {  
   
   const [size, setSize] = useState({width: 1, height:1})
   const [orginalSize, setOriginalSize] = useState({width: 1, height:1})
@@ -155,13 +155,68 @@ const Canvas = () => {
   const [help, setHelp] = useState(false);
   const [labelVisibility, setLabelVisibility] = useState(isLabelVisible);
   const [selection, setSelection] = React.useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (event) => {
     setSelection(event.target.value);
     set_types(event.target.value)
   };
 
+  const handleSave = ()=>{
+    var coordinates = [];
+    // var type = [];
+    // var bbox = [];
+    [...regions].forEach((region, index) =>{
+      if(region.completed){
+        var pointArray = []
+        var all_x = region.points.map((p) => p["x"]);
+        var all_y = region.points.map((p) => p["y"]);
+        var bbox_arr = [Math.round(Math.min(...all_x)/zoomLevel), Math.round(Math.min(...all_y)/zoomLevel), 
+        Math.round(Math.max(...all_x)/zoomLevel), Math.round(Math.max(...all_y)/zoomLevel)]
+        for (const p of region.points) {
+          pointArray.push(Math.round(p.x /zoomLevel),Math.round(p.y /zoomLevel))
+        }
+        // coordinates.push(pointArray.toString())
+        // type.push(region.type)
+        // bbox.push(bbox_arr.toString()) 
+        coordinates.push(
+          {
+            "id":index,
+            "name": region.type,
+            "annotations": pointArray,
+            "bbox": bbox_arr
+          }
+        )
+      }
+    })
+
+    console.log(coordinates);
+    setLoading(false);
+  }
+
   const canvaRef = useRef(null)
+
+  useEffect(()=>{
+    if(open) return;
+
+    regions = []
+    isDragging = false;
+    isSelected = false;
+    isDrawing = true ;
+    isLabelVisible = false;
+    labelType = 'name';
+    selectedRegion = null
+    defaultType = "Unknown"
+    defaultColor = 'rgb(0, 0, 0)'
+    opacity = true;
+
+    setZoomLevel(1);
+    setState(false);
+    setHelp(false);
+    setLabelVisibility(isLabelVisible);
+    setSelection('');
+
+  },[open])
 
   const show_regions = () =>{
     if(isDrawing) return;
@@ -199,13 +254,13 @@ const Canvas = () => {
     )
 
     if(coordinates.length === 0) return
-    setState(true)
+    setState(!state)
   }
 
   const show_help = () =>{
 
     setHelp(true)
-    setState(true)
+    setState(!state)
   }
 
   // toggle labels
@@ -586,21 +641,20 @@ const Canvas = () => {
   }
 
   return (
-    <div className='body'>
+    <>
    
     <div className='page_body' onMouseDown={(e)=>{deselect_all(e)}}>
 
         {/********************* side bar **********************/}
         <div className='side_bar'>
-        <FormControl fullWidth>
-          <Select
-            size='small'
-            value={selection}
-            onChange={handleChange}
-            style={{background: "white"}}
-          >
+        <LoadingButton color="success" fullWidth onClick={handleSave} loading={loading}loadingPosition="start" startIcon={<Save/>} variant="contained" sx={{mb:3}}>
+          <span>Save</span>
+        </LoadingButton>
+
+        <FormControl fullWidth sx={{mb: 3}}>
+          <Select size='small' value={selection} onChange={handleChange} style={{background: "white"}}>
             {regionNames.map((name, index) =>{
-              return (<MenuItem key={index} value={name}><Typography color={colorPallete[name].main}>{name}</Typography></MenuItem>)
+              return (<MenuItem key={index} value={name}><div className='color_square' style={{backgroundColor:colorPallete[name].main}}></div>{name}</MenuItem>)
             })}
           </Select>
         </FormControl>
@@ -613,17 +667,18 @@ const Canvas = () => {
         {/********************** working area **********************/}
         <div className="work_area">
           <canvas className='main_canvas' onDoubleClick={(e)=>handle_mouse(e)} onMouseMove={(e)=>{handle_mouse(e)}} onMouseDown={(e)=>{handle_mouse(e)}} onMouseUp={(e)=>{handle_mouse(e)}} ref={canvaRef} width={size.width} height={size.height}>Sorry, Canvas functionality is not supported.</canvas>
-          <img className="main_img" onLoad={(e)=>{get_dimensions(e)}}  width={size.width} height={size.height} src={mouth} alt="failed to load"/> 
+          <img className="main_img" onLoad={(e)=>{get_dimensions(e)}}  width={size.width} height={size.height} src={img} alt="failed to load"/> 
         </div>
 
         {/********************** bottom panel **********************/}
-        <Drawer anchor='bottom' open={state} onClose={()=>{setState(false)}}>
-          <div style={{display: "flex", justifyContent: "flex-end"}}><IconButton aria-label="delete" onClick={()=>setState(false)} color="primary"><Close/></IconButton></div>
-          {help?<Help/>:<RegionTable showPoints={showPoints} />}
-        </Drawer> 
+        {state &&
+          <Drawer anchor='bottom' variant="permanent">
+            {help?<Help/>:<RegionTable showPoints={showPoints} />}
+          </Drawer> 
+        }
     </div>
 
-    </div>
+    </>
   )
 }
 

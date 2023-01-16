@@ -6,6 +6,8 @@ import NotFound from './Components/NotFound';
 import ProtectedRoute from './Components/ProtectedRoute';
 import Canvas from './Components/Annotation/Canvas';
 import './App.css';
+import PatientsPage from './Components/PatientsPage';
+import ImagesPage from './Components/ImagesPage';
 
 
 function App() {
@@ -20,7 +22,8 @@ function App() {
         <Route index path='/adminportal' element={<ProtectedRoute><ProtectedEl/></ProtectedRoute>}/>
         <Route index path='/upload' element={<ProtectedRoute><ProtectedEl/></ProtectedRoute>}/>
         <Route index path='/annotation' element={<ProtectedRoute><Canvas/></ProtectedRoute>}/>
-        <Route index path='/patients' element={<ProtectedRoute><ProtectedEl/></ProtectedRoute>}/>
+        <Route index path='/patients' element={<ProtectedRoute><PatientsPage/></ProtectedRoute>}/>
+        <Route index path='/images' element={<ProtectedRoute><ImagesPage/></ProtectedRoute>}/>
          
         <Route path='/*' element={<NotFound/>}/>
 

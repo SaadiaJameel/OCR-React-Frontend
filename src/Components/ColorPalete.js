@@ -5,7 +5,8 @@ const colors = {
     light: {main: 'rgb(168,199,236)',contrastText: '#ffffff'},
 
     // region colors
-    "teeth":{main: 'rgb(111, 26, 182)',contrastText: '#ffffff'},
+    "Oral Cavity":{main: 'rgb(255, 0, 0)',contrastText: '#ffffff'},
+    "Teeth":{main: 'rgb(111, 26, 182)',contrastText: '#ffffff'},
     "Enemal":{main: 'rgb(0, 129, 201)',contrastText: '#ffffff'},
     "Hard Plate":{main: 'rgb(255, 201, 60)',contrastText: '#ffffff'},
     "Mole":{main: 'rgb(60, 98, 85)',contrastText: '#ffffff'},

@@ -3,6 +3,9 @@
 	--dark-color:rgb(41, 51, 62);
 }
 
+body{
+	background-color: #DDDDDD;
+}
 a{
     text-decoration: none;
     color: inherit;
@@ -13,7 +16,7 @@ a{
 .main_canvas{
     position: absolute;
     top: 10px;
-    left: 110px;
+    left: 165px;
     z-index: 10;
 }
 
@@ -27,9 +30,10 @@ a{
 }
 
 .body{
-	margin-top: 65px;
-	display: flex;
+	margin-top: 50px;
+	padding: 20px;
 }
+
 .page_body{
     width: 100%;
     display: flex;
@@ -47,7 +51,7 @@ a{
     height: 100%;
     width: 150px;
 	padding: 5px;
-	padding-top: 20px;
+	padding-top: 10px;
     background-color: var(--dark-color);
 }
 
@@ -81,6 +85,15 @@ a{
     opacity: 0;  
     overflow:hidden; 
     position:absolute;
+}
+
+
+.color_square{
+	width: 14px;
+	height: 14px;
+	border-radius: 3px;
+	display: inline-block;
+	margin-right: 5px;
 }
 
 /* not found page */

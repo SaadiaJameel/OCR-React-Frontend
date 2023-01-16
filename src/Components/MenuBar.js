@@ -83,7 +83,7 @@ function MenuBar() {
                   <Typography textAlign="center"><Link to="/upload" replace>Upload</Link></Typography>
                 </MenuItem>
                 <MenuItem>
-                  <Typography textAlign="center"><Link to="/annotation" replace>Annotation</Link></Typography>
+                  <Typography textAlign="center"><Link to="/images" replace>Images</Link></Typography>
                 </MenuItem>
                 <MenuItem>
                   <Typography textAlign="center"><Link to="/patients" replace>Patients</Link></Typography>
@@ -91,14 +91,14 @@ function MenuBar() {
                               
           </Menu>
          
-            <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
-                <Button sx={{ my: 2, color: 'white', display: 'block' }}>
+            <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex'}}}>
+                <Button sx={{ my: 2, color: 'white', display: 'block', m:0}}>
                     <Link to="/upload" replace>Upload</Link>
                 </Button>
-                <Button sx={{ my: 2, color: 'white', display: 'block' }}>
-                    <Link to="/annotation" replace>Annotation</Link>
+                <Button sx={{ my: 2, color: 'white', display: 'block', m:0 }}>
+                    <Link to="/images" replace>Images</Link>
                 </Button>
-                <Button sx={{ my: 2, color: 'white', display: 'block' }}>
+                <Button sx={{ my: 2, color: 'white', display: 'block', m:0}}>
                     <Link to="/patients" replace>Patients</Link>
                 </Button>
             </Box>
@@ -108,7 +108,7 @@ function MenuBar() {
           <Button
             onClick={handleOpenUserMenu}
             size="small"
-            sx={{ ml: 2, borderRadius: 5 }}
+            sx={{ m:0, ml: 2, borderRadius: 5}}
             aria-controls={open ? 'account-menu' : undefined}
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
