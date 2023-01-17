@@ -1,14 +1,14 @@
 import React, { useRef, useEffect, useState } from 'react';
 import {Drawer} from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { Save} from '@mui/icons-material';
+import { Close, Save} from '@mui/icons-material';
 import colorPallete from '../ColorPalete'
 import RegionTable from './RegionTable';
 import Help from './Help';
 import ButtonPanel from './ButtonPanel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
+import {Select, InputLabel} from '@mui/material';
 
 // global variables 
 // todo: check whether we could use useStates instead
@@ -44,7 +44,7 @@ function drawCircle(ctx, pos,size=4){
 
 // polygon class
 class Polygon{
-  constructor(ctx){
+  constructor(ctx, color=defaultColor, type=defaultType){
     this.ctx = ctx;
     this.isSelected = false;
     this.points = [];
@@ -53,9 +53,9 @@ class Polygon{
     this.dragging = false;
     this.completed = false;
     this.markedForDeletion = false;
-    this.color = defaultColor;
-    this.transcolor =  defaultColor.replace(')', ', 0.6)').replace('rgb', 'rgba')
-    this.type = defaultType
+    this.color = color;
+    this.transcolor =  color.replace(')', ', 0.6)').replace('rgb', 'rgba')
+    this.type = type;
   }
   addPoint(p){ 
     this.points.push(point(p.x,p.y)) 
@@ -145,7 +145,7 @@ class Polygon{
   }
 }
 
-const Canvas = ({img, open}) => {  
+const Canvas = ({info, open}) => {  
   
   const [size, setSize] = useState({width: 1, height:1})
   const [orginalSize, setOriginalSize] = useState({width: 1, height:1})
@@ -223,7 +223,6 @@ const Canvas = ({img, open}) => {
 
     setHelp(false)
 
-    var coordinates = [];
     var type = [];
     var bbox = [];
     [...regions].forEach(region =>{
@@ -236,24 +235,23 @@ const Canvas = ({img, open}) => {
         for (const p of region.points) {
           pointArray.push(Math.round(p.x /zoomLevel),Math.round(p.y /zoomLevel))
         }
-        coordinates.push(pointArray.toString())
+  
         type.push(region.type)
         bbox.push(bbox_arr.toString()) 
       }
     })
 
     setShowPoints(
-      coordinates.map((points, index) =>
+      type.map((points, index) =>
         <tr  key={index}>
           <td>{index+1}</td>
           <td>{type[index]}</td>
           <td>[{bbox[index]}]</td>
-          <td>[{points}]</td>
         </tr>
       )
     )
 
-    if(coordinates.length === 0) return
+    if(type.length === 0) return
     setState(!state)
   }
 
@@ -294,22 +292,25 @@ const Canvas = ({img, open}) => {
     redraw_ids()
   }
 
+  const finish_drawing = () =>{
+    [...regions].forEach(region => {
+      if(region.points.length < 3) region.markedForDeletion = true;
+      region.completed = true
+      region.isSelected = false
+    });
+
+    polygon = new Polygon(ctx)
+    regions.push(polygon)
+    redraw_canvas()
+    redraw_ids()
+  }
+
   const handle_keyup = (e) =>{
   
     e.preventDefault()
     
     if(e.key === "Enter") {
-      
-      [...regions].forEach(region => {
-        if(region.points.length < 3) region.markedForDeletion = true;
-        region.completed = true
-        region.isSelected = false
-      });
-  
-      polygon = new Polygon(ctx)
-      regions.push(polygon)
-      redraw_canvas()
-      redraw_ids()
+      finish_drawing()
     }
 
     if(e.key === "Escape") {
@@ -478,6 +479,19 @@ const Canvas = ({img, open}) => {
    
   canvas = canvaRef.current;
   ctx = canvas.getContext('2d');
+
+  regions = []
+
+  for (const key in info.annotation){
+    polygon = new Polygon(ctx,colorPallete[key].main ,key)
+    var points = []
+    for(var i=0; i<info.annotation[key].length; i=i+2){
+      points.push(point(info.annotation[key][i],info.annotation[key][i+1]))
+    }
+    polygon.points = points
+    polygon.completed = true;
+    regions.push(polygon)    
+  }
 
   polygon = new Polygon(ctx)
   regions.push(polygon)
@@ -650,9 +664,9 @@ const Canvas = ({img, open}) => {
         <LoadingButton color="success" fullWidth onClick={handleSave} loading={loading}loadingPosition="start" startIcon={<Save/>} variant="contained" sx={{mb:3}}>
           <span>Save</span>
         </LoadingButton>
-
         <FormControl fullWidth sx={{mb: 3}}>
-          <Select size='small' value={selection} onChange={handleChange} style={{background: "white"}}>
+          <InputLabel size='small' id="label">Label</InputLabel>
+          <Select size='small' value={selection} labelId="label" label="Label" onChange={handleChange} style={{backgroundColor: "white"}}>
             {regionNames.map((name, index) =>{
               return (<MenuItem key={index} value={name}><div className='color_square' style={{backgroundColor:colorPallete[name].main}}></div>{name}</MenuItem>)
             })}
@@ -660,19 +674,23 @@ const Canvas = ({img, open}) => {
         </FormControl>
 
         {/******************* button pannel *************************/}
-        <ButtonPanel func={{show_regions, zoom_in, zoom_out, zoom_reset, move_selected, 
+        <ButtonPanel func={{finish_drawing,show_regions, zoom_in, zoom_out, zoom_reset, move_selected, 
         delete_selected, show_help, clear_all, show_label, label_type, opacity_change}} labelVisibility={labelVisibility}/>
         </div>
 
         {/********************** working area **********************/}
         <div className="work_area">
           <canvas className='main_canvas' onDoubleClick={(e)=>handle_mouse(e)} onMouseMove={(e)=>{handle_mouse(e)}} onMouseDown={(e)=>{handle_mouse(e)}} onMouseUp={(e)=>{handle_mouse(e)}} ref={canvaRef} width={size.width} height={size.height}>Sorry, Canvas functionality is not supported.</canvas>
-          <img className="main_img" onLoad={(e)=>{get_dimensions(e)}}  width={size.width} height={size.height} src={img} alt="failed to load"/> 
+          <img className="main_img" onLoad={(e)=>{get_dimensions(e)}}  width={size.width} height={size.height} src={info && info.img} alt="failed to load"/> 
         </div>
 
         {/********************** bottom panel **********************/}
         {state &&
           <Drawer anchor='bottom' variant="permanent">
+            <div style={{display: 'flex', flexDirection: 'row'}}>
+              <div style={{flexGrow:1}}></div>
+              <Close onClick={()=>setState(!state)}/>
+            </div>
             {help?<Help/>:<RegionTable showPoints={showPoints} />}
           </Drawer> 
         }

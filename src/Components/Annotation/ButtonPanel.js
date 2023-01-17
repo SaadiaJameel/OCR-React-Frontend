@@ -1,7 +1,7 @@
 import React from 'react';
 import {IconButton, Divider, Tooltip} from '@mui/material';
 import {Preview,ZoomIn,CropFree,ZoomOut,Close, CancelOutlined, HelpOutline, Style, Save} from '@mui/icons-material';
-import {ArrowUpward, ArrowDownward, ArrowBack, ArrowForward, Opacity, AddPhotoAlternate} from '@mui/icons-material';
+import {ArrowUpward, ArrowDownward, ArrowBack, ArrowForward, Opacity, Check} from '@mui/icons-material';
 import {Label, LabelOff} from '@mui/icons-material';
 
 const ButtonPanel = ({func, labelVisibility}) => {
@@ -12,6 +12,7 @@ const ButtonPanel = ({func, labelVisibility}) => {
             <div>
                 <Divider color="gray"/>  
                 <Tooltip title="Show Regions" placement="bottom-end" arrow><IconButton onClick={func.show_regions} sx={{color: 'white'}}><Preview/></IconButton></Tooltip>
+                <Tooltip title="Finish Drawing" placement="bottom-end" arrow><IconButton onClick={func.finish_drawing} sx={{color: 'white'}}><Check/></IconButton></Tooltip>
             </div>
             <div>
                 <Divider/>  

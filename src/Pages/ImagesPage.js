@@ -10,7 +10,7 @@ import IconButton from '@mui/material/IconButton';
 import {StarOutline, Star, Close, Info} from '@mui/icons-material';
 import Canvas from '../Components/Annotation/Canvas';
 
-const AllRiskFactors = ['Smoking', 'Chewing Betel','Alcohol'];
+const LesionType = ['Yes', 'No'];
 const AllCategories = ['OCA', 'OPMD', 'Benign', 'Healthy'];
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -19,7 +19,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const ImagesPage = () => {
     
-    const [riskFactor, setRiskFactor] = useState([]);
+    const [lesionAppear, setLesionAppear] = useState([]);
     const [category, setCategory] = useState([]);
     const [open, setOpen] = useState(false);
     const [openInfo, setOpenInfo] = useState(false);
@@ -44,9 +44,9 @@ const ImagesPage = () => {
         setOpenInfo(true);
     }
 
-    const handleRiskFactorChange = (event) => {
+    const handleLesionChange = (event) => {
       const {target: { value },} = event;
-      setRiskFactor(typeof value === 'string' ? value.split(',') : value,);
+     setLesionAppear(typeof value === 'string' ? value.split(',') : value,);
     };
 
     const handleCategoryChange = (event) => {
@@ -75,12 +75,12 @@ const ImagesPage = () => {
                         </Grid>
                         <Grid item xs={12} sm={6} md={3}>
                             <FormControl margin="normal" fullWidth>
-                                <InputLabel size='small' id="risk-factor-label">Risk Factor</InputLabel>
-                                <Select size='small' labelId="risk-factor-label" name='risk factor' label="Risk Factor"  multiple
-                                value={riskFactor} onChange={handleRiskFactorChange} input={<OutlinedInput label="Risk Factor" />} renderValue={(selected) => selected.join(', ')}>
-                                {AllRiskFactors.map((name) => (
+                                <InputLabel size='small' id="lesion-label">Lesion Appear</InputLabel>
+                                <Select size='small' labelId="lesion-label" name='lesion' label="Lesion Appear"  multiple
+                                value={lesionAppear} onChange={handleLesionChange} input={<OutlinedInput label="Lesion Appear" />} renderValue={(selected) => selected.join(', ')}>
+                                {LesionType.map((name) => (
                                     <MenuItem key={name} value={name}>
-                                    <Checkbox checked={riskFactor.indexOf(name) > -1} />
+                                    <Checkbox checked={lesionAppear.indexOf(name) > -1} />
                                     <ListItemText primary={name} />
                                     </MenuItem>
                                 ))}
@@ -123,8 +123,8 @@ const ImagesPage = () => {
                             position="top"
                             actionIcon={
                                 <>
-                                <IconButton size='small' sx={{ color: 'white' }} aria-label={`star ${item.title}`} onClick={()=>annotation(item.img)}>
-                                    {item.annotated? <Star fontSize='small'/>:<StarOutline fontSize='small'/>}
+                                <IconButton size='small' sx={{ color: 'white' }} aria-label={`star ${item.title}`} onClick={()=>annotation(item)}>
+                                    {item.annotation && item.annotation.length > 0? <Star fontSize='small'/>:<StarOutline fontSize='small'/>}
                                 </IconButton>
                                 <IconButton size='small' sx={{ color: 'white' }} aria-label={`star ${item.title}`} onClick={()=>openInfoDialog(item)}>
                                     <Info fontSize='small'/>
@@ -149,7 +149,7 @@ const ImagesPage = () => {
                 </Toolbar>
                 </AppBar>
                 <div style={{minHeight:"50px", width: "100px"}}></div>
-                <Canvas img={image} open={open} />
+                <Canvas info={image} open={open} />
             </Dialog>
 
           <Dialog open={openInfo} onClose={handleInfoClose} aria-labelledby="info-dialog" aria-describedby="info-dialog-description">
@@ -157,7 +157,7 @@ const ImagesPage = () => {
                 <img src={info.img} alt={info.title} style={{width: '500px'}}/>
                 <DialogContentText id="info-dialog-description">
                   <Typography>Title: {info.title}</Typography>
-                  <Typography>Annotated: {info.annotated?info.annotated.toString(): 'false'}</Typography>
+                  <Typography>Annotated: {info.annotation && info.annotation.length >0 ? 'True': 'False'}</Typography>
                 </DialogContentText>
               </DialogContent>
           </Dialog>
@@ -173,78 +173,81 @@ const itemData = [
       img: mouth,
       title: 'mouth',
       author: '@bkristastucchio',
-      annotated: true,
+      annotation: {
+        'Teeth':[1,2,100,1,300,300],
+        'Gingiva':[1,300,50,50,300,300, 400,10]
+      },
     },
     {
       img: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e',
       title: 'Breakfast',
       author: '@bkristastucchio',
-      annotated: true,
+      annotation: {},
     },
     {
       img: 'https://images.unsplash.com/photo-1551782450-a2132b4ba21d',
       title: 'Burger',
       author: '@rollelflex_graphy726',
-      annotated: false,
+      annotation: {}
     },
     {
       img: 'https://images.unsplash.com/photo-1522770179533-24471fcdba45',
       title: 'Camera',
       author: '@helloimnik',
-      annotated: false,
+      annotation: {}
     },
     {
       img: 'https://images.unsplash.com/photo-1444418776041-9c7e33cc5a9c',
       title: 'Coffee',
       author: '@nolanissac',
-      annotated: false,
+      annotation: {}
     },
     {
       img: 'https://images.unsplash.com/photo-1533827432537-70133748f5c8',
       title: 'Hats',
       author: '@hjrc33',
-      annotated: false,
+      annotation: {}
     },
     {
       img: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62',
       title: 'Honey',
       author: '@arwinneil',
-      annotated: true,
+      annotation: [],
     },
     {
       img: 'https://images.unsplash.com/photo-1516802273409-68526ee1bdd6',
       title: 'Basketball',
       author: '@tjdragotta',
-      annotated: false,
+      annotation: {}
     },
     {
       img: 'https://images.unsplash.com/photo-1518756131217-31eb79b20e8f',
       title: 'Fern',
       author: '@katie_wasserman',
-      annotated: false,
+      annotation: {}
     },
     {
       img: 'https://images.unsplash.com/photo-1597645587822-e99fa5d45d25',
       title: 'Mushrooms',
       author: '@silverdalex',
-      annotated: false,
+      annotation: {}
     },
     {
       img: 'https://images.unsplash.com/photo-1567306301408-9b74779a11af',
       title: 'Tomato basil',
       author: '@shelleypauls',
-      annotated: false,
+      annotation: {}
     },
     {
       img: 'https://images.unsplash.com/photo-1471357674240-e1a485acb3e1',
       title: 'Sea star',
       author: '@peterlaster',
-      annotated: false,
+      annotation: {}
     },
     {
       img: 'https://images.unsplash.com/photo-1589118949245-7d38baf380d6',
       title: 'Bike',
       author: '@southside_customs',
-      annotated: false,
+      annotation: {}
     },
   ];

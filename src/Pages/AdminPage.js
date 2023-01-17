@@ -54,14 +54,16 @@ const AdminPage = () => {
             'email': JSON.parse(sessionStorage.getItem("info")).email,
         }}
         ).then(res=>{
+            setMsg(res.data.message)
             var list = [...request];
             list.splice(index,1);
             setRequests(list);
         }).catch(err=>{
             if(err.response) setMsg(err.response.data.message)
             else alert(err)
-        }) 
-        setSelected(-1);
+        }).finally(()=>{
+            setSelected(-1);
+        })
 
     }
 
@@ -84,8 +86,9 @@ const AdminPage = () => {
             console.log(err)
             if(err.response) setMsg(err.response.data.message)
             else alert(err)
-        }) 
-        setSelected(-1);
+        }).finally(()=>{
+            setSelected(-1);
+        })
     }
 
     const showMsg = (msg, severity)=>{

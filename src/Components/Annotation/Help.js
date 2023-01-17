@@ -70,6 +70,25 @@ const Help = props => {
                 <td>Toggle label visibility, Toggle label type, Toggle region fill</td>
             </tr>
             </tbody></table>
+            <p>jjj</p>
+            <p>jjj</p>
+            <p>jjj</p>
+            <p>jjj</p>
+            <p>jjj</p>
+            <p>jjj</p>
+            <p>jjj</p>
+            <p>jjj</p>
+            <p>jjj</p>
+            <p>jjj</p>
+            <p>jjj</p>
+            <p>jjj</p>
+            <p>jjj</p>
+            <p>jjj</p>
+            <p>jjj</p>
+            <p>jjj</p>
+            <p>jjj</p>
+            <p>jjj</p>
+            <p>jjj</p>
         </div>
     );
 };

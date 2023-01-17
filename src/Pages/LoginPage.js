@@ -23,6 +23,7 @@ const LoginPage =()=>{
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [showSignupPassword, setShowSignupPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
 
@@ -53,10 +54,8 @@ const LoginPage =()=>{
             return
         }
 
-        // if(data.get("password").length < 8){
-        //     showMsg("Password should contain atleast 8 charactors","error");
-        //     return
-        // }
+        
+        setLoading(true);
 
         axios.post(`${config['path']}/auth/login`, {
             email: data.get('email'),
@@ -80,6 +79,8 @@ const LoginPage =()=>{
             }else{
                 alert(error)
             }
+        }).finally(()=>{
+            setLoading(false);
         });
 
     };
@@ -103,6 +104,7 @@ const LoginPage =()=>{
             return
         }
 
+        setLoading(true)
         axios.post(`${config['path']}/auth/signup`, {
                 username: data.get('username'),
                 email: data.get('signup email'),
@@ -110,7 +112,7 @@ const LoginPage =()=>{
                 password: data.get('signup password')
             })
             .then(function (response) {
-                showMsg("Request sent", "success")
+                showMsg("You will recieve an email on acceptance", "success")
                 return
             })
             .catch(function (error) {
@@ -119,6 +121,8 @@ const LoginPage =()=>{
                 }else{
                     showMsg(error, "error")
                 }
+            }).finally(()=>{
+                setLoading(false)
             });
     };
 
@@ -135,12 +139,12 @@ const LoginPage =()=>{
 
                         <Box component="form" noValidate onSubmit={handleSignUpSubmit} sx={{ mt: 1 }}>
 
-                        <TextField margin="normal" size='small' required fullWidth id="email" label="Email Address" name="signup email" autoFocus/>
-                        <TextField margin="normal" size='small' required fullWidth id="username" label="User Name" name="username"/>
-                        <TextField margin="normal" size='small' required fullWidth id="regNo" label="Register No" name="regNo"/>
+                        <TextField margin="normal" size='small' inputProps={{ maxLength: 100 }} required fullWidth id="email" label="Email Address" name="signup email" autoFocus/>
+                        <TextField margin="normal" size='small' inputProps={{ maxLength: 100 }} required fullWidth id="username" label="User Name" name="username"/>
+                        <TextField margin="normal" size='small' inputProps={{ maxLength: 100 }} required fullWidth id="regNo" label="Register No" name="regNo"/>
                         <FormControl margin="normal" fullWidth  variant="outlined">
                         <InputLabel required size='small' htmlFor="signup password">Password</InputLabel>
-                        <OutlinedInput required size='small' id="signup password" type={showSignupPassword ? 'text' : 'password'} label="Password" name="signup password"
+                        <OutlinedInput required size='small' inputProps={{ maxLength: 100 }} id="signup password" type={showSignupPassword ? 'text' : 'password'} label="Password" name="signup password"
                             endAdornment={
                             <InputAdornment position="end">
                                 <IconButton aria-label="toggle password visibility" onClick={handleClickShowSignupPassword} onMouseDown={handleMouseDownPassword} edge="end">
@@ -152,7 +156,7 @@ const LoginPage =()=>{
                         </FormControl>
                         <FormControl margin="normal" fullWidth  variant="outlined">
                         <InputLabel required size='small' htmlFor="confirm password">Confirm Password</InputLabel>
-                        <OutlinedInput required size='small' id="confirm password" type={showConfirmPassword ? 'text' : 'password'} label="Confirm Password" name="confirm password"
+                        <OutlinedInput required size='small' inputProps={{ maxLength: 100 }} id="confirm password" type={showConfirmPassword ? 'text' : 'password'} label="Confirm Password" name="confirm password"
                             endAdornment={
                             <InputAdornment position="end">
                                 <IconButton aria-label="toggle password visibility" onClick={handleClickShowConfirmPassword} onMouseDown={handleMouseDownPassword} edge="end">
@@ -162,7 +166,7 @@ const LoginPage =()=>{
                             }
                         />
                         </FormControl>                                                
-                        <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} > Sign Up </Button>
+                        <Button type="submit" disabled={loading} fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} >Request to Register</Button>
                         
                         <Grid container>
                             <Grid item xs></Grid>
@@ -182,10 +186,10 @@ const LoginPage =()=>{
                         
                         <Box component="form" noValidate onSubmit={handleSignInSubmit} sx={{ mt: 1 }}>
                             
-                        <TextField margin="normal" size='small' required fullWidth id="email" label="Email Address" name="email" autoComplete="email" autoFocus/>
+                        <TextField margin="normal" size='small' inputProps={{ maxLength: 100 }} required fullWidth id="email" label="Email Address" name="email" autoComplete="email" autoFocus/>
                         <FormControl margin="normal" fullWidth  variant="outlined">
                         <InputLabel required size='small' htmlFor="password">Password</InputLabel>
-                        <OutlinedInput required size='small' id="password" type={showPassword ? 'text' : 'password'} label="Password" name="password"
+                        <OutlinedInput required size='small' inputProps={{ maxLength: 100 }} id="password" type={showPassword ? 'text' : 'password'} label="Password" name="password"
                             endAdornment={
                             <InputAdornment position="end">
                                 <IconButton aria-label="toggle password visibility" onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} edge="end">
@@ -197,7 +201,7 @@ const LoginPage =()=>{
                         </FormControl>
                         {/* <FormControlLabel control={<Checkbox  size='small' value="remember" color="primary" />} label="Remember me" /> */}
                     
-                        <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} > Sign In </Button>
+                        <Button type="submit" disabled={loading} fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} > Sign In </Button>
                         
                         <Grid container>
                             <Grid item xs> </Grid>
