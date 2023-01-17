@@ -2,17 +2,19 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import MenuBar from './MenuBar';
 
-const ProtectedRoute = ({children}) => {
+const ProtectedRoute = ({allowed, children}) => {
     
-    // const info = JSON.parse(sessionStorage.getItem("info"))
-    const info = {}
+    const info = JSON.parse(sessionStorage.getItem("info"))
+    const roles = info? info["roles"]: []
+    const user = info? info["username"]: null
 
-    if(!info) return <Navigate to="/login" replace />;
+    if(!user) return <Navigate to="/login" replace />;
+    else if(! roles.find(role => allowed.includes(role))) return <Navigate to="/notfound" replace />;
 
     return (
         <>
-        <MenuBar/>
-        <div className='page'>
+        <MenuBar roles={roles} username={user}/>
+        <div>
             {children}
         </div>
         </>

@@ -9,6 +9,7 @@ import './App.css';
 import PatientsPage from './Pages/PatientsPage';
 import ImagesPage from './Pages/ImagesPage';
 import UploadPage from './Pages/UploadPage';
+import AdminPage from './Pages/AdminPage';
 
 
 function App() {
@@ -20,11 +21,11 @@ function App() {
         <Route index element={<LoginPage/>}/>
         <Route path='/login' element={<LoginPage/>}/>
         
-        <Route index path='/adminportal' element={<ProtectedRoute><ProtectedEl/></ProtectedRoute>}/>
-        <Route index path='/upload' element={<ProtectedRoute><UploadPage/></ProtectedRoute>}/>
-        <Route index path='/annotation' element={<ProtectedRoute><Canvas/></ProtectedRoute>}/>
-        <Route index path='/patients' element={<ProtectedRoute><PatientsPage/></ProtectedRoute>}/>
-        <Route index path='/images' element={<ProtectedRoute><ImagesPage/></ProtectedRoute>}/>
+        <Route index path='/adminportal' element={<ProtectedRoute allowed={[1]}><AdminPage/></ProtectedRoute>}/>
+        <Route index path='/upload' element={<ProtectedRoute allowed={[1,2]}><UploadPage/></ProtectedRoute>}/>
+        <Route index path='/annotation' element={<ProtectedRoute allowed={[1,2]}><Canvas/></ProtectedRoute>}/>
+        <Route index path='/patients' element={<ProtectedRoute allowed={[1,2]}><PatientsPage/></ProtectedRoute>}/>
+        <Route index path='/images' element={<ProtectedRoute allowed={[1,2]}><ImagesPage/></ProtectedRoute>}/>
          
         <Route path='/*' element={<NotFound/>}/>
 

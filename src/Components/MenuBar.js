@@ -4,12 +4,40 @@ import{ Box,Toolbar,IconButton,Typography, Button} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
 import logo from '../Assets/logo.svg';
+import { useNavigate } from 'react-router-dom';
 
-function MenuBar() {
+function stringToColor(string) {
+  let i, hash = 0;
+  let color = '#';
+
+  for (i = 0; i < string.length; i += 1) {
+    hash = string.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  for (i = 0; i < 3; i += 1) {
+    const value = (hash >> (i * 8)) & 0xff;
+    color += `00${value.toString(16)}`.slice(-2);
+  }
+
+  return color;
+}
+
+
+function stringAvatar(name) {
+  return {
+  sx: {bgcolor: stringToColor(name), width: 32, height: 32},
+  children: `${name.split(' ')[0][0]}`,
+  };
+}
+
+
+function MenuBar({roles,username}) {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const open = Boolean(anchorElUser);
   const open2 = Boolean(anchorElNav);
+
+  const navigate = useNavigate();
   
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -28,6 +56,11 @@ function MenuBar() {
 
   const GoToProfile = ()=>{
     
+  }
+
+  const Logout = ()=>{
+    sessionStorage.removeItem("info")
+    navigate("/login");
   }
 
   return (
@@ -88,6 +121,10 @@ function MenuBar() {
                 <MenuItem>
                   <Typography textAlign="center"><Link to="/patients" replace>Patients</Link></Typography>
                 </MenuItem>
+                {roles.includes(1) && 
+                <MenuItem>
+                  <Typography textAlign="center"><Link to="/adminportal" replace>Admin Portal</Link></Typography>
+                </MenuItem>}
                               
           </Menu>
          
@@ -101,6 +138,10 @@ function MenuBar() {
                 <Button sx={{ my: 2, color: 'white', display: 'block', m:0}}>
                     <Link to="/patients" replace>Patients</Link>
                 </Button>
+                { roles.includes(1) &&
+                  <Button sx={{ my: 2, color: 'white', display: 'block', m:0}} variant='contained'>
+                    <Link to="/adminportal" replace>Admin Portal</Link>
+                </Button>}
             </Box>
 
       <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-end' }}>
@@ -108,14 +149,14 @@ function MenuBar() {
           <Button
             onClick={handleOpenUserMenu}
             size="small"
-            sx={{ m:0, ml: 2, borderRadius: 5}}
+            sx={{ m:0, ml: 2, borderRadius: 5, p:0}}
             aria-controls={open ? 'account-menu' : undefined}
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
             color="inherit"
           >
-            <Typography sx={{ m: 1, textTransform: 'none' }}></Typography>
-            <Avatar sx={{ width: 32, height: 32 }} alt="o" src="" />
+            <Typography sx={{ m: 1, textTransform: 'none'}}>{username}</Typography>
+            <Avatar {...stringAvatar(username)}/>
           </Button>
       </Box>
       <Menu
@@ -158,7 +199,7 @@ function MenuBar() {
           <Typography textAlign="center" onClick={GoToProfile}>Profile</Typography>
         </MenuItem>
         <MenuItem>
-          <Typography textAlign="center">Logout</Typography>
+          <Typography textAlign="center" onClick={Logout}>Logout</Typography>
         </MenuItem>
       </Menu>
         </Toolbar>

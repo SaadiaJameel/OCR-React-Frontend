@@ -54,15 +54,19 @@ const UploadPage = () => {
         <Paper sx={{p:3, my:1}}>
         <Typography sx={{ fontWeight: 700, m: 1 }}>Add Images</Typography>  
         
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-            <Stack spacing={2} direction='row' sx={{my:3}}>          
-                <Button variant="contained" component="label">
-                    Select Images
-                    <input hidden accept="image/png, image/jpeg" multiple type="file" onChange={selectFiles}/>
-                </Button> 
-                <Button type='submit' variant="contained" disabled={selectedFiles.length===0}> Upload </Button>
-            </Stack>
-            <ImageList cols={matches? 5:2}>
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
+            <Grid container spacing={{ xs: 2, md: 3 }}>
+                <Grid item xs={12} sm={6} md={3}>
+                    <Button fullWidth variant="contained" component="label">
+                        Select Images
+                        <input hidden accept="image/png, image/jpeg" multiple type="file" onChange={selectFiles}/>
+                    </Button>  
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                    <Button fullWidth type='submit' variant="contained" disabled={selectedFiles.length===0}> Upload </Button>
+                </Grid>
+            </Grid>
+            <ImageList cols={matches? 5:2} sx={{mt:5}}>
             {imagePreviews.map((item, index) => (
                 <ImageListItem key={index}>
                 <img

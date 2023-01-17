@@ -107,10 +107,8 @@ const ImagesPage = () => {
                     </Grid>
                     
                 </Box>
-            </Paper>
-            <Paper sx={{p:3, my:1}}>
-                
-                <ImageList cols={matches? 8:3}>
+
+                <ImageList cols={matches? 8:3} sx={{mt:4}}>
                     {itemData.map((item, index) => (
                         <ImageListItem key={index}>
                         <img
@@ -139,6 +137,7 @@ const ImagesPage = () => {
                     ))}
                 </ImageList>
             </Paper>
+           
             <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
                 <AppBar sx={{ position: 'fixed'}}>
                 <Toolbar>
