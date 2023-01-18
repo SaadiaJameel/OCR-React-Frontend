@@ -139,7 +139,7 @@ function MenuBar({roles,username}) {
                     <Link to="/patients" replace>Patients</Link>
                 </Button>
                 { roles.includes(1) &&
-                  <Button sx={{ my: 2, color: 'white', display: 'block', m:0}} variant='contained'>
+                  <Button sx={{ my: 2, color: 'white', display: 'block', m:0}} variant='outlined' color='secondary'>
                     <Link to="/adminportal" replace>Admin Portal</Link>
                 </Button>}
             </Box>

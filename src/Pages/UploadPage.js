@@ -1,12 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Button, Paper, Typography, Grid, Box, ImageList, ImageListItem, ImageListItemBar } from '@mui/material';
-import {useMediaQuery, IconButton, Stack} from '@mui/material';
+import {useMediaQuery, IconButton, TextField} from '@mui/material';
 import { Delete} from '@mui/icons-material';
 
 const UploadPage = () => {
 
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [imagePreviews, setImagePreviews] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const hidenInput = useRef();
+    const patientidRef = useRef();
 
     const matches = useMediaQuery('(min-width:800px)');
 
@@ -27,6 +30,13 @@ const UploadPage = () => {
         setSelectedFiles(files);       
         setImagePreviews(images);
     };
+
+    const handleSelection = ()=>{
+        //setLoading(true)
+        if(patientidRef.current.value==="") return
+        hidenInput.current.click()
+        
+    }
 
     const handleDelete = (index)=>{
         let images = [...imagePreviews];
@@ -55,15 +65,18 @@ const UploadPage = () => {
         <Typography sx={{ fontWeight: 700, m: 1 }}>Add Images</Typography>  
         
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
+            <input hidden accept="image/png, image/jpeg" ref={hidenInput} multiple type="file" onChange={selectFiles}/>
             <Grid container spacing={{ xs: 2, md: 3 }}>
                 <Grid item xs={12} sm={6} md={3}>
-                    <Button fullWidth variant="contained" component="label">
+                    <TextField size='small' inputRef={patientidRef} required label="Patients' Reg No" name="patient_id" fullWidth autoComplete='off' inputProps={{ maxLength: 100 }}/>
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                    <Button fullWidth variant="contained" disabled={loading} onClick={handleSelection} component="label">
                         Select Images
-                        <input hidden accept="image/png, image/jpeg" multiple type="file" onChange={selectFiles}/>
                     </Button>  
                 </Grid>
                 <Grid item xs={12} sm={6} md={3}>
-                    <Button fullWidth type='submit' variant="contained" disabled={selectedFiles.length===0}> Upload </Button>
+                    <Button  fullWidth type='submit' variant="contained" disabled={selectedFiles.length===0}> Upload </Button>
                 </Grid>
             </Grid>
             <ImageList cols={matches? 5:2} sx={{mt:5}}>

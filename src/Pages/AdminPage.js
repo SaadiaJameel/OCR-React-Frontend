@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Paper, Divider, List, ListItem, ListItemAvatar, ListItemText, Button } from '@mui/material';
-import {Avatar, Typography, Badge, Stack, Snackbar} from '@mui/material';
+import {Avatar, Typography, Badge, Stack} from '@mui/material';
 import {Mail} from '@mui/icons-material';
 import config from '../config.json'
 import axios from 'axios';
-import MuiAlert from '@mui/material/Alert';
+import NotificationBar from '../Components/NotificationBar';
 
-const Alert = React.forwardRef(function Alert(props, ref) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
 
 function stringToColor(string) {
     let i, hash = 0;
@@ -36,9 +33,7 @@ function stringAvatar(name) {
 const AdminPage = () => {
 
     const [request, setRequests] = useState([]);
-    const [msg, setMsg] = useState("")
-    const [severity, setSeverity] = useState('success');
-    const [open, setOpen] = useState(false);
+    const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
     const [selected, setSelected] = useState(-1);
 
     const handleAccept = (id, index)=>{
@@ -54,12 +49,12 @@ const AdminPage = () => {
             'email': JSON.parse(sessionStorage.getItem("info")).email,
         }}
         ).then(res=>{
-            setMsg(res.data.message)
+            showMsg(res.data.message, "success")
             var list = [...request];
             list.splice(index,1);
             setRequests(list);
         }).catch(err=>{
-            if(err.response) setMsg(err.response.data.message)
+            if(err.response) showMsg(err.response.data.message, "error")
             else alert(err)
         }).finally(()=>{
             setSelected(-1);
@@ -84,7 +79,7 @@ const AdminPage = () => {
             setRequests(list);
         }).catch(err=>{
             console.log(err)
-            if(err.response) setMsg(err.response.data.message)
+            if(err.response) showMsg(err.response.data.message)
             else alert(err)
         }).finally(()=>{
             setSelected(-1);
@@ -92,9 +87,7 @@ const AdminPage = () => {
     }
 
     const showMsg = (msg, severity)=>{
-        setMsg(msg);
-        setSeverity(severity);
-        setOpen(true);
+        setStatus({msg, severity, open:true})
     }
 
     useEffect(()=>{
@@ -110,7 +103,7 @@ const AdminPage = () => {
         ).then(res=>{
             setRequests(res.data)
           }).catch(err=>{
-            if(err.response) setMsg(err.response.data.message)
+            if(err.response) showMsg(err.response.data.message)
             else alert(err)
             
           }) 
@@ -134,8 +127,8 @@ const AdminPage = () => {
                 <ListItem
                     secondaryAction={
                     <Stack direction='row' spacing={2}>
-                        <Button variant='contained' disabled={selected==index} onClick={()=>handleAccept(item._id, index)}>Accept</Button>
-                        <Button variant='outlined' disabled={selected==index} color='error' onClick={()=>handleReject(item._id,index)}>Reject</Button>
+                        <Button variant='contained' disabled={selected===index} onClick={()=>handleAccept(item._id, index)}>Accept</Button>
+                        <Button variant='outlined' disabled={selected===index} color='error' onClick={()=>handleReject(item._id,index)}>Reject</Button>
                     </Stack>
                 }>
                     <ListItemAvatar><Avatar {...stringAvatar(item.username)} /></ListItemAvatar>
@@ -157,9 +150,8 @@ const AdminPage = () => {
         </List>
         </Paper>
 
-        <Snackbar open={open} autoHideDuration={5000} onClose={()=>setOpen(false)} anchorOrigin={{ vertical: 'top',horizontal: 'right' }}>
-            <Alert onClose={()=>setOpen(false)} severity={severity} sx={{ width: '100%' }}>{msg}</Alert>
-        </Snackbar>
+        <NotificationBar status={status} setStatus={setStatus}/>
+
         </div>
     );
 };;

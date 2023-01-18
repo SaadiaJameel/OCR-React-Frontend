@@ -44,6 +44,10 @@ a{
     width: fit-content;
 }
 
+.nav-link-selected{
+	border: 2px solid red
+}
+
 .side_bar{
     position: fixed;
     z-index: 100;

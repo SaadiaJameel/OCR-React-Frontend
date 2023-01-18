@@ -1,31 +1,31 @@
 import React, {useState} from 'react';
-import {Box,Button,Snackbar,Paper,Avatar,CssBaseline} from '@mui/material';
+import {Box,Button,Paper,Avatar,CssBaseline} from '@mui/material';
 import {TextField, Grid,Typography, FormControl, IconButton, OutlinedInput, InputAdornment} from '@mui/material';
 import {InputLabel} from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import MuiAlert from '@mui/material/Alert';
 import background_img from '../Assets/background.jpeg';
 import logo from '../Assets/logo.svg'
 import axios from 'axios';
 import config from '../config.json';
 import { useNavigate } from "react-router-dom";
+import NotificationBar from '../Components/NotificationBar';
 
-const Alert = React.forwardRef(function Alert(props, ref) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
 
 const LoginPage =()=>{
 
     const [singup, setSignup] = useState(false);
-    const [msg, setMsg] = useState("")
-    const [severity, setSeverity] = useState('success');
-    const [open, setOpen] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [showSignupPassword, setShowSignupPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
 
     const navigate = useNavigate();
+    
+    const showMsg = (msg, severity)=>{
+        setStatus({msg, severity, open:true})
+    }
+
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
     const handleClickShowConfirmPassword = () => setShowConfirmPassword((show) => !show);
@@ -39,11 +39,6 @@ const LoginPage =()=>{
         setSignup(!singup);
     }
 
-    const showMsg = (msg, severity)=>{
-        setMsg(msg);
-        setSeverity(severity);
-        setOpen(true);
-    }
 
     const handleSignInSubmit = (event) => {
         event.preventDefault();
@@ -215,11 +210,7 @@ const LoginPage =()=>{
                     </Box>
                 </Grid>
             }
-
-            <Snackbar open={open} autoHideDuration={5000} onClose={()=>setOpen(false)} anchorOrigin={{ vertical: 'top',horizontal: 'right' }}>
-                <Alert onClose={()=>setOpen(false)} severity={severity} sx={{ width: '100%' }}>{msg}</Alert>
-            </Snackbar>
-            
+            <NotificationBar status={status} setStatus={setStatus}/>
         </Grid>
     );
 }
