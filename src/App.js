@@ -20,7 +20,8 @@ function App() {
 
         <Route index element={<LoginPage/>}/>
         <Route path='/login' element={<LoginPage/>}/>
-        
+        <Route index path='/images' element={<ImagesPage/>}/>
+        <Route index path='/patients' element={<PatientsPage/>}/>
         <Route index path='/adminportal' element={<ProtectedRoute allowed={[1]}><AdminPage/></ProtectedRoute>}/>
         <Route index path='/upload' element={<ProtectedRoute allowed={[1,2]}><UploadPage/></ProtectedRoute>}/>
         <Route index path='/annotation' element={<ProtectedRoute allowed={[1,2]}><Canvas/></ProtectedRoute>}/>

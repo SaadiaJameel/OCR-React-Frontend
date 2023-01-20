@@ -1,10 +1,20 @@
 import React, {useState} from 'react';
 import { Paper, TextField, Typography, FormControl, InputLabel, Select, MenuItem} from '@mui/material';
-import {Box, Grid, Button, FormControlLabel, Checkbox} from "@mui/material";
+import {Box, Grid, Button, FormControlLabel, Checkbox, IconButton} from "@mui/material";
+import { Close } from '@mui/icons-material';
 import axios from 'axios';
 import config from '../config.json';
 import CopyToClipboard from '../Components/CopyToClipBoard';
 import NotificationBar from '../Components/NotificationBar';
+
+const pdata = {
+    patient_id: "P158",
+    age: "28",
+    gender: "Male",
+    risk_factors:["smoking"],
+    category:"Benign",
+    histo_diagnosis: ""
+}
 
 const PatientsPage = () => {
     
@@ -12,6 +22,7 @@ const PatientsPage = () => {
     const [gender, setGender] = useState('Male'); 
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
     const [loading, setLoading] = useState(false);
+    const [patientData, setPatientData] = useState(null);
 
     const showMsg = (msg, severity)=>{
         setStatus({msg, severity, open:true})
@@ -24,6 +35,19 @@ const PatientsPage = () => {
     const handleCategoryChange = (event) => {
       setCategory(event.target.value);
     };
+
+    const handleGet = (event)=>{
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+
+        if(data.get('patient_id')===""){
+            showMsg("Enter the patient ID", "error")
+            return
+        }
+
+        setPatientData(pdata);
+
+    }
 
     const handleSubmit = (event)=>{
         event.preventDefault();
@@ -74,7 +98,37 @@ const PatientsPage = () => {
 
     return (
         <div className='body'>
-         <Paper sx={{p:3, my:1}}>
+            <Paper sx={{p:3, my:1}}>
+                <Typography sx={{ fontWeight: 700, m: 1 }}>Check Patient Details</Typography>               
+                <Box component="form" onSubmit={handleGet} noValidate sx={{ mt: 1 }}>                    
+                                    
+                    <Grid container rowSpacing={1} columnSpacing={{ xs: 2, md: 3 }}>
+                        <Grid item xs={12} sm={6} md={3}>
+                            <TextField margin="normal" size='small' required label="Patients' Reg No" name="patient_id" fullWidth autoComplete='off' inputProps={{ maxLength: 100 }}/>
+                        </Grid>                       
+                        <Grid item xs={12} sm={6} md={3}>
+                            <Button type="submit" sx={{mt:2}} variant="contained" disabled={loading} fullWidth> Get Details </Button>
+                        </Grid>
+                    </Grid>
+                </Box>
+                {
+                    patientData &&
+                    <Box style={{border:'1px solid lightgray', padding: '10px'}}>
+                        <div style={{display: 'flex', flexDirection:'row-reverse'}}>
+                            <IconButton size='small' onClick={()=>setPatientData(null)}><Close fontSize='small'/></IconButton>
+                        </div>
+                        <table><tbody>
+                        <tr><td>Register No:</td><td>{patientData.patient_id} <CopyToClipboard text={patientData.patient_id}/></td></tr>
+                        <tr><td>Age:</td><td>{patientData.age}</td></tr>
+                        <tr><td>Gender:</td><td>{patientData.gender}</td></tr>
+                        <tr><td>Category:</td><td>{patientData.category}</td></tr>
+                        <tr><td>Histopathological Diagnosis:</td><td>{patientData.histo_diagnosis}</td></tr>
+                        </tbody></table>
+                    </Box>
+                }
+            </Paper>
+
+            <Paper sx={{p:3, my:1}}>
                 <Typography sx={{ fontWeight: 700, m: 1 }}>Add Patient Details</Typography>               
                 <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>                    
                                     
@@ -132,8 +186,8 @@ const PatientsPage = () => {
                     </Grid> 
                 </Box>
             </Paper>
-            <CopyToClipboard text={"hi"}/>
-            <NotificationBar status={status} setStatus={setStatus}/>
+
+            <NotificationBar status={status} setStatus={setStatus}/>       
         </div>
     );
 };

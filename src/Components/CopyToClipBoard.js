@@ -12,7 +12,7 @@ const CopyToClipboard = ({text}) => {
     
     return (
         <>
-          <IconButton onClick={handleClick}><ContentCopyIcon/></IconButton>
+          <IconButton size='small' sx={{p:0, mx:1}} onClick={handleClick}><ContentCopyIcon fontSize='small'/></IconButton>
           <Snackbar
             open={open}
             onClose={() => setOpen(false)}
