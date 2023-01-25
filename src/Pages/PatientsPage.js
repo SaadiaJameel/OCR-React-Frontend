@@ -82,7 +82,8 @@ const PatientsPage = () => {
         { headers: {
             'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
             'email': JSON.parse(sessionStorage.getItem("info")).email,
-        }}
+        },
+        withCredentials: true }        
         ).then(res=>{
             showMsg(res.data.message, "success")
            

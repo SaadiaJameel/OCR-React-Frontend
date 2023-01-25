@@ -1,10 +1,16 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import{ AppBar, Menu,Container,Avatar,MenuItem} from '@mui/material';
 import{ Box,Toolbar,IconButton,Typography, Button} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
 import logo from '../Assets/logo.svg';
 import { useNavigate } from 'react-router-dom';
+import axios from "axios";
+import config from '../config.json';
+import { useSelector, useDispatch } from 'react-redux';
+import { trySilentRefresh } from '../utils/authUtils';
+// import { useIdleTimer } from 'react-idle-timer';
+import { setUserData } from '../Reducers/userDataSlice';
 
 function stringToColor(string) {
   let i, hash = 0;
@@ -37,6 +43,9 @@ function MenuBar({roles,username}) {
   const open = Boolean(anchorElUser);
   const open2 = Boolean(anchorElNav);
 
+  const userData = useSelector(state => state.userData.data);
+  const dispatch = useDispatch();
+
   const navigate = useNavigate();
   
   const handleOpenNavMenu = (event) => {
@@ -59,8 +68,18 @@ function MenuBar({roles,username}) {
   }
 
   const Logout = ()=>{
-    sessionStorage.removeItem("info")
-    navigate("/login");
+    console.log(userData.accessToken.token);
+    axios.post(`${config['path']}/auth/revokeToken`, {},
+    { headers: {
+      'Authorization': `Bearer ${userData.accessToken.token}`,
+      'email': userData.email,
+  },
+  withCredentials: true}
+    )
+    .then(()=>{
+      sessionStorage.removeItem("info")
+      navigate("/login");
+    });
   }
 
   return (

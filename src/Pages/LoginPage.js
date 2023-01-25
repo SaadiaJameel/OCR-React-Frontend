@@ -9,6 +9,8 @@ import axios from 'axios';
 import config from '../config.json';
 import { useNavigate } from "react-router-dom";
 import NotificationBar from '../Components/NotificationBar';
+import { useDispatch } from 'react-redux';
+import { setUserData } from '../Reducers/userDataSlice';
 
 
 const LoginPage =()=>{
@@ -26,7 +28,7 @@ const LoginPage =()=>{
         setStatus({msg, severity, open:true})
     }
 
-
+    const dispatch = useDispatch();
     const handleClickShowPassword = () => setShowPassword((show) => !show);
     const handleClickShowConfirmPassword = () => setShowConfirmPassword((show) => !show);
     const handleClickShowSignupPassword = () => setShowSignupPassword((show) => !show);
@@ -55,14 +57,22 @@ const LoginPage =()=>{
         axios.post(`${config['path']}/auth/login`, {
             email: data.get('email'),
             password: data.get('password')
-        })
+        }, { withCredentials: true })
         .then(function (response) {
             var data = response.data
-            
-            const object = {username: data.username, email: data.email, roles: data.role, atoken: data.access_token, reg_no: data.reg_no }
+            const object = {username: data.others.username, email: data.others.email, roles: data.others.role, reg_no: data.others.reg_no }
             sessionStorage.setItem("info",JSON.stringify(object))
+            console.log(data, object);
 
-            if(response.data.role.includes(1)){
+            dispatch(setUserData({
+                id: data.others.id,
+                username: data.others.username,
+                email: data.others.email,
+                roles: data.others.roles,
+                accessToken: data.accessToken,
+                reg_no: data.others.reg_no
+              }))
+            if(response.data.others.role.includes(1)){
                 navigate("/adminportal");
             }else{
                 navigate("/upload");
