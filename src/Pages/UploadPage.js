@@ -66,7 +66,7 @@ const UploadPage = () => {
         
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
             <input hidden accept="image/png, image/jpeg" ref={hidenInput} multiple type="file" onChange={selectFiles}/>
-            <Grid container spacing={{ xs: 2, md: 3 }}>
+            {/* <Grid container spacing={{ xs: 2, md: 3 }}>
                 <Grid item xs={12} sm={6} md={3}>
                     <TextField size='small' inputRef={patientidRef} required label="Patients' Reg No" name="patient_id" fullWidth autoComplete='off' inputProps={{ maxLength: 100 }}/>
                 </Grid>
@@ -78,7 +78,7 @@ const UploadPage = () => {
                 <Grid item xs={12} sm={6} md={3}>
                     <Button  fullWidth type='submit' variant="contained" disabled={selectedFiles.length===0}> Upload </Button>
                 </Grid>
-            </Grid>
+            </Grid> */}
             <ImageList cols={matches? 5:2} sx={{mt:5}}>
             {imagePreviews.map((item, index) => (
                 <ImageListItem key={index}>
@@ -102,14 +102,12 @@ const UploadPage = () => {
                     subtitle={
                    <div style={{display: 'flex', flexDirection: 'row', gap: '5px'}}>
                     <div>
-                        <p>Patients' Id:</p>
                         <p>Location:</p>
                         <p>Clinical diagnosis:</p>
                         <p>Lesions appear:</p>
                     </div>
                     <div style={{display: 'flex', flexDirection: 'column', gap: '5px', paddingTop: '8px', width: '100%'}}>                   
-                            <input name={`patient-${index}`} />
-                    
+                                                
                             <select name={`location-${index}`} style={{width: '100%'}}>
                             <option value="1">Lips</option>
                             <option value="2">Upper labial mucosa</option>

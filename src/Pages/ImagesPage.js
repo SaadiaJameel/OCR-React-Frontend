@@ -173,10 +173,7 @@ const itemData = [
       img: mouth,
       title: 'mouth',
       author: '@bkristastucchio',
-      annotation: {
-        'Teeth':[1,2,100,1,300,300],
-        'Gingiva':[1,300,50,50,300,300, 400,10]
-      },
+      annotation: {},
     },
     {
       img: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e',

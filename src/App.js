@@ -47,6 +47,7 @@ function App() {
 
         <Route index element={<LoginPage/>}/>
         <Route path='/login' element={<LoginPage/>}/>
+        <Route path='/adminportal' element={<AdminPage/>}/>
         {/* <Route index path='/images' element={<ImagesPage/>}/>
         <Route index path='/patients' element={<PatientsPage/>}/> */}
         <Route index path='/adminportal' element={<ProtectedRoute allowed={[1]}><AdminPage/></ProtectedRoute>}/>

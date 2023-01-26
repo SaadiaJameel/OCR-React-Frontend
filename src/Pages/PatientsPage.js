@@ -23,6 +23,7 @@ const PatientsPage = () => {
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
     const [loading, setLoading] = useState(false);
     const [patientData, setPatientData] = useState(null);
+    const [toggleData, setToggleData] = useState(true);
 
     const showMsg = (msg, severity)=>{
         setStatus({msg, severity, open:true})
@@ -45,8 +46,14 @@ const PatientsPage = () => {
             return
         }
 
+        setToggleData(true);
         setPatientData(pdata);
 
+    }
+
+    const handleAddNew = () =>{
+        setToggleData(false);
+        setPatientData(null);
     }
 
     const handleSubmit = (event)=>{
@@ -110,11 +117,15 @@ const PatientsPage = () => {
                         <Grid item xs={12} sm={6} md={3}>
                             <Button type="submit" sx={{mt:2}} variant="contained" disabled={loading} fullWidth> Get Details </Button>
                         </Grid>
+                        <Grid item xs={12} sm={6} md={3}></Grid>
+                        <Grid item xs={12} sm={6} md={3}>
+                            <Button sx={{mt:2}} type='button' variant="outlined" disabled={loading} onClick={handleAddNew} fullWidth> Add New </Button>
+                        </Grid>
                     </Grid>
                 </Box>
                 {
-                    patientData &&
-                    <Box style={{border:'1px solid lightgray', padding: '10px'}}>
+                    toggleData? patientData &&
+                    <Box style={{border:'1px solid lightgray', padding: '10px'}} sx={{ mt: 3}}>
                         <div style={{display: 'flex', flexDirection:'row-reverse'}}>
                             <IconButton size='small' onClick={()=>setPatientData(null)}><Close fontSize='small'/></IconButton>
                         </div>
@@ -126,6 +137,64 @@ const PatientsPage = () => {
                         <tr><td>Histopathological Diagnosis:</td><td>{patientData.histo_diagnosis}</td></tr>
                         </tbody></table>
                     </Box>
+                    :
+                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3}} style={{border:'1px solid lightgray', padding: '10px'}}>                    
+                    <div style={{display: 'flex', flexDirection:'row-reverse'}}>
+                        <IconButton size='small' onClick={()=>setToggleData(true)}><Close fontSize='small'/></IconButton>
+                    </div>              
+                    <Grid container rowSpacing={1} columnSpacing={{ xs: 2, md: 3 }}>
+                        <Grid item xs={12} sm={6} md={3}>
+                            <TextField margin="normal" size='small' required label="Patients' Reg No" name="patient_id" fullWidth autoComplete='off' inputProps={{ maxLength: 100 }}/>
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={3}>
+                        <FormControl required margin="normal" fullWidth>
+                            <InputLabel size='small' id="gender">Gender</InputLabel>
+                            <Select size='small' labelId="gender" value={gender} name='gender' label="Gender" onChange={handleGenderChange}>
+                                <MenuItem value={'Female'}>Female</MenuItem>
+                                <MenuItem value={'Male'}>Male</MenuItem>
+                            </Select>
+                        </FormControl>
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={3}>
+                            <TextField margin="normal" required size='small' label="Age" name="age" inputProps={{ type:'number', min: 0, max: 100 }} fullWidth/>
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={3}>
+                            <FormControl margin="normal" fullWidth>
+                                <InputLabel size='small' id="category">Category</InputLabel>
+                                <Select size='small' labelId="category" value={category} name='category' label="Category" onChange={handleCategoryChange}>
+                                    <MenuItem value={'Unknown'}>Unknown</MenuItem>
+                                    <MenuItem value={'Healthy'}>Healthy</MenuItem>
+                                    <MenuItem value={'Benign'}>Benign</MenuItem>
+                                    <MenuItem value={'OPMD'}>OPMD</MenuItem>
+                                    <MenuItem value={'OCA'}>OCA</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                    </Grid>
+
+
+                    <Grid container rowSpacing={1} columnSpacing={{ xs: 2, md: 3 }} sx={{my:1}}>
+                        <Grid item md={12}>
+                            <TextField fullWidth margin="normal" size='small' label="Histopathological diagnosis" name="histo_diagnosis" multiline maxRows={4}/>
+                        </Grid>
+                    </Grid>
+
+
+                    <Grid container rowSpacing={1} columnSpacing={{ xs: 2, md: 3 }} sx={{my:1}}>
+                        <Grid item xs={12} sm={6} md={3}>
+                            <FormControlLabel control={<Checkbox name='smoking'/>} label="Smoking" />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={3}>
+                            <FormControlLabel control={<Checkbox name='betel' defaultChecked={false} />} label="Chewing Betel" />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={3}>
+                            <FormControlLabel control={<Checkbox name='alcohol' defaultChecked={false} />} label="Alcohol" />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={3}>
+                            <Button type="submit" variant="contained" disabled={loading} fullWidth> Add </Button>
+                        </Grid>
+                    </Grid> 
+                </Box>
                 }
             </Paper>
 

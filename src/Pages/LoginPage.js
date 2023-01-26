@@ -60,7 +60,7 @@ const LoginPage =()=>{
         }, { withCredentials: true })
         .then(function (response) {
             var data = response.data
-            const object = {username: data.others.username, email: data.others.email, roles: data.others.role, reg_no: data.others.reg_no }
+            const object = {username: data.others.username, email: data.others.email, roles: data.others.role, reg_no: data.others.reg_no, atoken: data.accessToken.token }
             sessionStorage.setItem("info",JSON.stringify(object))
             console.log(data, object);
 
