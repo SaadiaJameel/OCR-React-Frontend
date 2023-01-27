@@ -16,7 +16,7 @@ import { setUserData } from './Reducers/userDataSlice';
 
 
 function App() {
-  const timeout = 1000 * 60 * 60;
+  const timeout = 1000 * 60 * 15;
   const [message, setMessage] = React.useState('');
   const dispatch = useDispatch();
 
@@ -64,14 +64,12 @@ function App() {
 
   React.useEffect(() => {
 
+    if (localStorage.getItem('loggedOut')) {
       setTimeout(() => {
-        console.log('aaaaaaa');
-      silentRefresh();
-
-          // setMessage(localStorage.getItem('loggedOut'));
-          // localStorage.removeItem('loggedOut');
-      }, timeout);
-
+          setMessage(localStorage.getItem('loggedOut'));
+          localStorage.removeItem('loggedOut');
+      }, 5000);
+    }
 }, []);
   return (
       <RouterProvider router={router}/>

@@ -19,11 +19,15 @@ export const userDataSlice = createSlice({
         setUserData: (state, action) => {
             state.data = action.payload;
         },
+        setAccessToken: (state, action) => {
+            state.data.accessToken = action.payload;
+        }
     },
 });
 
 export const { 
     setUserData,
+    setAccessToken,
 } = userDataSlice.actions;
 
 export default userDataSlice.reducer;

@@ -10,7 +10,7 @@ import config from '../config.json';
 import { useSelector, useDispatch } from 'react-redux';
 import { trySilentRefresh } from '../utils/authUtils';
 // import { useIdleTimer } from 'react-idle-timer';
-import { setUserData } from '../Reducers/userDataSlice';
+import { setUserData, setAccessToken } from '../Reducers/userDataSlice';
 
 function stringToColor(string) {
   let i, hash = 0;
@@ -47,6 +47,7 @@ function MenuBar({roles,username}) {
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
+  const timeout = 1000 * 60 * 15;
   
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -81,6 +82,23 @@ function MenuBar({roles,username}) {
       navigate("/login");
     });
   }
+  useEffect(() => {
+		// Silence refresh.
+		setInterval(async () => {
+			const res = await trySilentRefresh().then((data) => {
+				if (data) {
+					dispatch(setAccessToken(data.accessToken));
+					return true;
+				}
+				return false;
+			});
+
+			if (!res) {
+				localStorage.setItem('loggedOut', 'Your session has been expired! Please log in again.');
+				Logout();
+			}
+		}, timeout);
+	}, []);
 
   return (
     <AppBar position="fixed">
