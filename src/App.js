@@ -1,7 +1,6 @@
 import React from 'react';
 import {createBrowserRouter, createRoutesFromElements, Route, RouterProvider , Outlet} from 'react-router-dom';
 import LoginPage from './Pages/LoginPage';
-import ProtectedEl from './Pages/ProtectedEl';
 import NotFound from './Components/NotFound';
 import ProtectedRoute from './Components/ProtectedRoute';
 import Canvas from './Components/Annotation/Canvas';
@@ -19,7 +18,9 @@ import Manage from './Pages/Manage';
 import PatientsTable from './Components/Patients/PatientsTable';
 import PatientProfile from './Components/Patients/PatientProfile';
 import RequestsTable from './Components/AdminPortal/RequestsTable';
-import CheckRequest from './Components/AdminPortal/CheckRequest';
+import RequestDetails from './Components/AdminPortal/RequestDetails';
+import ReviewersTable from './Components/AdminPortal/ReviewersTable';
+import UserDetails from './Components/AdminPortal/UserDetails';
 
 
 function App() {
@@ -58,10 +59,13 @@ function App() {
 
             <Route path='/adminportal/requests' element={<Requests/>}>
               <Route index element={<RequestsTable/>}/>
-              <Route path='/adminportal/requests/:id' element={<CheckRequest/>}/>
+              <Route path='/adminportal/requests/:id' element={<RequestDetails/>}/>
             </Route>
 
-            <Route path='/adminportal/reviewers' element={<Reviewers/>}/>
+            <Route path='/adminportal/reviewers' element={<Reviewers/>}>
+              <Route index element={<ReviewersTable/>}/>
+              <Route path='/adminportal/reviewers/:id' element={<UserDetails/>}/>
+            </Route>
         </Route>
 
         <Route path='/manage' element={<ProtectedRoute allowed={[1,2]}><Manage/></ProtectedRoute>}>

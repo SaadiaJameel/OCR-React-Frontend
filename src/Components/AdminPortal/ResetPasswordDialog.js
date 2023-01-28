@@ -1,24 +1,28 @@
 import React, {useState} from 'react';
-import Button from '@mui/material/Button';
-import DialogTitle from '@mui/material/DialogTitle';
-import Dialog from '@mui/material/Dialog';
-import { DialogContent,DialogActions, FormControl, InputLabel, InputAdornment, IconButton, OutlinedInput, LinearProgress, Typography } from '@mui/material';
+import {DialogTitle, Dialog, Button, DialogContent,DialogActions, } from '@mui/material';
+import { FormControl, InputLabel, InputAdornment, IconButton, OutlinedInput, Typography } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { PasswordStrengthIndicator, passwordStrength } from '../utils';
+import LoadingButton from '@mui/lab/LoadingButton';
+import NotificationBar from '../NotificationBar';
+import config from '../../config.json';
+import axios from 'axios';
 
-export default function ResetPasswordDialog() {
+export default function ResetPasswordDialog({user}) {
 
     const [open, setOpen] =  useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [confirm, setConfirm] = useState(false);
     const [password, setPassword] = useState("");
-    
+    const [state, setState] = useState(0);
+    const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
+   
     const handleClickOpen = () => {
         setOpen(true);
     };
 
     const handlePasswordChange = (e)=>{
-        const ok = passwordStrength(e.target.value) >30;
+        const ok = passwordStrength(e.target.value) > 30;
         setPassword(e.target.value);
         setConfirm(ok);
     }
@@ -32,6 +36,34 @@ export default function ResetPasswordDialog() {
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
     };
+
+    const showMsg = (msg, severity)=>{
+        setStatus({msg, severity, open:true})
+    }
+
+    const handleReset = ()=>{
+      
+        setState(1);
+
+        axios.post(`${config['path']}/admin/reset/user/${user._id}`,
+        {
+            password: password
+        },
+        { headers: {
+            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'email': JSON.parse(sessionStorage.getItem("info")).email,
+        }}
+        ).then(res=>{
+            showMsg("Password is updated successfully", "success");
+            handleClose();
+        }).catch(err=>{
+            if(err.response) showMsg(err.response.data.message, "error")
+            else alert(err)
+        }).finally(()=>{
+            setState(0);
+        })
+
+    }
 
   return (
     <div>
@@ -58,10 +90,11 @@ export default function ResetPasswordDialog() {
         <PasswordStrengthIndicator password={password}/>
         </DialogContent>
         <DialogActions>
-            <Button onClick={handleClose} color='inherit' variant='outlined'>Cancel</Button>
-            <Button onClick={handleClose} color='error' variant='contained' disabled={!confirm}>Reset</Button>
+            <LoadingButton size="small" onClick={handleReset} loading={state === 1} variant="contained" disabled={!confirm || state !==0}>Reset Password</LoadingButton>
+            <Button onClick={handleClose} color='inherit' variant='outlined' disabled={state !==0}>Cancel</Button>
             </DialogActions>
         </Dialog>
+        <NotificationBar status={status} setStatus={setStatus}/>
     </div>
   );
 }
