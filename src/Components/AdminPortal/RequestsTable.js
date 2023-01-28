@@ -9,14 +9,15 @@ import { stringAvatar} from '../utils';
 import { DataGrid } from '@mui/x-data-grid';
 import { OpenInNew, Search } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
-
+import { useSelector} from 'react-redux';
 
 const RequestsTable = () => {
 
     const [request, setRequests] = useState([]);
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
     const [loading, setLoading] = useState(true);
-    const [filt, setFilt] = useState('')
+    const [filt, setFilt] = useState('');
+    const userData = useSelector(state => state.userData.data);
 
     const handleChange = (e) => {
         setFilt(e.target.value);
@@ -62,21 +63,18 @@ const RequestsTable = () => {
 
         axios.get(`${config['path']}/admin/requests`,
         { headers: {
-          'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
-          'email': JSON.parse(sessionStorage.getItem("info")).email,
-        }},
-        {
-          email: JSON.parse(sessionStorage.getItem("info")).email,
-          username: JSON.parse(sessionStorage.getItem("info")).username,
+          'Authorization': `Bearer ${userData.accessToken.token}`,
+          'email': userData.email,
+        },
+            withCredentials: true
         }
         ).then(res=>{
-            setRequests(res.data)
+            setRequests(res.data);
+            setLoading(false);
         }).catch(err=>{
-            if(err.response) showMsg(err.response.data.message)
+            if(err.response) showMsg(err.response.data.message, "error")
             else alert(err)
             
-        }).finally(()=>{
-            setLoading(false);
         })
     },[])
   

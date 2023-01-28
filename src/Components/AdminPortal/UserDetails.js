@@ -10,6 +10,7 @@ import NotificationBar from '../NotificationBar';
 import LoadingButton from '@mui/lab/LoadingButton';
 import ResetPasswordDialog from './ResetPasswordDialog';
 import DeleteUserDialog from './DeleteUserDialog';
+import { useSelector} from 'react-redux';
 
 const UserDetails = () => {
 
@@ -20,6 +21,7 @@ const UserDetails = () => {
     const [state, setState] = useState(0);
     const formRef = useRef();
     const { id } = useParams();
+    const userData = useSelector(state => state.userData.data);
 
     const handleChange = (event) => {
         setRole(event.target.value);
@@ -30,9 +32,11 @@ const UserDetails = () => {
         setLoading(true);
         axios.get(`${config['path']}/admin/users/${id}`,
         { headers: {
-            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
-            'email': JSON.parse(sessionStorage.getItem("info")).email,
-        }}
+            'Authorization': `Bearer ${userData.accessToken.token}`,
+            'email': userData.email,
+        },
+            withCredentials: true
+        }
         ).then(res=>{
             setData(res.data);
             setLoading(false);
@@ -58,9 +62,11 @@ const UserDetails = () => {
           role: [role]
         },
         { headers: {
-            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
-            'email': JSON.parse(sessionStorage.getItem("info")).email,
-        }}
+            'Authorization': `Bearer ${userData.accessToken.token}`,
+            'email': userData.email,
+        },
+            withCredentials: true
+        }
         ).then(res=>{
             setData(res.data)
             showMsg("User details updated successfully", "success");

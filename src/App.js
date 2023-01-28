@@ -1,17 +1,14 @@
 import React from 'react';
 import {createBrowserRouter, createRoutesFromElements, Route, RouterProvider , Outlet} from 'react-router-dom';
+import './App.css';
 import LoginPage from './Pages/LoginPage';
 import NotFound from './Components/NotFound';
 import ProtectedRoute from './Components/ProtectedRoute';
 import Canvas from './Components/Annotation/Canvas';
-import './App.css';
 import PatientsPage from './Components/Patients/PatientsPage';
 import ImagesPage from './Pages/ImagesPage';
 import UploadPage from './Pages/UploadPage';
 import AdminPage from './Pages/AdminPage';
-import { trySilentRefresh } from './utils/authUtils';
-import { useDispatch } from 'react-redux';
-import { setUserData } from './Reducers/userDataSlice';
 import Requests from './Components/AdminPortal/Requests';
 import Reviewers from './Components/AdminPortal/Reviewers';
 import Manage from './Pages/Manage';
@@ -21,32 +18,10 @@ import RequestsTable from './Components/AdminPortal/RequestsTable';
 import RequestDetails from './Components/AdminPortal/RequestDetails';
 import ReviewersTable from './Components/AdminPortal/ReviewersTable';
 import UserDetails from './Components/AdminPortal/UserDetails';
+import UserProfile from './Components/UserProfile';
 
 
 function App() {
-  const [message, setMessage] = React.useState('');
-  const dispatch = useDispatch();
-
-  const silentRefresh = () => {
-    console.log("aaaaaaaa");
-    trySilentRefresh().then(data => {
-      if(data){
-        console.log(data);
-        dispatch(setUserData({
-          id: data.user.id,
-          username: data.user.username,
-          email: data.user.email,
-          roles: data.user.roles,
-          accessToken: data.accessToken,
-          reg_no: data.user.reg_no
-        }))
-      }
-      else if (window.location.pathname !== '/' && window.location.pathname !== '/login' && window.location.pathname !== '/register') {
-        setMessage('Your session has expired. Please login again.');
-        window.location.pathname = '/login';
-    }
-    })
-  }
 
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -78,6 +53,7 @@ function App() {
             </Route>
         </Route>
 
+        <Route path='/profile' element={<ProtectedRoute allowed={[1,2,3]}><UserProfile/></ProtectedRoute> }/>
         <Route path='/upload' element={<ProtectedRoute allowed={[1,2]}><UploadPage/></ProtectedRoute> }/>
         <Route path='/annotation' element={<ProtectedRoute allowed={[1,2]}><Canvas/></ProtectedRoute>}/>
         <Route path='/patients' element={<ProtectedRoute allowed={[1,2]}><PatientsPage/></ProtectedRoute>}/>
@@ -89,15 +65,6 @@ function App() {
     )
   )
 
-//   React.useEffect(() => {
-
-//     if (localStorage.getItem('loggedOut')) {
-//       setTimeout(() => {
-//           setMessage(localStorage.getItem('loggedOut'));
-//           localStorage.removeItem('loggedOut');
-//       }, 5000);
-//     }
-// }, []);
   return (
       <RouterProvider router={router}/>
   );

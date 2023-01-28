@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import{ AppBar, Menu,Container,Avatar,MenuItem} from '@mui/material';
+import{ AppBar, Menu,Container,Avatar,MenuItem, Divider} from '@mui/material';
 import{ Box,Toolbar,IconButton,Typography, Button} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
@@ -9,8 +9,8 @@ import axios from "axios";
 import config from '../config.json';
 import { useSelector, useDispatch } from 'react-redux';
 import { trySilentRefresh } from '../utils/authUtils';
-// import { useIdleTimer } from 'react-idle-timer';
-import { setUserData, setAccessToken } from '../Reducers/userDataSlice';
+import {setAccessToken } from '../Reducers/userDataSlice';
+import { AccountBox, LogoutOutlined} from '@mui/icons-material';
 
 function stringToColor(string) {
   let i, hash = 0;
@@ -36,6 +36,24 @@ function stringAvatar(name) {
   };
 }
 
+const displayRole = (role)=>{
+    let roleName = "";
+    switch(role[0]){
+      case 1:
+        roleName = "Admin"
+        break;
+      case 2:
+        roleName = "Reviewer"
+        break;
+      case 3:
+        roleName = "Clinician"
+        break;
+      default:
+        roleName = ""
+    }
+
+    return <Typography fontSize='small' color='GrayText'>{roleName}</Typography>;
+}
 
 function MenuBar({roles,username}) {
   const [anchorElNav, setAnchorElNav] = useState(null);
@@ -65,17 +83,17 @@ function MenuBar({roles,username}) {
   };
 
   const GoToProfile = ()=>{
-    
+    navigate('/profile');
   }
 
   const Logout = ()=>{
-    console.log(userData.accessToken.token);
+    
     axios.post(`${config['path']}/auth/revokeToken`, {},
     { headers: {
       'Authorization': `Bearer ${userData.accessToken.token}`,
       'email': userData.email,
   },
-  withCredentials: true}
+      withCredentials: true}
     )
     .then(()=>{
       sessionStorage.removeItem("info")
@@ -226,11 +244,16 @@ function MenuBar({roles,username}) {
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
  
-        <MenuItem>
-          <Typography textAlign="center" onClick={GoToProfile}>Profile</Typography>
+        <Box sx={{mx:3, my:2}}>
+          <Typography>{username}</Typography>
+          {displayRole(roles)}
+          <Divider/>
+        </Box>
+        <MenuItem sx={{width:'200px'}}>
+          <Button onClick={GoToProfile} color='inherit' startIcon={<AccountBox/>}>Profile</Button>
         </MenuItem>
-        <MenuItem>
-          <Typography textAlign="center" onClick={Logout}>Logout</Typography>
+        <MenuItem sx={{width:'200px'}}>
+          <Button onClick={Logout} color='inherit' startIcon={<LogoutOutlined/>}>Logout</Button>
         </MenuItem>
       </Menu>
         </Toolbar>

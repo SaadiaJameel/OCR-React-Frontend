@@ -8,6 +8,7 @@ import axios from 'axios';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useNavigate } from 'react-router-dom';
 import NotificationBar from '../NotificationBar';
+import { useSelector} from 'react-redux';
 
 export default function DeleteUserDialog({user}) {
 
@@ -16,6 +17,7 @@ export default function DeleteUserDialog({user}) {
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
     const [confirmed, setConfirmed] = useState(false);
     const navigate = useNavigate();
+    const userData = useSelector(state => state.userData.data);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -40,9 +42,11 @@ export default function DeleteUserDialog({user}) {
         axios.post(`${config['path']}/admin/delete/user/${user._id}`,
         {},
         { headers: {
-            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
-            'email': JSON.parse(sessionStorage.getItem("info")).email,
-        }}
+            'Authorization': `Bearer ${userData.accessToken.token}`,
+            'email': userData.email,
+        },
+            withCredentials: true
+        }
         ).then(res=>{
             navigate("/adminportal/reviewers");
         }).catch(err=>{

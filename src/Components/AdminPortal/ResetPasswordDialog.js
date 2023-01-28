@@ -7,6 +7,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import NotificationBar from '../NotificationBar';
 import config from '../../config.json';
 import axios from 'axios';
+import { useSelector} from 'react-redux';
 
 export default function ResetPasswordDialog({user}) {
 
@@ -15,7 +16,8 @@ export default function ResetPasswordDialog({user}) {
     const [confirm, setConfirm] = useState(false);
     const [password, setPassword] = useState("");
     const [state, setState] = useState(0);
-    const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
+    const [status, setStatus] = useState({msg:"",severity:"success", open:false});
+    const userData = useSelector(state => state.userData.data);
    
     const handleClickOpen = () => {
         setOpen(true);
@@ -50,9 +52,11 @@ export default function ResetPasswordDialog({user}) {
             password: password
         },
         { headers: {
-            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
-            'email': JSON.parse(sessionStorage.getItem("info")).email,
-        }}
+            'Authorization': `Bearer ${userData.accessToken.token}`,
+            'email': userData.email,
+        },
+            withCredentials: true
+        }
         ).then(res=>{
             showMsg("Password is updated successfully", "success");
             handleClose();

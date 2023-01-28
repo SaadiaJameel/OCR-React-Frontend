@@ -9,18 +9,23 @@ import { stringAvatar} from '../utils';
 import { DataGrid } from '@mui/x-data-grid';
 import { OpenInNew, Search } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
-
+import { useSelector} from 'react-redux';
 
 const ReviewersTable = () => {
 
     const [request, setRequests] = useState([]);
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
     const [loading, setLoading] = useState(true);
-    const [filt, setFilt] = useState('')
+    const [filt, setFilt] = useState('');
+    const userData = useSelector(state => state.userData.data);
 
     const handleChange = (e) => {
         setFilt(e.target.value);
     };
+
+    const showMsg = (msg, severity)=>{
+        setStatus({msg, severity, open:true})
+    }
 
     const columns = [
         {
@@ -58,17 +63,18 @@ const ReviewersTable = () => {
 
         axios.get(`${config['path']}/admin/reviewers`,
         { headers: {
-          'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
-          'email': JSON.parse(sessionStorage.getItem("info")).email,
-        }}
+            'Authorization': `Bearer ${userData.accessToken.token}`,
+            'email': userData.email,
+        },
+            withCredentials: true
+        }
         ).then(res=>{
             setRequests(res.data)
-        }).catch(err=>{
-            console.log(err)
-            alert(err)
-            
-        }).finally(()=>{
             setLoading(false);
+        }).catch(err=>{
+            if(err.response) showMsg(err.response.data.message, "error")
+            else alert(err)
+            
         })
     },[])
   
