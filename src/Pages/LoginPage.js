@@ -73,7 +73,7 @@ const LoginPage =()=>{
                 reg_no: data.others.reg_no
               }))
             if(response.data.others.role.includes(1)){
-                navigate("/adminportal");
+                navigate("/adminportal/requests");
             }else{
                 navigate("/upload");
             }
@@ -118,7 +118,7 @@ const LoginPage =()=>{
             })
             .then(function (response) {
                 showMsg("You will recieve an email on acceptance", "success")
-                return
+                setSignup(false);
             })
             .catch(function (error) {
                 if(error.message){
@@ -149,7 +149,7 @@ const LoginPage =()=>{
                         <TextField margin="normal" size='small' inputProps={{ maxLength: 100 }} required fullWidth id="regNo" label="Register No" name="regNo"/>
                         <FormControl margin="normal" fullWidth  variant="outlined">
                         <InputLabel required size='small' htmlFor="signup password">Password</InputLabel>
-                        <OutlinedInput required size='small' inputProps={{ maxLength: 100 }} id="signup password" type={showSignupPassword ? 'text' : 'password'} label="Password" name="signup password"
+                        <OutlinedInput required size='small' inputProps={{ maxLength: 100 }} id="signup password" type={showSignupPassword ? 'text' : 'password'} label="Password" name="signup password" autoComplete='false'
                             endAdornment={
                             <InputAdornment position="end">
                                 <IconButton aria-label="toggle password visibility" onClick={handleClickShowSignupPassword} onMouseDown={handleMouseDownPassword} edge="end">

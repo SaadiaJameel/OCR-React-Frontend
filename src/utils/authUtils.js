@@ -6,7 +6,6 @@ const trySilentRefresh = async () => {
     try {
         const res = await axios.post(`${config['path']}/auth/refreshToken`,{}, { withCredentials: true });
         if (res.data.success) {
-            console.log(res.data);
             return {
                 user: res.data.ref,
                 accessToken: res.data.accessToken

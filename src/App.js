@@ -6,17 +6,23 @@ import NotFound from './Components/NotFound';
 import ProtectedRoute from './Components/ProtectedRoute';
 import Canvas from './Components/Annotation/Canvas';
 import './App.css';
-import PatientsPage from './Pages/PatientsPage';
+import PatientsPage from './Components/Patients/PatientsPage';
 import ImagesPage from './Pages/ImagesPage';
 import UploadPage from './Pages/UploadPage';
 import AdminPage from './Pages/AdminPage';
 import { trySilentRefresh } from './utils/authUtils';
 import { useDispatch } from 'react-redux';
 import { setUserData } from './Reducers/userDataSlice';
+import Requests from './Components/AdminPortal/Requests';
+import Reviewers from './Components/AdminPortal/Reviewers';
+import Manage from './Pages/Manage';
+import PatientsTable from './Components/Patients/PatientsTable';
+import PatientProfile from './Components/Patients/PatientProfile';
+import RequestsTable from './Components/AdminPortal/RequestsTable';
+import CheckRequest from './Components/AdminPortal/CheckRequest';
 
 
 function App() {
-  const timeout = 1000 * 60 * 15;
   const [message, setMessage] = React.useState('');
   const dispatch = useDispatch();
 
@@ -47,14 +53,31 @@ function App() {
 
         <Route index element={<LoginPage/>}/>
         <Route path='/login' element={<LoginPage/>}/>
-        <Route path='/adminportal' element={<AdminPage/>}/>
-        {/* <Route index path='/images' element={<ImagesPage/>}/>
-        <Route index path='/patients' element={<PatientsPage/>}/> */}
-        <Route index path='/adminportal' element={<ProtectedRoute allowed={[1]}><AdminPage/></ProtectedRoute>}/>
-        <Route index path='/upload' element={<ProtectedRoute allowed={[1,2]}><UploadPage/></ProtectedRoute> }/>
-        <Route index path='/annotation' element={<ProtectedRoute allowed={[1,2]}><Canvas/></ProtectedRoute>}/>
-        <Route index path='/patients' element={<ProtectedRoute allowed={[1,2]}><PatientsPage/></ProtectedRoute>}/>
-        <Route index path='/images' element={<ProtectedRoute allowed={[1,2]}><ImagesPage/></ProtectedRoute>}/>
+
+        <Route path='/adminportal' element={<ProtectedRoute allowed={[1]}><AdminPage/></ProtectedRoute>}>
+
+            <Route path='/adminportal/requests' element={<Requests/>}>
+              <Route index element={<RequestsTable/>}/>
+              <Route path='/adminportal/requests/:id' element={<CheckRequest/>}/>
+            </Route>
+
+            <Route path='/adminportal/reviewers' element={<Reviewers/>}/>
+        </Route>
+
+        <Route path='/manage' element={<ProtectedRoute allowed={[1,2]}><Manage/></ProtectedRoute>}>
+            <Route index element={<Reviewers/>}/>
+            <Route path='/manage/images' element={<Reviewers/>}/>
+            <Route path ='/manage/patients' element={<PatientsPage/>}>
+                <Route  index element={<PatientsTable/>}></Route>
+                <Route  index path="/manage/patients/all" element={<PatientsTable/>}></Route>
+                <Route path="/manage/patients/:id" element={<PatientProfile/>}></Route>
+            </Route>
+        </Route>
+
+        <Route path='/upload' element={<ProtectedRoute allowed={[1,2]}><UploadPage/></ProtectedRoute> }/>
+        <Route path='/annotation' element={<ProtectedRoute allowed={[1,2]}><Canvas/></ProtectedRoute>}/>
+        <Route path='/patients' element={<ProtectedRoute allowed={[1,2]}><PatientsPage/></ProtectedRoute>}/>
+        <Route path='/images' element={<ProtectedRoute allowed={[1,2]}><ImagesPage/></ProtectedRoute>}/>
          
         <Route path='/*' element={<NotFound/>}/>
 
@@ -62,15 +85,15 @@ function App() {
     )
   )
 
-  React.useEffect(() => {
+//   React.useEffect(() => {
 
-    if (localStorage.getItem('loggedOut')) {
-      setTimeout(() => {
-          setMessage(localStorage.getItem('loggedOut'));
-          localStorage.removeItem('loggedOut');
-      }, 5000);
-    }
-}, []);
+//     if (localStorage.getItem('loggedOut')) {
+//       setTimeout(() => {
+//           setMessage(localStorage.getItem('loggedOut'));
+//           localStorage.removeItem('loggedOut');
+//       }, 5000);
+//     }
+// }, []);
   return (
       <RouterProvider router={router}/>
   );

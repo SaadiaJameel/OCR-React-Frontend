@@ -3,14 +3,20 @@
 	--dark-color:rgb(41, 51, 62);
 }
 
-body{
-	background-color: #DDDDDD;
-}
 a{
     text-decoration: none;
     color: inherit;
 }
 
+/* side bar */
+.sidebar{
+	height:100%;
+	width:150px;
+	border-right: 1px solid lightgray;
+	position:fixed!important;
+	z-index:1;
+	overflow:auto;
+}
 /* canvas css */
 
 .main_canvas{

@@ -167,17 +167,11 @@ function MenuBar({roles,username}) {
          
             <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex'}}}>
                 <Button sx={{ my: 2, color: 'white', display: 'block', m:0}}>
-                    <Link to="/upload" replace>Upload</Link>
-                </Button>
-                <Button sx={{ my: 2, color: 'white', display: 'block', m:0 }}>
-                    <Link to="/images" replace>Images</Link>
-                </Button>
-                <Button sx={{ my: 2, color: 'white', display: 'block', m:0}}>
-                    <Link to="/patients" replace>Patients</Link>
+                    <Link to="/manage/images">Manage</Link>
                 </Button>
                 { roles.includes(1) &&
                   <Button sx={{ my: 2, color: 'white', display: 'block', m:0}} variant='outlined' color='secondary'>
-                    <Link to="/adminportal" replace>Admin Portal</Link>
+                    <Link to="/adminportal/requests">Admin Portal</Link>
                 </Button>}
             </Box>
 
