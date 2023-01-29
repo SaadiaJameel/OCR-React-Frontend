@@ -32,11 +32,9 @@ const UserDetails = () => {
         setLoading(true);
         axios.get(`${config['path']}/admin/users/${id}`,
         { headers: {
-            'Authorization': `Bearer ${userData.accessToken.token}`,
-            'email': userData.email,
-        },
-            withCredentials: true
-        }
+            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'email': JSON.parse(sessionStorage.getItem("info")).email,
+        }}
         ).then(res=>{
             setData(res.data);
             setLoading(false);
@@ -62,11 +60,9 @@ const UserDetails = () => {
           role: [role]
         },
         { headers: {
-            'Authorization': `Bearer ${userData.accessToken.token}`,
-            'email': userData.email,
-        },
-            withCredentials: true
-        }
+            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'email': JSON.parse(sessionStorage.getItem("info")).email,
+        }}
         ).then(res=>{
             setData(res.data)
             showMsg("User details updated successfully", "success");
@@ -101,8 +97,8 @@ const UserDetails = () => {
                 </Stack>
             </Stack>
             <Stack spacing={2}>
-                <Skeleton variant="rounded" height={40} />
-                <Skeleton variant="rounded" height={40} />
+                <Skeleton variant="rounded" height={40} width={600}/>
+                <Skeleton variant="rounded" height={40} width={600}/>
             </Stack>
             </>
             :
@@ -117,7 +113,7 @@ const UserDetails = () => {
 
             <Box component="form" noValidate ref={formRef} sx={{ mt: 5 }}>
 
-            <Stack direction='column' spacing={3}>
+            <Stack direction='column' spacing={3} sx={{maxWidth:'600px'}}>
                 <TextField defaultValue={data.username} name='username' size='small' label='user name'/>
                 <TextField  value={data.email} name='email' size='small' disabled label='email'/>
                 <TextField value={data.reg_no} name='reg_no' size='small' disabled label='reg no'/>
@@ -131,6 +127,7 @@ const UserDetails = () => {
                     label="Role"
                     name='role'
                     onChange={handleChange}
+                    sx= {{backgroundColor: '#fbfbfb'}}  
                     >
                     <MenuItem value={1}>Admin</MenuItem>
                     <MenuItem value={2}>Reviewer</MenuItem>
@@ -141,7 +138,7 @@ const UserDetails = () => {
                 <TextField value={data.updatedAt} name='updated_at' size='small' disabled label='Updated At'/>
             </Stack>
             <Stack direction='row' spacing={2} sx={{my:3}}>
-                <LoadingButton size="small" onClick={handleUpdate} loading={state=== 1} variant="contained" disabled={state!==0}>Update</LoadingButton>
+                <LoadingButton onClick={handleUpdate} loading={state=== 1} variant="contained" disabled={state!==0}>Update</LoadingButton>
             </Stack>
             </Box>
 

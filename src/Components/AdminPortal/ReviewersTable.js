@@ -63,11 +63,9 @@ const ReviewersTable = () => {
 
         axios.get(`${config['path']}/admin/reviewers`,
         { headers: {
-            'Authorization': `Bearer ${userData.accessToken.token}`,
-            'email': userData.email,
-        },
-            withCredentials: true
-        }
+            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'email': JSON.parse(sessionStorage.getItem("info")).email,
+        }}
         ).then(res=>{
             setRequests(res.data)
             setLoading(false);

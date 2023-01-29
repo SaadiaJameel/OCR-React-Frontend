@@ -30,11 +30,9 @@ const RequestDetails = () => {
         setLoading(true);
         axios.get(`${config['path']}/admin/requests/${id}`,
         { headers: {
-            'Authorization': `Bearer ${userData.accessToken.token}`,
-            'email': userData.email,
-        },
-            withCredentials: true
-        }
+            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'email': JSON.parse(sessionStorage.getItem("info")).email,
+        }}
         ).then(res=>{
             setData(res.data);
             setLoading(false);
@@ -61,11 +59,9 @@ const RequestDetails = () => {
           reason: reason
         },
         { headers: {
-            'Authorization': `Bearer ${userData.accessToken.token}`,
-            'email': userData.email,
-        },
-            withCredentials: true
-        }
+            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'email': JSON.parse(sessionStorage.getItem("info")).email,
+        }}
         ).then(res=>{
             navigate("/adminportal/requests");
         }).catch(err=>{
@@ -88,11 +84,9 @@ const RequestDetails = () => {
             reason: reason
         },
         { headers: {
-            'Authorization': `Bearer ${userData.accessToken.token}`,
-            'email': userData.email,
-        },
-            withCredentials: true
-        }
+            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'email': JSON.parse(sessionStorage.getItem("info")).email,
+        }}
         ).then(res=>{
             showMsg(res.data.message, "success")
             navigate("/adminportal/requests");

@@ -52,11 +52,9 @@ export default function ResetPasswordDialog({user}) {
             password: password
         },
         { headers: {
-            'Authorization': `Bearer ${userData.accessToken.token}`,
-            'email': userData.email,
-        },
-            withCredentials: true
-        }
+            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'email': JSON.parse(sessionStorage.getItem("info")).email,
+        }}
         ).then(res=>{
             showMsg("Password is updated successfully", "success");
             handleClose();
@@ -71,7 +69,7 @@ export default function ResetPasswordDialog({user}) {
 
   return (
     <div>
-        <Button variant='contained' color='error' size='small' onClick={handleClickOpen}>Reset Password</Button>
+        <Button variant='contained' color='error' onClick={handleClickOpen}>Reset Password</Button>
         <Dialog onClose={handleClose} open={open}>
         <DialogTitle>Reset User Password</DialogTitle>
         <DialogContent dividers>

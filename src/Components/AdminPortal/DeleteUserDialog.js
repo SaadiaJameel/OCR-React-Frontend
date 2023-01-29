@@ -42,12 +42,9 @@ export default function DeleteUserDialog({user}) {
         axios.post(`${config['path']}/admin/delete/user/${user._id}`,
         {},
         { headers: {
-            'Authorization': `Bearer ${userData.accessToken.token}`,
-            'email': userData.email,
-        },
-            withCredentials: true
-        }
-        ).then(res=>{
+            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'email': JSON.parse(sessionStorage.getItem("info")).email,
+        }}).then(res=>{
             navigate("/adminportal/reviewers");
         }).catch(err=>{
             if(err.response) showMsg(err.response.data.message, "error")
@@ -61,7 +58,7 @@ export default function DeleteUserDialog({user}) {
 
   return (
     <div>
-        <Button variant='contained' color='error' size='small' onClick={handleClickOpen}>Delete User</Button>
+        <Button variant='contained' color='error' onClick={handleClickOpen}>Delete User</Button>
         <Dialog onClose={handleClose} open={open}>
         <DialogTitle>Delete User</DialogTitle>
         <DialogContent dividers>

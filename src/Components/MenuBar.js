@@ -243,17 +243,17 @@ function MenuBar({roles,username}) {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
- 
-        <Box sx={{mx:3, my:2}}>
+        <Box sx={{mx:3}}>
           <Typography>{username}</Typography>
           {displayRole(roles)}
-          <Divider/>
         </Box>
+        <Divider sx={{my:1}}/>
         <MenuItem sx={{width:'200px'}}>
-          <Button onClick={GoToProfile} color='inherit' startIcon={<AccountBox/>}>Profile</Button>
+          <AccountBox sx={{mx:1}}/><Typography onClick={GoToProfile}> Profile</Typography>
         </MenuItem>
+        <Divider/>
         <MenuItem sx={{width:'200px'}}>
-          <Button onClick={Logout} color='inherit' startIcon={<LogoutOutlined/>}>Logout</Button>
+          <LogoutOutlined sx={{mx:1}}/><Typography onClick={Logout}> Logout</Typography>
         </MenuItem>
       </Menu>
         </Toolbar>

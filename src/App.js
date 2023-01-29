@@ -19,6 +19,7 @@ import RequestDetails from './Components/AdminPortal/RequestDetails';
 import ReviewersTable from './Components/AdminPortal/ReviewersTable';
 import UserDetails from './Components/AdminPortal/UserDetails';
 import UserProfile from './Components/UserProfile';
+import ImagesSearch from './Components/ImagesSearch';
 
 
 function App() {
@@ -44,8 +45,8 @@ function App() {
         </Route>
 
         <Route path='/manage' element={<ProtectedRoute allowed={[1,2]}><Manage/></ProtectedRoute>}>
-            <Route index element={<Reviewers/>}/>
-            <Route path='/manage/images' element={<Reviewers/>}/>
+            <Route index element={<ImagesSearch/>}/>
+            <Route path='/manage/images' element={<ImagesSearch/>}/>
             <Route path ='/manage/patients' element={<PatientsPage/>}>
                 <Route  index element={<PatientsTable/>}></Route>
                 <Route  index path="/manage/patients/all" element={<PatientsTable/>}></Route>
