@@ -1,12 +1,11 @@
 import React, { useRef, useEffect, useState } from 'react';
-import {Button, Divider, Drawer, Stack, Typography} from '@mui/material';
+import {Button, Divider, Drawer, Select, Typography} from '@mui/material';
 import { Close, Save} from '@mui/icons-material';
 import colorPallete from '../ColorPalete'
 import RegionTable from './RegionTable';
 import Help from './Help';
 import ButtonPanel from './ButtonPanel';
 import MenuItem from '@mui/material/MenuItem';
-import {Select, InputLabel} from '@mui/material';
 
 // global variables 
 // todo: check whether we could use useStates instead
@@ -35,11 +34,11 @@ var opacity = true;
 const point = (x,y) => ({x,y});
 
 // draw circle around given point
-function drawCircle(ctx, pos,size=4){
+function drawCircle(ctx, pos,zoomLevel,size=4){
   ctx.strokeStyle = "red";
   ctx.fillStyle = "red";
   ctx.beginPath();
-  ctx.arc(pos.x,pos.y,size,0,Math.PI *2);
+  ctx.arc((pos.x)*zoomLevel,(pos.y)*zoomLevel,size,0,Math.PI *2);
   ctx.fill();
   ctx.stroke();
 }
@@ -61,12 +60,12 @@ class Polygon{
     this.scale = 1;
   }
   addPoint(p){ 
-    this.points.push(point(p.x,p.y)) 
+    this.points.push(point((p.x)/this.scale,(p.y)/this.scale)) 
   }
   isPointInPoly(pt){
     for(var c = false, i = -1, l = this.points.length, j = l - 1; ++i < l; j = i)
-        ((this.points[i].y <= pt.y && pt.y < this.points[j].y) || (this.points[j].y <= pt.y && pt.y <this.points[i].y))
-        && (pt.x < (this.points[j].x - this.points[i].x) * (pt.y - this.points[i].y) / (this.points[j].y - this.points[i].y) + this.points[i].x)
+        ((this.points[i].y <= (pt.y)/this.scale && (pt.y)/this.scale < this.points[j].y) || (this.points[j].y <= (pt.y)/this.scale && (pt.y)/this.scale <this.points[i].y))
+        && ((pt.x)/this.scale < (this.points[j].x - this.points[i].x) * ((pt.y)/this.scale - this.points[i].y) / (this.points[j].y - this.points[i].y) + this.points[i].x)
         && (c = !c);
     return c;
   }
@@ -75,7 +74,7 @@ class Polygon{
       this.ctx.lineWidth = 1;
       this.ctx.strokeStyle = this.color;
       this.ctx.fillStyle = this.transcolor
-      for (const p of this.points) { this.ctx.lineTo(p.x,p.y) }
+      for (const p of this.points) { this.ctx.lineTo((p.x)*this.scale,(p.y)*this.scale) }
       this.ctx.closePath();
       if(opacity) this.ctx.fill();
       this.ctx.stroke();
@@ -84,8 +83,8 @@ class Polygon{
     var i = 0, index = -1;
     dist *= dist;
     for (const p of this.points) {
-        var x = pos.x - p.x;
-        var y = pos.y - p.y;
+        var x = pos.x - (p.x)*this.scale;
+        var y = pos.y - (p.y)*this.scale;
         var d2 =  x * x + y * y;
         if (d2 < dist) {
             dist = d2;
@@ -102,7 +101,7 @@ class Polygon{
         this.ctx.strokeStyle = this.color;
         this.ctx.beginPath();
         this.ctx.moveTo(mouse.x,mouse.y)
-        this.ctx.lineTo(this.points[this.points.length-1].x,this.points[this.points.length-1].y)
+        this.ctx.lineTo((this.points[this.points.length-1].x)*this.scale,(this.points[this.points.length-1].y)*this.scale)
         this.ctx.stroke();
       }else{
         isDrawing = false;
@@ -120,8 +119,8 @@ class Polygon{
           if (mouse.button) {
               isDragging = true;
               if(this.dragging) {
-                this.activePoint.x += mouse.x - this.mouse.lx;
-                this.activePoint.y += mouse.y - this.mouse.ly;
+                this.activePoint.x += (mouse.x)/this.scale - this.mouse.lx;
+                this.activePoint.y += (mouse.y)/this.scale - this.mouse.ly;
               } else {this.dragging = true}
           } else {
             this.dragging = false
@@ -132,13 +131,13 @@ class Polygon{
 
       // indicate selection
       if(this.isSelected){
-        for (const p of this.points) { drawCircle(this.ctx, p) }
+        for (const p of this.points) { drawCircle(this.ctx, p, this.scale) }
         //var inside = this.isPointInPoly(mouse)
         if(this.activePoint ) mouse.cursor = "move"
       }
 
-      this.mouse.lx = mouse.x;
-      this.mouse.ly = mouse.y;
+      this.mouse.lx = (mouse.x)/this.scale;
+      this.mouse.ly = (mouse.y)/this.scale;
   }
 }
 
@@ -168,10 +167,10 @@ const Canvas = ({info, open, setOpen, data, setData}) => {
         var pointArray = []
         var all_x = region.points.map((p) => p["x"]);
         var all_y = region.points.map((p) => p["y"]);
-        var bbox_arr = [Math.round(Math.min(...all_x)/zoomLevel), Math.round(Math.min(...all_y)/zoomLevel), 
-        Math.round(Math.max(...all_x)/zoomLevel), Math.round(Math.max(...all_y)/zoomLevel)]
+        var bbox_arr = [Math.round(Math.min(...all_x)), Math.round(Math.min(...all_y)), 
+        Math.round(Math.max(...all_x)), Math.round(Math.max(...all_y))]
         for (const p of region.points) {
-          pointArray.push(Math.round(p.x /zoomLevel),Math.round(p.y /zoomLevel))
+          pointArray.push(Math.round(p.x),Math.round(p.y))
         }
         // coordinates.push(pointArray.toString())
         // type.push(region.type)
@@ -194,7 +193,6 @@ const Canvas = ({info, open, setOpen, data, setData}) => {
     temp[info].lesions_appear = lesion
 
     setData(temp);
-    console.log(temp);
     setOpen(false);
   }
 
@@ -234,10 +232,10 @@ const Canvas = ({info, open, setOpen, data, setData}) => {
         var pointArray = []
         var all_x = region.points.map((p) => p["x"]);
         var all_y = region.points.map((p) => p["y"]);
-        var bbox_arr = [Math.round(Math.min(...all_x)/zoomLevel), Math.round(Math.min(...all_y)/zoomLevel), 
-        Math.round(Math.max(...all_x)/zoomLevel), Math.round(Math.max(...all_y)/zoomLevel)]
+        var bbox_arr = [Math.round(Math.min(...all_x)), Math.round(Math.min(...all_y)), 
+        Math.round(Math.max(...all_x)), Math.round(Math.max(...all_y))]
         for (const p of region.points) {
-          pointArray.push(Math.round(p.x /zoomLevel),Math.round(p.y /zoomLevel))
+          pointArray.push(Math.round(p.x),Math.round(p.y))
         }
   
         type.push(region.type)
@@ -469,10 +467,10 @@ const Canvas = ({info, open, setOpen, data, setData}) => {
         height = ctx.font.match(/\d+/).pop() || 10;
         width = text_info.width;
         ctx.fillStyle = "black";
-        ctx.fillRect(regions[i].points[0].x -1 , regions[i].points[0].y - height-2, width+2, height-(-2));
+        ctx.fillRect((regions[i].points[0].x)*zoomLevel -1 , (regions[i].points[0].y)*zoomLevel - height-2, width+2, height-(-2));
         ctx.fillStyle = "yellow";
         ctx.textBaseline = "bottom";
-        ctx.fillText(text,regions[i].points[0].x, regions[i].points[0].y);
+        ctx.fillText(text,(regions[i].points[0].x)*zoomLevel, (regions[i].points[0].y)*zoomLevel);
       }
     }
   }
@@ -523,11 +521,7 @@ const Canvas = ({info, open, setOpen, data, setData}) => {
     });
     
     [...regions].forEach(region =>{
-      var pointArray = []
-      for (const p of region.points) {
-        pointArray.push(point(p.x * 1.5 , p.y * 1.5))
-      }
-      region.points = pointArray
+      region.scale = region.scale * 1.5;
     })
 
     setZoomLevel(zoomLevel*1.5)
@@ -543,11 +537,7 @@ const Canvas = ({info, open, setOpen, data, setData}) => {
     });
     
     [...regions].forEach(region =>{
-      var pointArray = []
-      for (const p of region.points) {
-        pointArray.push(point(p.x / 1.5 , p.y / 1.5))
-      }
-      region.points = pointArray
+      region.scale = region.scale / 1.5;
     })
 
     setZoomLevel(zoomLevel/1.5)
@@ -563,11 +553,7 @@ const Canvas = ({info, open, setOpen, data, setData}) => {
     });
     
     [...regions].forEach(region =>{
-      var pointArray = []
-      for (const p of region.points) {
-        pointArray.push(point(p.x / zoomLevel , p.y / zoomLevel))
-      }
-      region.points = pointArray
+      region.scale = 1
     })
 
     setZoomLevel(1)
