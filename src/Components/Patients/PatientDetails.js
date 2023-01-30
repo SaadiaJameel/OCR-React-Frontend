@@ -11,6 +11,7 @@ import axios from 'axios';
 import { useSelector} from 'react-redux';
 import PatientProfile from './PatientProfile';
 import NotificationBar from '../NotificationBar';
+import UploadPage from './UploadPage';
 
 const tempdata = {_id: '63c771ab19fa3b752054d449', patient_id: 'P1', risk_factors: {smoking: false, betel: false, alcohol: true}, age: 28, gender: '',updatedAt
 : "2023-01-18T04:12:27.061Z",createdAt : "2023-01-18T04:12:27.061Z",histo_diagnosis: "", category: "Unknown"}
@@ -93,8 +94,8 @@ const PatientDetails = () => {
                 </TabList>
                 </Box>
                 <TabPanel value="1" sx={{px:0}}><PatientProfile data={data}/></TabPanel>
-                <TabPanel value="2" sx={{px:0}}>Item Two</TabPanel>
-                <TabPanel value="3" sx={{px:0}}>Item Three</TabPanel>
+                <TabPanel value="2" sx={{px:0}}>images</TabPanel>
+                <TabPanel value="3" sx={{px:0}}><UploadPage/></TabPanel>
             </TabContext>
             </Box>
 

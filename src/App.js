@@ -7,7 +7,6 @@ import ProtectedRoute from './Components/ProtectedRoute';
 import Canvas from './Components/Annotation/Canvas';
 import PatientsPage from './Components/Patients/PatientsPage';
 import ImagesPage from './Pages/ImagesPage';
-import UploadPage from './Pages/UploadPage';
 import AdminPage from './Pages/AdminPage';
 import Requests from './Components/AdminPortal/Requests';
 import Reviewers from './Components/AdminPortal/Reviewers';
@@ -55,7 +54,7 @@ function App() {
         </Route>
 
         <Route path='/profile' element={<ProtectedRoute allowed={[1,2,3]}><UserProfile/></ProtectedRoute> }/>
-        <Route path='/upload' element={<ProtectedRoute allowed={[1,2]}><UploadPage/></ProtectedRoute> }/>
+        {/* <Route path='/upload' element={<ProtectedRoute allowed={[1,2]}><UploadPage/></ProtectedRoute> }/> */}
         <Route path='/annotation' element={<ProtectedRoute allowed={[1,2]}><Canvas/></ProtectedRoute>}/>
         <Route path='/patients' element={<ProtectedRoute allowed={[1,2]}><PatientsPage/></ProtectedRoute>}/>
         <Route path='/images' element={<ProtectedRoute allowed={[1,2]}><ImagesPage/></ProtectedRoute>}/>

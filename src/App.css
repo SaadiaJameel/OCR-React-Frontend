@@ -36,17 +36,24 @@ input, select{
 	flex-direction: column;
 	box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
 }
+
+.grid_image{
+	background-size: cover;
+	width: 100%;
+	aspect-ratio: 1/1;
+	background-position: center;
+}
 /* canvas css */
 
 .main_canvas{
     position: absolute;
     top: 10px;
-    left: 165px;
+    left: 200px;
     z-index: 10;
 }
 
 .work_area{
-    padding: 10px 10px 10px 165px;
+    padding: 10px 10px 10px 200px;
     position: relative;
 }
 
@@ -69,19 +76,16 @@ input, select{
     width: fit-content;
 }
 
-.nav-link-selected{
-	border: 2px solid red
-}
-
 .side_bar{
     position: fixed;
     z-index: 100;
     left: 0;
     height: 100%;
-    width: 150px;
-	padding: 5px;
+    width: 170px;
+	padding: 10px;
 	padding-top: 10px;
-    background-color: var(--dark-color);
+    background-color: #2c2c2c;
+	border-right: 1px solid gray;
 }
 
 .show_regions, .show_help{

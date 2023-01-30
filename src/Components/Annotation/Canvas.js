@@ -1,32 +1,34 @@
 import React, { useRef, useEffect, useState } from 'react';
-import {Drawer} from '@mui/material';
-import LoadingButton from '@mui/lab/LoadingButton';
+import {Button, Divider, Drawer, Stack, Typography} from '@mui/material';
 import { Close, Save} from '@mui/icons-material';
 import colorPallete from '../ColorPalete'
 import RegionTable from './RegionTable';
 import Help from './Help';
 import ButtonPanel from './ButtonPanel';
 import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
 import {Select, InputLabel} from '@mui/material';
 
 // global variables 
 // todo: check whether we could use useStates instead
 const regionNames = ["Oral Cavity", "Teeth","Enemal","Hard Plate","Mole","Soft Plate","Tongue","Stain","Uvula","Gingiva","Lips"]
+const diagnosis =["Normal","OLP / LR", "OSMF/OSF","VBD", "RAU","MRG","FEP","PVL","SLE","OFG","OCA"]
+const locations = ["Lips","Upper labial mucosa","Lower labial mucosa","L/S Buccal mucosa","R/S Buccal mucosa",
+"Palate","Tongue-dorsum","Tongue-ventral","Alveolar ridge","Gingiva","Flour of the mouth"]
+
 const colors = colorPallete
 const mouse = {x : 0, y : 0, button : 0, cursor: 'crosshair'};
 var regions = []
 var isDragging = false;
 var isSelected = false;
 var isDrawing = true ;
-var isLabelVisible = false;
+var isLabelVisible = true;
 var labelType = 'name';
 var polygon
 var canvas
 var ctx
 var selectedRegion
-var defaultType = "Unknown"
-var defaultColor = 'rgb(0, 0, 0)'
+var defaultType = "Oral Cavity"
+var defaultColor = 'rgb(255, 0, 0)'
 var opacity = true;
 
 // return points as Json
@@ -56,6 +58,7 @@ class Polygon{
     this.color = color;
     this.transcolor =  color.replace(')', ', 0.6)').replace('rgb', 'rgba')
     this.type = type;
+    this.scale = 1;
   }
   addPoint(p){ 
     this.points.push(point(p.x,p.y)) 
@@ -74,14 +77,8 @@ class Polygon{
       this.ctx.fillStyle = this.transcolor
       for (const p of this.points) { this.ctx.lineTo(p.x,p.y) }
       this.ctx.closePath();
-      // for (const p of this.points) {
-      //   this.ctx.moveTo(p.x + 4,p.y);
-      //   this.ctx.arc(p.x,p.y,3,0,Math.PI *2);
-      // }
       if(opacity) this.ctx.fill();
       this.ctx.stroke();
-      
-
   }
   closest(pos, dist = 8) {
     var i = 0, index = -1;
@@ -145,7 +142,7 @@ class Polygon{
   }
 }
 
-const Canvas = ({info, open}) => {  
+const Canvas = ({info, open, setOpen, data, setData}) => {  
   
   const [size, setSize] = useState({width: 1, height:1})
   const [orginalSize, setOriginalSize] = useState({width: 1, height:1})
@@ -154,8 +151,10 @@ const Canvas = ({info, open}) => {
   const [state, setState] = useState(false);
   const [help, setHelp] = useState(false);
   const [labelVisibility, setLabelVisibility] = useState(isLabelVisible);
-  const [selection, setSelection] = React.useState('');
-  const [loading, setLoading] = useState(false);
+  const [selection, setSelection] = React.useState('Oral Cavity');
+  const [location, setLocation] = useState(data[info].location)
+  const [clinicalDiagnosis, setClinicalDiagnosis] = useState(data[info].clinical_diagnosis);
+  const [lesion, setLesion] = useState(data[info].lesions_appear);
 
   const handleChange = (event) => {
     setSelection(event.target.value);
@@ -163,9 +162,7 @@ const Canvas = ({info, open}) => {
   };
 
   const handleSave = ()=>{
-    var coordinates = [];
-    // var type = [];
-    // var bbox = [];
+    var updated = [];
     [...regions].forEach((region, index) =>{
       if(region.completed){
         var pointArray = []
@@ -179,7 +176,7 @@ const Canvas = ({info, open}) => {
         // coordinates.push(pointArray.toString())
         // type.push(region.type)
         // bbox.push(bbox_arr.toString()) 
-        coordinates.push(
+        updated.push(
           {
             "id":index,
             "name": region.type,
@@ -190,8 +187,15 @@ const Canvas = ({info, open}) => {
       }
     })
 
-    console.log(coordinates);
-    setLoading(false);
+    var temp = [...data]
+    temp[info].annotation = updated
+    temp[info].location= location
+    temp[info].clinical_diagnosis = clinicalDiagnosis
+    temp[info].lesions_appear = lesion
+
+    setData(temp);
+    console.log(temp);
+    setOpen(false);
   }
 
   const canvaRef = useRef(null)
@@ -203,11 +207,11 @@ const Canvas = ({info, open}) => {
     isDragging = false;
     isSelected = false;
     isDrawing = true ;
-    isLabelVisible = false;
+    isLabelVisible = true;
     labelType = 'name';
     selectedRegion = null
-    defaultType = "Unknown"
-    defaultColor = 'rgb(0, 0, 0)'
+    defaultType = "Oral Cavity"
+    defaultColor = 'rgb(255, 0, 0)'
     opacity = true;
 
     setZoomLevel(1);
@@ -480,18 +484,20 @@ const Canvas = ({info, open}) => {
   canvas = canvaRef.current;
   ctx = canvas.getContext('2d');
 
-  regions = []
+  regions = [];
 
-  for (const key in info.annotation){
-    polygon = new Polygon(ctx,colorPallete[key].main ,key)
+  [...data[info].annotation].forEach(region=>{
+    var type = region.name
+    polygon = new Polygon(ctx,colorPallete[type].main , type)
     var points = []
-    for(var i=0; i<info.annotation[key].length; i=i+2){
-      points.push(point(info.annotation[key][i],info.annotation[key][i+1]))
+    var oldAnnotations = region.annotations
+    for(var i=0; i< oldAnnotations.length; i+=2){
+      points.push(point(region.annotations[i], region.annotations[i+1]))
     }
     polygon.points = points
     polygon.completed = true;
     regions.push(polygon)    
-  }
+  })
 
   polygon = new Polygon(ctx)
   regions.push(polygon)
@@ -656,32 +662,57 @@ const Canvas = ({info, open}) => {
 
   return (
     <>
-   
     <div className='page_body' onMouseDown={(e)=>{deselect_all(e)}}>
 
         {/********************* side bar **********************/}
         <div className='side_bar'>
-        <LoadingButton color="success" fullWidth onClick={handleSave} loading={loading}loadingPosition="start" startIcon={<Save/>} variant="contained" sx={{mb:3}}>
-          <span>Save</span>
-        </LoadingButton>
-        <FormControl fullWidth sx={{mb: 3}}>
-          <InputLabel size='small' id="label">Label</InputLabel>
-          <Select size='small' value={selection} labelId="label" label="Label" onChange={handleChange} style={{backgroundColor: "white"}}>
-            {regionNames.map((name, index) =>{
-              return (<MenuItem key={index} value={name}><div className='color_square' style={{backgroundColor:colorPallete[name].main}}></div>{name}</MenuItem>)
+        <Button variant='contained' fullWidth color='warning' startIcon={<Save/>} onClick={handleSave} sx={{mb:1}}>Save</Button>
+        <Button variant='contained' fullWidth color='inherit' onClick={()=>setOpen(false)} sx={{mb:1}}>Close</Button>
+
+        {/******************** image annotation ************************/}
+        <Divider color="gray" sx={{height:2, mt:1}}/>   
+        
+        <Typography fontSize='small' sx={{color:'white'}}>Region Label</Typography>
+        <Select fullWidth size='small' value={selection} onChange={handleChange} sx={{backgroundColor: "white", mb:1}}>
+          {regionNames.map((name, index) =>{
+            return (<MenuItem key={index} value={name}><div className='color_square' style={{backgroundColor:colorPallete[name].main}}></div>{name}</MenuItem>)
+          })}
+        </Select>
+
+        <Divider color="gray" sx={{height:2, mt:1}}/>
+        <Typography fontSize='small' sx={{color:'white'}}>Location</Typography>
+        
+          <Select fullWidth size='small' value={location} onChange={(e)=>setLocation(e.target.value)} sx={{backgroundColor: "white", mb:1}}>
+            {locations.map((name, index) =>{
+              return (<MenuItem key={index} value={name}>{name}</MenuItem>)
             })}
           </Select>
-        </FormControl>
+        
+          <Typography fontSize='small' sx={{color:'white'}}>Clinical Diagnosis</Typography>
+          <Select fullWidth size='small' value={clinicalDiagnosis} labelId="diagnosis" label="Clinical Diagnosis" onChange={(e)=>setClinicalDiagnosis(e.target.value)} sx={{backgroundColor: "white", mb:1}}>
+            {diagnosis.map((name, index) =>{
+              return (<MenuItem key={index} value={name}>{name}</MenuItem>)
+            })}
+          </Select>
 
-        {/******************* button pannel *************************/}
-        <ButtonPanel func={{finish_drawing,show_regions, zoom_in, zoom_out, zoom_reset, move_selected, 
-        delete_selected, show_help, clear_all, show_label, label_type, opacity_change}} labelVisibility={labelVisibility}/>
+          <Typography fontSize='small' sx={{color:'white'}}>Lesion Present</Typography>
+          <Select fullWidth size='small'  value={lesion} labelId="lesion" label="Lesion Appear" onChange={(e)=>setLesion(e.target.value)} sx={{backgroundColor: "white", mb:1}}>
+              <MenuItem value={false}>False</MenuItem>
+              <MenuItem value={true}>True</MenuItem>
+          </Select>
+        
+        <Divider color="gray" sx={{height:2, mt:1}}/>  
+
+         {/******************* button pannel *************************/}
+         <ButtonPanel func={{finish_drawing,show_regions, zoom_in, zoom_out, zoom_reset, move_selected, 
+          delete_selected, show_help, clear_all, show_label, label_type, opacity_change}} labelVisibility={labelVisibility}/>
+
         </div>
 
         {/********************** working area **********************/}
         <div className="work_area">
           <canvas className='main_canvas' onDoubleClick={(e)=>handle_mouse(e)} onMouseMove={(e)=>{handle_mouse(e)}} onMouseDown={(e)=>{handle_mouse(e)}} onMouseUp={(e)=>{handle_mouse(e)}} ref={canvaRef} width={size.width} height={size.height}>Sorry, Canvas functionality is not supported.</canvas>
-          <img className="main_img" onLoad={(e)=>{get_dimensions(e)}}  width={size.width} height={size.height} src={info && info.img} alt="failed to load"/> 
+          <img className="main_img" onLoad={(e)=>{get_dimensions(e)}}  width={size.width} height={size.height} src={info>=0 && data[info].img} alt="failed to load"/> 
         </div>
 
         {/********************** bottom panel **********************/}

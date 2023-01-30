@@ -209,7 +209,7 @@ const itemData = [
       img: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62',
       title: 'Honey',
       author: '@arwinneil',
-      annotation: [],
+      annotation: {},
     },
     {
       img: 'https://images.unsplash.com/photo-1516802273409-68526ee1bdd6',
