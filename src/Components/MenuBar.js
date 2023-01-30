@@ -4,7 +4,7 @@ import{ Box,Toolbar,IconButton,Typography, Button} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
 import logo from '../Assets/logo.svg';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
 import axios from "axios";
 import config from '../config.json';
 import { useSelector, useDispatch } from 'react-redux';
@@ -184,12 +184,12 @@ function MenuBar({roles,username}) {
           </Menu>
          
             <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex'}}}>
-                <Button sx={{ my: 2, color: 'white', display: 'block', m:0}}>
-                    <Link to="/manage/images">Manage</Link>
+                <Button sx={{ my: 2, color: 'white', display: 'block', m:0}} component={NavLink} to="/manage/images"> 
+                    Manage
                 </Button>
                 { roles.includes(1) &&
-                  <Button sx={{ my: 2, color: 'white', display: 'block', m:0}} variant='outlined' color='secondary'>
-                    <Link to="/adminportal/requests">Admin Portal</Link>
+                  <Button sx={{ my: 2, color: 'white', display: 'block', m:0}} variant='outlined' color='secondary' component={NavLink} to="/adminportal/requests">
+                    Admin Portal
                 </Button>}
             </Box>
 

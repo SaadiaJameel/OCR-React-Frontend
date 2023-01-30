@@ -5,7 +5,7 @@ import { Outlet } from 'react-router-dom';
 const PatientsPage = () => {
     return (
         <Box>
-            <Typography sx={{ fontWeight: 700}} variant="h5">Patients</Typography>    
+            <Typography sx={{ fontWeight: 700}} variant="h5">Patients</Typography> 
             <Outlet/>  
         </Box>
     );

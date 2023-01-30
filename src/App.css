@@ -29,6 +29,13 @@ input, select{
 .nav-link-unselected{
 	border-left: 1px solid green;
 }
+
+/* image upload */
+.imageDiv {
+	display: flex;
+	flex-direction: column;
+	box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
+}
 /* canvas css */
 
 .main_canvas{

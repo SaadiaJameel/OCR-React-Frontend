@@ -1,5 +1,5 @@
 import React, { useState, useEffect} from 'react';
-import {Box} from '@mui/material';
+import {Box, LinearProgress} from '@mui/material';
 import {TextField, InputAdornment, Skeleton} from '@mui/material';
 import {Avatar, Typography, Stack} from '@mui/material';
 import config from '../../config.json'
@@ -29,8 +29,19 @@ const ReviewersTable = () => {
 
     const columns = [
         {
+            field: "reg_no",
+            headerName: "Reviewers",
+            sortable: false,
+            disableColumnMenu: true,
+            align: "center",
+            renderCell: ({ row }) =>
+              <Link to={`/adminportal/reviewers/${row._id}`}>
+                  <OpenInNew fontSize='small'/>
+              </Link>
+        },
+        {
           field: 'username',
-          headerName: 'Reviewers',
+          headerName: ' ',
           sortable: false,
           flex: 1,
           disableColumnMenu: true,
@@ -43,17 +54,6 @@ const ReviewersTable = () => {
                     </Stack>
               </Stack>
           )
-        },
-        {
-          field: "reg_no",
-          headerName: " ",
-          sortable: false,
-          disableColumnMenu: true,
-          align: "center",
-          renderCell: ({ row }) =>
-            <Link to={`/adminportal/reviewers/${row._id}`}>
-                <OpenInNew fontSize='small'/>
-            </Link>
         }
     ];
 
@@ -122,14 +122,7 @@ const ReviewersTable = () => {
                       </Stack>
                     ),
                     LoadingOverlay: () => (
-                        <Box sx={{height: "max-content"}}>
-                          {[...Array(2)].map((_, index) => (
-                            <Stack direction='row' alignItems='center' key={index}>
-                                <Skeleton variant="circular" width={40} height={40} sx={{m:1}}/>
-                                <Skeleton variant="text" width={210} sx={{ fontSize: '2rem',m:1 }}/>
-                            </Stack>
-                          ))}
-                        </Box>
+                        <LinearProgress/>
                     )
                   }}
             />

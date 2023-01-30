@@ -13,7 +13,7 @@ import Requests from './Components/AdminPortal/Requests';
 import Reviewers from './Components/AdminPortal/Reviewers';
 import Manage from './Pages/Manage';
 import PatientsTable from './Components/Patients/PatientsTable';
-import PatientProfile from './Components/Patients/PatientProfile';
+import PatientDetails from './Components/Patients/PatientDetails';
 import RequestsTable from './Components/AdminPortal/RequestsTable';
 import RequestDetails from './Components/AdminPortal/RequestDetails';
 import ReviewersTable from './Components/AdminPortal/ReviewersTable';
@@ -50,7 +50,7 @@ function App() {
             <Route path ='/manage/patients' element={<PatientsPage/>}>
                 <Route  index element={<PatientsTable/>}></Route>
                 <Route  index path="/manage/patients/all" element={<PatientsTable/>}></Route>
-                <Route path="/manage/patients/:id" element={<PatientProfile/>}></Route>
+                <Route path="/manage/patients/:id" element={<PatientDetails/>}></Route>
             </Route>
         </Route>
 

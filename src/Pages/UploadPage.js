@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Button, Paper, Typography, Grid, Box, ImageList, ImageListItem, ImageListItemBar } from '@mui/material';
 import {useMediaQuery, IconButton, TextField} from '@mui/material';
 import { Delete} from '@mui/icons-material';
-
+import noImage from '../Assets/noImage.jpg'
 const UploadPage = () => {
 
     const [selectedFiles, setSelectedFiles] = useState([]);
@@ -33,7 +33,6 @@ const UploadPage = () => {
 
     const handleSelection = ()=>{
         //setLoading(true)
-        if(patientidRef.current.value==="") return
         hidenInput.current.click()
         
     }
@@ -59,26 +58,28 @@ const UploadPage = () => {
     }
 
     return (
-        <div className='body'>
-        
-        <Paper sx={{p:3, my:1}}>
+        <div>
+
         <Typography sx={{ fontWeight: 700, m: 1 }}>Add Images</Typography>  
         
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
             <input hidden accept="image/png, image/jpeg" ref={hidenInput} multiple type="file" onChange={selectFiles}/>
-            {/* <Grid container spacing={{ xs: 2, md: 3 }}>
-                <Grid item xs={12} sm={6} md={3}>
-                    <TextField size='small' inputRef={patientidRef} required label="Patients' Reg No" name="patient_id" fullWidth autoComplete='off' inputProps={{ maxLength: 100 }}/>
-                </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                    <Button fullWidth variant="contained" disabled={loading} onClick={handleSelection} component="label">
+            
+                    <Button variant="contained" disabled={loading} onClick={handleSelection} component="label">
                         Select Images
                     </Button>  
+                    <Button  type='submit' variant="contained" disabled={selectedFiles.length===0}> Upload </Button>
+
+            <Grid container spacing={2}>
+            {[...Array(30)].map((item, index) => (
+                <Grid item key={index} xs={6} md={3} lg={2}>
+                    <div className='imageDiv'>
+                    <img src={noImage} style={{width:"100%", aspectRatio:"1/1"}}/>
+                    <div style={{height:'20px'}}>Helllooo</div>
+                    </div>
                 </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                    <Button  fullWidth type='submit' variant="contained" disabled={selectedFiles.length===0}> Upload </Button>
-                </Grid>
-            </Grid> */}
+            ))}
+            </Grid>  
             <ImageList cols={matches? 5:2} sx={{mt:5}}>
             {imagePreviews.map((item, index) => (
                 <ImageListItem key={index}>
@@ -106,42 +107,7 @@ const UploadPage = () => {
                         <p>Clinical diagnosis:</p>
                         <p>Lesions appear:</p>
                     </div>
-                    <div style={{display: 'flex', flexDirection: 'column', gap: '5px', paddingTop: '8px', width: '100%'}}>                   
-                                                
-                            <select name={`location-${index}`} style={{width: '100%'}}>
-                            <option value="1">Lips</option>
-                            <option value="2">Upper labial mucosa</option>
-                            <option value="3">Lower labial mucosa</option>
-                            <option value="4">L/S Buccal mucosa</option>
-                            <option value="5">R/S Buccal mucosa</option>
-                            <option value="6">Palate</option>
-                            <option value="7">Tongue-dorsum</option>
-                            <option value="8">Tongue-ventral</option>
-                            <option value="9">Tongue-lateral border</option>
-                            <option value="10">Alveolar ridge</option>
-                            <option value="11">Gingiva</option>
-                            <option value="12">Flour of the mouth</option>
-                            </select>
-                       
-                            <select name={`diagnosis-${index}`} style={{width: '100%'}}>
-                            <option value="1">Normal</option>
-                            <option value="2">OLP / LR</option>
-                            <option value="3">OSMF/OSF</option>
-                            <option value="4">VBD</option>
-                            <option value="5">RAU</option>
-                            <option value="6">MRG</option>
-                            <option value="7">FEP</option>
-                            <option value="8">PVL</option>
-                            <option value="9">SLE</option>
-                            <option value="10">OFG</option>
-                            <option value="11">OCA</option>
-                            </select>
-                       
-                            <select name={`lesion-${index}`} style={{width: '100%'}}>
-                            <option value="true">True</option>
-                            <option value="false">Flase</option>
-                            </select>
-                        </div>
+                   
                     </div>
                     }
                     position="below"
@@ -149,9 +115,46 @@ const UploadPage = () => {
                 </ImageListItem>
             ))}
             </ImageList>
-        </Box>
-        </Paper>           
+        </Box>    
         </div>
     );
 };
 export default UploadPage;
+
+
+{/* <div style={{display: 'flex', flexDirection: 'column', gap: '5px', paddingTop: '8px', width: '100%'}}>                   
+                                                
+<select name={`location-${index}`} style={{width: '100%'}}>
+<option value="1">Lips</option>
+<option value="2">Upper labial mucosa</option>
+<option value="3">Lower labial mucosa</option>
+<option value="4">L/S Buccal mucosa</option>
+<option value="5">R/S Buccal mucosa</option>
+<option value="6">Palate</option>
+<option value="7">Tongue-dorsum</option>
+<option value="8">Tongue-ventral</option>
+<option value="9">Tongue-lateral border</option>
+<option value="10">Alveolar ridge</option>
+<option value="11">Gingiva</option>
+<option value="12">Flour of the mouth</option>
+</select>
+
+<select name={`diagnosis-${index}`} style={{width: '100%'}}>
+<option value="1">Normal</option>
+<option value="2">OLP / LR</option>
+<option value="3">OSMF/OSF</option>
+<option value="4">VBD</option>
+<option value="5">RAU</option>
+<option value="6">MRG</option>
+<option value="7">FEP</option>
+<option value="8">PVL</option>
+<option value="9">SLE</option>
+<option value="10">OFG</option>
+<option value="11">OCA</option>
+</select>
+
+<select name={`lesion-${index}`} style={{width: '100%'}}>
+<option value="true">True</option>
+<option value="false">Flase</option>
+</select>
+</div> */}

@@ -28,7 +28,7 @@ const Manage = () => {
           </Button>   
         </Stack>
       </div>
-      <Box sx={{flexGrow:1, marginLeft:'160px'}}>
+      <Box sx={{flexGrow:1, marginLeft:'170px'}}>
         <Outlet/>
       </Box>
     </Box>

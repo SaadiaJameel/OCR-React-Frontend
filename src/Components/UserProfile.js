@@ -46,6 +46,11 @@ const UserProfile = () => {
         const formData = new FormData(formRef.current);
         const username = formData.get('username');
       
+        if(username ==="" || username.length <5){
+            showMsg("Username should inlclude minimum 5 characters", "error");
+            return;
+        }
+
         setState(1);
 
         axios.post(`${config['path']}/auth/update`,
@@ -58,6 +63,9 @@ const UserProfile = () => {
         }}
         ).then(res=>{
             setData(res.data)
+            let newData = JSON.parse(sessionStorage.getItem("info"))
+            newData.username = res.data.username;
+            sessionStorage.setItem("info", JSON.stringify(newData));
             showMsg("User details updated successfully", "success");
         }).catch(err=>{
             if(err.response) showMsg(err.response.data.message, "error")
