@@ -19,6 +19,7 @@ import ReviewersTable from './Components/AdminPortal/ReviewersTable';
 import UserDetails from './Components/AdminPortal/UserDetails';
 import UserProfile from './Components/UserProfile';
 import ImagesSearch from './Components/ImagesSearch';
+import ImageCropper from './Components/Crop/ImageCropper';
 
 
 function App() {
@@ -54,9 +55,7 @@ function App() {
         </Route>
 
         <Route path='/profile' element={<ProtectedRoute allowed={[1,2,3]}><UserProfile/></ProtectedRoute> }/>
-        {/* <Route path='/upload' element={<ProtectedRoute allowed={[1,2]}><UploadPage/></ProtectedRoute> }/> */}
-        <Route path='/annotation' element={<ProtectedRoute allowed={[1,2]}><Canvas/></ProtectedRoute>}/>
-        <Route path='/patients' element={<ProtectedRoute allowed={[1,2]}><PatientsPage/></ProtectedRoute>}/>
+        <Route path='/cropper' element={<ProtectedRoute allowed={[1,2]}><ImageCropper/></ProtectedRoute>}/>
         <Route path='/images' element={<ProtectedRoute allowed={[1,2]}><ImagesPage/></ProtectedRoute>}/>
          
         <Route path='/*' element={<NotFound/>}/>

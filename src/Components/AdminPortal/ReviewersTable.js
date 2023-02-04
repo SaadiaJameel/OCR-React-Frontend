@@ -47,7 +47,7 @@ const ReviewersTable = () => {
           disableColumnMenu: true,
           renderCell: ({row}) =>(
               <Stack direction='row' spacing={2} alignItems='center'>
-                  <Avatar {...stringAvatar(row.username)} />
+                  <Avatar {...stringAvatar(row.username)} variant='rounded' />
                     <Stack direction='column'>
                         <Typography>{row.username}</Typography>
                         <Typography color='GrayText'>{row.reg_no}</Typography>

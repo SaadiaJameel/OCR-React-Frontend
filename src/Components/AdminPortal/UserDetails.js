@@ -90,7 +90,7 @@ const UserDetails = () => {
             {loading?
             <>
             <Stack direction='row' spacing={2} alignItems='center' sx={{my:3}}>
-                <Skeleton variant="circular" width={60} height={60} />
+                <Skeleton variant="rounded" width={60} height={60} />
                 <Stack direction='column'>
                     <Skeleton variant="text" width={210} sx={{ fontSize: '2rem' }} />
                     <Skeleton variant="text" width={210} />
@@ -104,7 +104,7 @@ const UserDetails = () => {
             :
             <>
             <Stack direction='row' spacing={2} alignItems='center' sx={{my:3}}>
-                <Avatar {...stringAvatar(data.username, 60)}/>
+                <Avatar {...stringAvatar(data.username, 60)} variant='rounded' />
                 <Stack direction='column'>
                     <Typography variant='h6'>{data.username}</Typography>
                     <Typography color='GrayText'>{data.reg_no}</Typography>

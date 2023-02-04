@@ -38,11 +38,31 @@ input, select{
 }
 
 .grid_image{
-	background-size: cover;
+	position: relative;
 	width: 100%;
 	aspect-ratio: 1/1;
-	background-position: center;
 }
+
+.grid_image img{
+	width: 100%;
+	aspect-ratio: 1/1;
+	object-fit: cover;
+}
+
+.overlay{
+	width: 70px;
+	height: 70px;
+	position: absolute;
+	top:0;
+	right: 0;
+}
+
+.overlay svg {
+	height: 70px;
+	width: 70px;
+	fill: orange;
+}
+
 /* canvas css */
 
 .main_canvas{

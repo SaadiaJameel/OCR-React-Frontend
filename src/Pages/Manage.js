@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Box, Button, Stack} from '@mui/material';
 import { NavLink, Outlet } from 'react-router-dom';
-import { ImageSearch, People } from '@mui/icons-material';
+import { Photo, People } from '@mui/icons-material';
 
 const Manage = () => {
   
@@ -10,7 +10,7 @@ const Manage = () => {
     <Box sx={{ bgcolor: 'background.paper', display: 'flex', flexDirection:'row'}}>
       <div className='sidebar'>
         <Stack direction='column' spacing={1}>
-          <Button component={NavLink} to="/manage/images" startIcon={<ImageSearch/>} 
+          <Button component={NavLink} to="/manage/images" startIcon={<Photo/>} 
           sx={{ my: 2, display: 'flex', justifyContent: "flex-start", m:0}}
           style={({ isActive }) => ({
               color: isActive ? '#000' : '#000',

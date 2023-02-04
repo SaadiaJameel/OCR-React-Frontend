@@ -141,7 +141,7 @@ class Polygon{
   }
 }
 
-const Canvas = ({info, open, setOpen, data, setData}) => {  
+const Canvas = ({imageIndex, open, setOpen, data, setData}) => {  
   
   const [size, setSize] = useState({width: 1, height:1})
   const [orginalSize, setOriginalSize] = useState({width: 1, height:1})
@@ -151,9 +151,9 @@ const Canvas = ({info, open, setOpen, data, setData}) => {
   const [help, setHelp] = useState(false);
   const [labelVisibility, setLabelVisibility] = useState(isLabelVisible);
   const [selection, setSelection] = React.useState('Oral Cavity');
-  const [location, setLocation] = useState(data[info].location)
-  const [clinicalDiagnosis, setClinicalDiagnosis] = useState(data[info].clinical_diagnosis);
-  const [lesion, setLesion] = useState(data[info].lesions_appear);
+  const [location, setLocation] = useState(data[imageIndex].location)
+  const [clinicalDiagnosis, setClinicalDiagnosis] = useState(data[imageIndex].clinical_diagnosis);
+  const [lesion, setLesion] = useState(data[imageIndex].lesions_appear);
 
   const handleChange = (event) => {
     setSelection(event.target.value);
@@ -187,10 +187,10 @@ const Canvas = ({info, open, setOpen, data, setData}) => {
     })
 
     var temp = [...data]
-    temp[info].annotation = updated
-    temp[info].location= location
-    temp[info].clinical_diagnosis = clinicalDiagnosis
-    temp[info].lesions_appear = lesion
+    temp[imageIndex].annotation = updated
+    temp[imageIndex].location= location
+    temp[imageIndex].clinical_diagnosis = clinicalDiagnosis
+    temp[imageIndex].lesions_appear = lesion
 
     setData(temp);
     setOpen(false);
@@ -484,7 +484,7 @@ const Canvas = ({info, open, setOpen, data, setData}) => {
 
   regions = [];
 
-  [...data[info].annotation].forEach(region=>{
+  [...data[imageIndex].annotation].forEach(region=>{
     var type = region.name
     polygon = new Polygon(ctx,colorPallete[type].main , type)
     var points = []
@@ -698,7 +698,7 @@ const Canvas = ({info, open, setOpen, data, setData}) => {
         {/********************** working area **********************/}
         <div className="work_area">
           <canvas className='main_canvas' onDoubleClick={(e)=>handle_mouse(e)} onMouseMove={(e)=>{handle_mouse(e)}} onMouseDown={(e)=>{handle_mouse(e)}} onMouseUp={(e)=>{handle_mouse(e)}} ref={canvaRef} width={size.width} height={size.height}>Sorry, Canvas functionality is not supported.</canvas>
-          <img className="main_img" onLoad={(e)=>{get_dimensions(e)}}  width={size.width} height={size.height} src={info>=0 && data[info].img} alt="failed to load"/> 
+          <img className="main_img" onLoad={(e)=>{get_dimensions(e)}}  width={size.width} height={size.height} src={imageIndex>=0 && data[imageIndex].img} alt="failed to load"/> 
         </div>
 
         {/********************** bottom panel **********************/}

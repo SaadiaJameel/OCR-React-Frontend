@@ -111,7 +111,7 @@ const RequestDetails = () => {
             {loading?
             <>
             <Stack direction='row' spacing={2} alignItems='center' sx={{my:3}}>
-                <Skeleton variant="circular" width={60} height={60} />
+                <Skeleton variant="rounded" width={60} height={60} />
                 <Stack direction='column'>
                     <Skeleton variant="text" width={210} sx={{ fontSize: '2rem' }} />
                     <Skeleton variant="text" width={210} />
@@ -125,7 +125,7 @@ const RequestDetails = () => {
             :
             <>
             <Stack direction='row' spacing={2} alignItems='center' sx={{my:3}}>
-                <Avatar {...stringAvatar(data.username, 60)}/>
+                <Avatar {...stringAvatar(data.username, 60)} variant='rounded' />
                 <Stack direction='column'>
                     <Typography variant='h6'>{data.username}</Typography>
                     <Typography color='GrayText'>{data.reg_no}</Typography>
@@ -144,6 +144,7 @@ const RequestDetails = () => {
                     label="Role"
                     name='role'
                     onChange={handleChange}
+                    sx={{background:'#fbfbfb'}}
                     >
                     <MenuItem value={1}>Admin</MenuItem>
                     <MenuItem value={2}>Reviewer</MenuItem>
@@ -152,7 +153,7 @@ const RequestDetails = () => {
                 </FormControl>
                 <TextField  value={data.email} name='email' size='small' disabled label='Email'/>
                 <TextField value={data.reg_no} name='reg_no' size='small' disabled label='Reg no'/>
-                <TextField label="Reason (optional)" multiline maxRows={4} name='reason' size='small' inputProps={{maxLength: 200}}/>
+                <TextField label="Reason (optional)" multiline maxRows={4} name='reason' size='small' inputProps={{maxLength: 200}} sx={{background:'#fbfbfb'}}/>
             </Stack>
             <Stack direction='row' spacing={2} sx={{my:3}}>
                 <LoadingButton size="small" onClick={handleAccept} loading={state=== 1} variant="contained" disabled={state!==0}>Accept</LoadingButton>

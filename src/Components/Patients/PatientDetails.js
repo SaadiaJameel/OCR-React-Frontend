@@ -1,9 +1,7 @@
 import React, { useEffect, useRef, useState} from 'react';
-import { styled } from '@mui/material/styles';
 import { Link, useParams} from 'react-router-dom';
-import { ArrowBack, Person, AddAPhoto, Image} from '@mui/icons-material';
-import { Box, Stack, Avatar, Typography, TextField, Skeleton, Button, Tab,
-        FormControl, MenuItem, Select, InputLabel, FormControlLabel, Checkbox, Grid} from '@mui/material';
+import { ArrowBack, AccountBox, AddAPhoto, Image} from '@mui/icons-material';
+import { Box, Stack, Avatar, Typography, Skeleton,Tab} from '@mui/material';
 import {TabContext,TabList,TabPanel} from '@mui/lab';
 import { stringAvatar } from '../utils';
 import config from '../../config.json'
@@ -12,6 +10,7 @@ import { useSelector} from 'react-redux';
 import PatientProfile from './PatientProfile';
 import NotificationBar from '../NotificationBar';
 import UploadPage from './UploadPage';
+import PatientImages from './PatientImages';
 
 const tempdata = {_id: '63c771ab19fa3b752054d449', patient_id: 'P1', risk_factors: {smoking: false, betel: false, alcohol: true}, age: 28, gender: '',updatedAt
 : "2023-01-18T04:12:27.061Z",createdAt : "2023-01-18T04:12:27.061Z",histo_diagnosis: "", category: "Unknown"}
@@ -64,7 +63,7 @@ const PatientDetails = () => {
             {loading?
             <>
             <Stack direction='row' spacing={2} alignItems='center' sx={{my:3}}>
-                <Skeleton variant="circular" width={60} height={60} />
+                <Skeleton variant="rounded" width={60} height={60} />
                 <Stack direction='column'>
                     <Skeleton variant="text" width={210} sx={{ fontSize: '2rem' }} />
                     <Skeleton variant="text" width={210} />
@@ -78,7 +77,7 @@ const PatientDetails = () => {
             :
             <>
             <Stack direction='row' spacing={2} alignItems='center' sx={{my:3}}>
-                <Avatar {...stringAvatar("P", 60)}/>
+                <Avatar {...stringAvatar("P", 60)} variant='rounded'/>
                 <Stack direction='column'>
                     <Typography variant='h6'>Patients ID: {data.patient_id}</Typography>
                     <Typography color='GrayText'>Category: {data.category}</Typography>
@@ -88,13 +87,13 @@ const PatientDetails = () => {
             <TabContext value={value}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <TabList onChange={handleChange} aria-label="lab API tabs example">
-                    <Tab icon={<Person fontSize='small'/>}  disableRipple label="Profile" value="1" />
+                    <Tab icon={<AccountBox fontSize='small'/>}  disableRipple label="Profile" value="1" />
                     <Tab icon={<Image fontSize='small'/>} disableRipple label="Images" value="2" />
                     <Tab icon={<AddAPhoto fontSize='small'/>} disableRipple label="Upload" value="3" />
                 </TabList>
                 </Box>
                 <TabPanel value="1" sx={{px:0}}><PatientProfile data={data}/></TabPanel>
-                <TabPanel value="2" sx={{px:0}}>images</TabPanel>
+                <TabPanel value="2" sx={{px:0}}><PatientImages/></TabPanel>
                 <TabPanel value="3" sx={{px:0}}><UploadPage/></TabPanel>
             </TabContext>
             </Box>

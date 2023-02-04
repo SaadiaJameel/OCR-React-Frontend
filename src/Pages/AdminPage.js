@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Box, Button, Stack} from '@mui/material';
-import { Link, NavLink, Outlet } from 'react-router-dom';
-import { AccountCircle, Email } from '@mui/icons-material';
+import { NavLink, Outlet } from 'react-router-dom';
+import { AccountBox, Email } from '@mui/icons-material';
 
 
 const AdminPage = () => {
@@ -19,7 +19,7 @@ const AdminPage = () => {
             })}>
             Requests
           </Button>     
-          <Button component={NavLink} to="/adminportal/reviewers" startIcon={<AccountCircle/>} 
+          <Button component={NavLink} to="/adminportal/reviewers" startIcon={<AccountBox/>} 
           sx={{ my: 2, display: 'flex', justifyContent: "flex-start", m:0}}
           style={({ isActive }) => ({
               color: isActive ? '#000' : '#000',
