@@ -6,6 +6,10 @@ import RegionTable from './RegionTable';
 import Help from './Help';
 import ButtonPanel from './ButtonPanel';
 import MenuItem from '@mui/material/MenuItem';
+import axios from 'axios';
+import config from '../../config.json';
+import { LoadingButton } from '@mui/lab';
+import NotificationBar from '../NotificationBar';
 
 // global variables 
 // todo: check whether we could use useStates instead
@@ -141,13 +145,15 @@ class Polygon{
   }
 }
 
-const Canvas = ({imageIndex, open, setOpen, data, setData}) => {  
+const Canvas = ({imageIndex, open, setOpen, data, setData, upload}) => {  
   
   const [size, setSize] = useState({width: 1, height:1})
   const [orginalSize, setOriginalSize] = useState({width: 1, height:1})
   const [showPoints, setShowPoints] = useState(false)
   const [zoomLevel, setZoomLevel] = useState(1)
-  const [state, setState] = useState(false);
+  const [togglePanel, setTogglePanel] = useState(false);
+  const [state, setState] = useState(0);
+  const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
   const [help, setHelp] = useState(false);
   const [labelVisibility, setLabelVisibility] = useState(isLabelVisible);
   const [selection, setSelection] = React.useState('Oral Cavity');
@@ -161,7 +167,11 @@ const Canvas = ({imageIndex, open, setOpen, data, setData}) => {
   };
 
   const handleSave = ()=>{
+
+    setState(1);
+
     var updated = [];
+
     [...regions].forEach((region, index) =>{
       if(region.completed){
         var pointArray = []
@@ -172,9 +182,6 @@ const Canvas = ({imageIndex, open, setOpen, data, setData}) => {
         for (const p of region.points) {
           pointArray.push(Math.round(p.x),Math.round(p.y))
         }
-        // coordinates.push(pointArray.toString())
-        // type.push(region.type)
-        // bbox.push(bbox_arr.toString()) 
         updated.push(
           {
             "id":index,
@@ -186,14 +193,53 @@ const Canvas = ({imageIndex, open, setOpen, data, setData}) => {
       }
     })
 
-    var temp = [...data]
-    temp[imageIndex].annotation = updated
-    temp[imageIndex].location= location
-    temp[imageIndex].clinical_diagnosis = clinicalDiagnosis
-    temp[imageIndex].lesions_appear = lesion
+    if(upload){
+      var temp = [...data]
+      temp[imageIndex].annotation = updated
+      temp[imageIndex].location= location
+      temp[imageIndex].clinical_diagnosis = clinicalDiagnosis
+      temp[imageIndex].lesions_appear = lesion
 
-    setData(temp);
-    setOpen(false);
+      setData(temp);
+      setState(0);
+      setOpen(false);
+
+    }else{
+
+      axios.post(`${config['path']}/image/data/update`,
+        {
+          _id: data[imageIndex]._id,
+          location:location,
+          clinical_diagnosis:clinicalDiagnosis,
+          lesions_appear:lesion,
+          annotation: updated
+
+        },
+        { headers: {
+            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'email': JSON.parse(sessionStorage.getItem("info")).email,
+        }}).then(res=>{
+          showMsg(res.data.message, "success")
+          var temp = [...data]
+          temp[imageIndex].annotation = updated
+          temp[imageIndex].location= location
+          temp[imageIndex].clinical_diagnosis = clinicalDiagnosis
+          temp[imageIndex].lesions_appear = lesion
+    
+          setData(temp);
+          setOpen(false);
+        }).catch(err=>{
+            if(err.response) showMsg(err.response.data.message, "error")
+            else alert(err)
+        }).finally(()=>{
+            setState(0);
+        })
+    }
+    
+  }
+
+  const showMsg = (msg, severity)=>{
+    setStatus({msg, severity, open:true})
   }
 
   const canvaRef = useRef(null)
@@ -213,7 +259,7 @@ const Canvas = ({imageIndex, open, setOpen, data, setData}) => {
     opacity = true;
 
     setZoomLevel(1);
-    setState(false);
+    setTogglePanel(false);
     setHelp(false);
     setLabelVisibility(isLabelVisible);
     setSelection('');
@@ -254,13 +300,13 @@ const Canvas = ({imageIndex, open, setOpen, data, setData}) => {
     )
 
     if(type.length === 0) return
-    setState(!state)
+    setTogglePanel(!togglePanel)
   }
 
   const show_help = () =>{
 
     setHelp(true)
-    setState(!state)
+    setTogglePanel(!togglePanel)
   }
 
   // toggle labels
@@ -345,8 +391,8 @@ const Canvas = ({imageIndex, open, setOpen, data, setData}) => {
     }
 
     if(e.key === ' '){
-      if(state) {
-        setState(false)
+      if(togglePanel) {
+        setTogglePanel(false)
         return
       }
       show_regions();
@@ -652,8 +698,8 @@ const Canvas = ({imageIndex, open, setOpen, data, setData}) => {
 
         {/********************* side bar **********************/}
         <div className='side_bar'>
-        <Button variant='contained' fullWidth color='warning' startIcon={<Save/>} onClick={handleSave} sx={{mb:1}}>Save</Button>
-        <Button variant='contained' fullWidth color='inherit' onClick={()=>setOpen(false)} sx={{mb:1}}>Close</Button>
+        <LoadingButton loading={state ===1} variant='contained' fullWidth color='warning' startIcon={<Save/>} onClick={handleSave} sx={{mb:1}}>Save</LoadingButton>
+        <Button variant='contained' fullWidth color='inherit' disabled={state !==0} onClick={()=>setOpen(false)} sx={{mb:1}}>Close</Button>
 
         {/******************** image annotation ************************/}
         <Divider color="gray" sx={{height:2, mt:1}}/>   
@@ -698,19 +744,25 @@ const Canvas = ({imageIndex, open, setOpen, data, setData}) => {
         {/********************** working area **********************/}
         <div className="work_area">
           <canvas className='main_canvas' onDoubleClick={(e)=>handle_mouse(e)} onMouseMove={(e)=>{handle_mouse(e)}} onMouseDown={(e)=>{handle_mouse(e)}} onMouseUp={(e)=>{handle_mouse(e)}} ref={canvaRef} width={size.width} height={size.height}>Sorry, Canvas functionality is not supported.</canvas>
-          <img className="main_img" onLoad={(e)=>{get_dimensions(e)}}  width={size.width} height={size.height} src={imageIndex>=0 && data[imageIndex].img} alt="failed to load"/> 
+          {upload?
+          <img className="main_img" onLoad={(e)=>{get_dimensions(e)}}  width={size.width} height={size.height} src={imageIndex>=0 && `${data[imageIndex].img}`} alt="failed to load"/> 
+            :
+          <img className="main_img" onLoad={(e)=>{get_dimensions(e)}}  width={size.width} height={size.height} src={imageIndex>=0 && `${config['image_path']}/${data[imageIndex].image_name}`} alt="failed to load"/> 
+          
+        }
         </div>
 
         {/********************** bottom panel **********************/}
-        {state &&
+        {togglePanel &&
           <Drawer anchor='bottom' variant="permanent">
             <div style={{display: 'flex', flexDirection: 'row'}}>
               <div style={{flexGrow:1}}></div>
-              <Close onClick={()=>setState(!state)}/>
+              <Close onClick={()=>setTogglePanel(!togglePanel)}/>
             </div>
             {help?<Help/>:<RegionTable showPoints={showPoints} />}
           </Drawer> 
         }
+        <NotificationBar status={status} setStatus={setStatus}/>
     </div>
 
     </>

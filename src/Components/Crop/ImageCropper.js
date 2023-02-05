@@ -5,11 +5,17 @@ import { useDebounceEffect } from './useDebounceEffect';
 import 'react-image-crop/dist/ReactCrop.css'
 import { Button, Slider, Stack, Typography } from '@mui/material';
 import { Warning } from '@mui/icons-material';
+import NotificationBar from '../NotificationBar';
+import { LoadingButton } from '@mui/lab';
+import axios from 'axios';
+import config from '../../config.json';
 
-export default function ImageCropper({imageIndex,data,setData,open,setOpen,selectedFiles, setSelectedFiles}) {
+export default function ImageCropper({imageIndex,data,setData,open,setOpen,selectedFiles, setSelectedFiles, upload}) {
   const imgRef = useRef(null)
   const [crop, setCrop] = useState()
   const [completedCrop, setCompletedCrop] = useState()
+  const [state, setState] = useState(0)
+  const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
   const [imgSrc, setImgSrc] = useState();
   const previewCanvasRef = useRef(null)
   const [scale, setScale] = useState(1)
@@ -36,28 +42,70 @@ export default function ImageCropper({imageIndex,data,setData,open,setOpen,selec
     [completedCrop, scale, rotate],
   )
 
+  const showMsg = (msg, severity)=>{
+    setStatus({msg, severity, open:true})
+  }
+
   const handleSave = ()=>{
     if(!completedCrop){
       return;
     }
 
+    setState(1);
+
     previewCanvasRef.current.toBlob((blob) => {
       
       var temp = [...data];
-      var tempFiles = [...selectedFiles];
-
       const url = URL.createObjectURL(blob);
-      temp[imageIndex].img = url;
-      temp[imageIndex].annotation = [];
+      
+      if(upload){
+        var tempFiles = [...selectedFiles];
+        temp[imageIndex].img = url;
+        temp[imageIndex].annotation = [];
 
-      var file = new File( [ blob ], "mycanvas.png" );
-      var dT = new DataTransfer();
-      dT.items.add( file );
-      tempFiles[imageIndex] = dT.files[0];
+        var file = new File( [ blob ], selectedFiles[imageIndex].name );
+        var dT = new DataTransfer();
+        dT.items.add( file );
+        tempFiles[imageIndex] = dT.files[0];
 
-      setSelectedFiles(tempFiles);
-      setData(temp);
-      setOpen(false);
+        setState(0)
+        setSelectedFiles(tempFiles);
+        setData(temp);
+        setOpen(false);
+
+      }else{
+        
+        var file = new File( [ blob ], data[imageIndex].image_name);
+        var dT = new DataTransfer();
+        dT.items.add( file );
+        var tempFile = dT.files[0];
+
+        var form = new FormData();
+        var filename = data[imageIndex].image_name;
+        form.append('files', tempFile , filename);
+        form.append('data', JSON.stringify({_id:data[imageIndex]._id}));
+       
+        
+        axios.post(`${config['path']}/images/update`, form,
+        { headers: {
+            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'Content-Type': 'multipart/form-data',
+            'email': JSON.parse(sessionStorage.getItem("info")).email,
+            
+        }}).then(res=>{
+          showMsg("Image updated succesfully", "success")
+          temp[imageIndex].annotation = [];
+          setData(temp);
+          setOpen(false);
+          
+        }).catch(err=>{
+            if(err.response) showMsg(err.response.data.message, "error");
+            else alert(err)
+        }).finally(()=>{
+            setState(0);
+            
+        })
+      }
       
     });
   }
@@ -68,7 +116,7 @@ export default function ImageCropper({imageIndex,data,setData,open,setOpen,selec
 
   useEffect(()=>{
     if(open){
-      setImgSrc(data[imageIndex].img);
+      setImgSrc(`${config["image_path"]}/${data[imageIndex].image_name}`);
     }
   },[open])
 
@@ -79,7 +127,7 @@ export default function ImageCropper({imageIndex,data,setData,open,setOpen,selec
           <div className="Crop-Controls">
                  
           <Stack direction='column' spacing={2}>
-            <Button variant='contained' color='warning' onClick={handleSave}>Save</Button>
+            <LoadingButton variant='contained' color='warning' onClick={handleSave}>Save</LoadingButton>
             <Button variant='contained' color='inherit' onClick={handleClose}>Close</Button>
 
             <div style={{width:'100%'}}>
@@ -122,6 +170,7 @@ export default function ImageCropper({imageIndex,data,setData,open,setOpen,selec
               <img
                 ref={imgRef}
                 alt="Crop me"
+                crossOrigin="anonymous"
                 src={imgSrc}
                 style={{ transform: `scale(${scale}) rotate(${rotate}deg)` }}
               />
@@ -142,6 +191,7 @@ export default function ImageCropper({imageIndex,data,setData,open,setOpen,selec
           />
         )}
       </div>
+      <NotificationBar status={status} setStatus={setStatus}/>
     </>
   )
 }

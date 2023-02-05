@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, { useEffect, useState} from 'react';
 import { Button, Typography, Grid, Box, Stack, Dialog, Slide,IconButton} from '@mui/material';
 import { Crop, Delete, Edit} from '@mui/icons-material';
 import Canvas from '../Annotation/Canvas';
@@ -7,7 +7,7 @@ import ImageCropper from '../Crop/ImageCropper';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import config from '../../config.json';
-import noImage from '../../Assets/temp data/mouth.png';
+import DeleteImage from './DeleteImage';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -18,9 +18,10 @@ const PatientImages = () => {
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
     const [loading, setLoading] = useState(false);
     const [openAnnotation, setOpenAnnotation] = useState(false)
-    const [openCrop, setOpenCrop] = useState(false)
+    const [openCrop, setOpenCrop] = useState(false);
+    const [openDelete, setOpenDelete] = useState(false);
     const [imageIndex, setImageIndex] = useState({});
-    const [data, setData] = useState(tempData);
+    const [data, setData] = useState([]);
     const { id } = useParams();
 
     const handleDelete = (index)=>{
@@ -51,43 +52,67 @@ const PatientImages = () => {
         setStatus({msg, severity, open:true})
     }
 
+    useEffect(()=>{
+
+        setLoading(true)
+        axios.get(`${config['path']}/image/${id}`,
+        { headers: {
+            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'email': JSON.parse(sessionStorage.getItem("info")).email,
+        }}
+        ).then(res=>{
+            setData(res.data.images);
+        }).catch(err=>{
+            if(err.response) showMsg(err.response.data.message, "error")
+            else alert(err)
+        }).finally(()=>{
+            setLoading(false);
+        })
+
+    },[])
+
     return (
         <div>       
         <Box>
             <Stack spacing={2} direction='row' sx={{mb:2}}>
-                <Button variant="contained" disabled={loading} >Generate Report</Button>  
+                <Button variant="contained">Generate Report</Button>  
             </Stack>
                     
             <Grid container spacing={2}>
             {[...data].map((item, index) => (
-                <Grid item key={index} xs={6} md={4} lg={3}>
+                <Grid item key={index} xs={4} md={3} lg={2}>
                     <div className='imageDiv'>
-                        
                         <div className='grid_image'>
-                            <img src={item.img} alt="Failed to Load"/>
+                            <img src={`${config["image_path"]}/${item.image_name}`} alt="Failed to Load"/>
                             {item.annotation.length === 0 && <div className='overlay'>
-                            <svg>
+                            <svg onClick={()=>handleDoubleClick(index)}>
                                 <polygon points="0,0,70,0,70,70"/>
                             </svg>
                             </div>}
+                            <Stack direction='row' sx={{position:'absolute', bottom:10, right:0}}>
+                                <IconButton onClick={()=>handleEdit(index)} size='small' sx={{ color:'transparent'}} className='iconBackground'><Crop fontSize='small'/></IconButton>
+                                <IconButton onClick={()=>handleDoubleClick(index)} size='small' sx={{ color:'transparent'}} className='iconBackground'><Edit fontSize='small'/></IconButton>
+                                <IconButton onClick={()=>handleDelete(index)} size='small' sx={{ color:'transparent'}} className='iconBackground'><Delete fontSize='small'/></IconButton>
+                            </Stack>
                         </div>
                                 
                         <Stack direction='column' justifyContent='space-between' alignItems='start' px={1}>
-                        <Stack direction='row'>
-                            <IconButton onClick={()=>handleEdit(index)} size='small'><Crop fontSize='small'/></IconButton>
-                            <IconButton onClick={()=>handleDoubleClick(index)} size='small'><Edit fontSize='small'/></IconButton>
-                            <IconButton onClick={()=>handleDelete(index)} size='small'><Delete fontSize='small'/></IconButton>
-                        </Stack>
                         <Box>
-                            <Typography>Location: <b>{item.location}</b></Typography>
-                            <Typography>Clinical diagnosis: <b>{item.clinical_diagnosis}</b></Typography>
-                            <Typography>Lesions appear: <b>{item.lesions_appear.toString()}</b></Typography>
+                            <Typography fontSize='small' color='GrayText'>{item.location} | {item.clinical_diagnosis}</Typography>
                         </Box>
                         </Stack>
                     </div>
                 </Grid>
             ))}
             </Grid>  
+            <Box sx={{my: 3}}>
+                {loading?
+                <Typography color='GrayText'>Loading ...</Typography>
+                :
+                data.length === 0 &&
+                <Typography color='GrayText'>No uploaded images</Typography>
+                }
+            </Box>
 
             <Dialog fullScreen open={openAnnotation} onClose={handleClose} TransitionComponent={Transition}>
                 <Canvas imageIndex={imageIndex} open={openAnnotation} setOpen={setOpenAnnotation} data={data} setData={setData} upload={false}/>
@@ -99,103 +124,10 @@ const PatientImages = () => {
                 open={openCrop} setOpen={setOpenCrop} />
             </Dialog>
         </Box>   
+            <DeleteImage open={openDelete} setOpen={setOpenDelete} />
             <NotificationBar status={status} setStatus={setStatus}/> 
         </div>
     );
 };
 
 export default PatientImages;
-
-const tempData = [
-    {
-      img: noImage,
-      location: "Upper labial mucosa",
-      clinical_diagnosis: "Normal",
-      lesions_appear: true,
-      annotation: [],
-    },
-    {
-        img: noImage,
-        location: "Upper labial mucosa",
-        clinical_diagnosis: "Normal",
-        lesions_appear: false,
-        annotation: [],
-    },
-    {
-        img: noImage,
-        location: "Upper labial mucosa",
-        clinical_diagnosis: "Normal",
-        lesions_appear: true,
-        annotation: [],
-    },
-    {
-        img: noImage,
-        location: "Upper labial mucosa",
-        clinical_diagnosis: "Normal",
-        lesions_appear: true,
-        annotation: [],
-    },
-    {
-        img: noImage,
-        location: "Upper labial mucosa",
-        clinical_diagnosis: "Normal",
-        lesions_appear: true,
-        annotation: [],
-    },
-    {
-        img: noImage,
-        location: "Upper labial mucosa",
-        clinical_diagnosis: "Normal",
-        lesions_appear: true,
-        annotation: [],
-    },
-    {
-        img: noImage,
-        location: "Upper labial mucosa",
-        clinical_diagnosis: "Normal",
-        lesions_appear: true,
-        annotation: [],
-    },
-    {
-        img: noImage,
-        location: "Upper labial mucosa",
-        clinical_diagnosis: "Normal",
-        lesions_appear: true,
-        annotation: [],
-    },
-    {
-        img: noImage,
-        location: "Upper labial mucosa",
-        clinical_diagnosis: "Normal",
-        lesions_appear: true,
-        annotation: [],
-    },
-    {
-        img: noImage,
-        location: "Upper labial mucosa",
-        clinical_diagnosis: "Normal",
-        lesions_appear: true,
-        annotation: [],
-    },
-    {
-        img: noImage,
-        location: "Upper labial mucosa",
-        clinical_diagnosis: "Normal",
-        lesions_appear: true,
-        annotation: [],
-    },
-    {
-        img: noImage,
-        location: "Upper labial mucosa",
-        clinical_diagnosis: "Normal",
-        lesions_appear: true,
-        annotation: [],
-    },
-    {
-        img: noImage,
-        location: "Upper labial mucosa",
-        clinical_diagnosis: "Normal",
-        lesions_appear: true,
-        annotation: [],
-    },
-  ];

@@ -9,8 +9,7 @@ import config from '../../config.json';
 import NotificationBar from '../NotificationBar';
 import LoadingButton from '@mui/lab/LoadingButton';
 
-export default function DeleteImage() {
-  const [open, setOpen] = useState(false);
+export default function DeleteImage({open, setOpen}) {
   const [state, setState] = useState(0);
   const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
 

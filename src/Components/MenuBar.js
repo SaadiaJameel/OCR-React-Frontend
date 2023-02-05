@@ -168,17 +168,11 @@ function MenuBar({roles,username}) {
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
                 <MenuItem>
-                  <Typography textAlign="center"><Link to="/upload" replace>Upload</Link></Typography>
-                </MenuItem>
-                <MenuItem>
-                  <Typography textAlign="center"><Link to="/images" replace>Images</Link></Typography>
-                </MenuItem>
-                <MenuItem>
-                  <Typography textAlign="center"><Link to="/patients" replace>Patients</Link></Typography>
+                  <Typography textAlign="center"><Link to="/manage/images" replace>Manage</Link></Typography>
                 </MenuItem>
                 {roles.includes(1) && 
                 <MenuItem>
-                  <Typography textAlign="center"><Link to="/adminportal" replace>Admin Portal</Link></Typography>
+                  <Typography textAlign="center"><Link to="/adminportal/requests" replace>Admin Portal</Link></Typography>
                 </MenuItem>}
                               
           </Menu>
@@ -188,7 +182,7 @@ function MenuBar({roles,username}) {
                     Manage
                 </Button>
                 { roles.includes(1) &&
-                  <Button sx={{ my: 2, color: 'white', display: 'block', m:0}} variant='outlined' color='secondary' component={NavLink} to="/adminportal/requests">
+                  <Button sx={{ my: 2, color: 'white', display: 'block', m:0}} color='secondary' component={NavLink} to="/adminportal/requests">
                     Admin Portal
                 </Button>}
             </Box>

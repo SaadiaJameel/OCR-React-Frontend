@@ -1,3 +1,4 @@
 {
-    "path":"http://localhost:5000/api"
+    "path":"http://localhost:5000/api",
+    "image_path":"http://localhost:5000/Storage/images"
 }

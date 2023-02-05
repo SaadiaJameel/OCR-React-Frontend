@@ -7,6 +7,7 @@ import ImageCropper from '../Crop/ImageCropper';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import config from '../../config.json';
+import { LoadingButton } from '@mui/lab';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -84,7 +85,7 @@ const UploadPage = () => {
 
         var form = new FormData();
         selectedFiles.forEach((pic, index) => {
-            var filename = id+"_"+ Date.now() + "_"+ index + "_" + selectedFiles[index].name;
+            var filename = id+"_"+ Date.now() + "_"+ index + "_" + pic.name;
             form.append('files', pic, filename);
             temp[index].image_name = filename;
         });
@@ -98,7 +99,7 @@ const UploadPage = () => {
             'email': JSON.parse(sessionStorage.getItem("info")).email,
         }}
         ).then(res=>{
-            showMsg(res.response.data.message, "success")
+            showMsg("Images Uploaded Successfully", "success")
             setSelectedFiles([]);
             setImageIndex(0);
             setData([]);
@@ -135,8 +136,8 @@ const UploadPage = () => {
         <Box>
             <input hidden accept="image/png, image/jpeg" ref={hidenInput} multiple type="file" onChange={selectFiles}/>
             <Stack spacing={2} direction='row' sx={{mb:2}}>
-                <Button variant="contained" disabled={loading} onClick={handleSelection} component="label">Add image</Button>  
-                <Button  variant="contained" disabled={selectedFiles.length===0} onClick={handleSubmit}> Upload </Button>
+                <Button variant="contained" disabled={loading} onClick={handleSelection}>Add image</Button>  
+                <LoadingButton  variant="contained" disabled={selectedFiles.length===0} loading={loading} onClick={handleSubmit}> Upload </LoadingButton>
             </Stack>
                     
             <Grid container spacing={2}>
@@ -144,7 +145,7 @@ const UploadPage = () => {
                 <Grid item key={index} xs={6} md={4} lg={3}>
                     <div className='imageDiv'>
                         
-                        <div className='grid_image'>
+                        <div className='grid_image' onClick={()=>handleDoubleClick(index)}>
                             <img src={item.img} alt="Failed to Load"/>
                             {item.annotation.length === 0 && <div className='overlay'>
                             <svg>
