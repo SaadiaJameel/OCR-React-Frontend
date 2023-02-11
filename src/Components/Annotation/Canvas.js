@@ -348,6 +348,7 @@ const Canvas = ({imageIndex, open, setOpen, data, setData, upload}) => {
     });
 
     polygon = new Polygon(ctx)
+    polygon.scale = zoomLevel;
     regions.push(polygon)
     redraw_canvas()
     redraw_ids()
@@ -368,6 +369,7 @@ const Canvas = ({imageIndex, open, setOpen, data, setData, upload}) => {
       });
   
       polygon = new Polygon(ctx)
+      polygon.scale = zoomLevel;
       regions.push(polygon)
       redraw_canvas()
       redraw_ids()
@@ -513,10 +515,10 @@ const Canvas = ({imageIndex, open, setOpen, data, setData, upload}) => {
         height = ctx.font.match(/\d+/).pop() || 10;
         width = text_info.width;
         ctx.fillStyle = "black";
-        ctx.fillRect((regions[i].points[0].x)*zoomLevel -1 , (regions[i].points[0].y)*zoomLevel - height-2, width+2, height-(-2));
+        ctx.fillRect((regions[i].points[0].x)*regions[i].scale -1 , (regions[i].points[0].y)*regions[i].scale - height-2, width+2, height-(-2));
         ctx.fillStyle = "yellow";
         ctx.textBaseline = "bottom";
-        ctx.fillText(text,(regions[i].points[0].x)*zoomLevel, (regions[i].points[0].y)*zoomLevel);
+        ctx.fillText(text,(regions[i].points[0].x)*regions[i].scale, (regions[i].points[0].y)*regions[i].scale);
       }
     }
   }
@@ -533,6 +535,7 @@ const Canvas = ({imageIndex, open, setOpen, data, setData, upload}) => {
   [...data[imageIndex].annotation].forEach(region=>{
     var type = region.name
     polygon = new Polygon(ctx,colorPallete[type].main , type)
+    polygon.scale = zoomLevel;
     var points = []
     var oldAnnotations = region.annotations
     for(var i=0; i< oldAnnotations.length; i+=2){
@@ -544,6 +547,7 @@ const Canvas = ({imageIndex, open, setOpen, data, setData, upload}) => {
   })
 
   polygon = new Polygon(ctx)
+  polygon.scale = zoomLevel;
   regions.push(polygon)
 
   redraw_canvas()
@@ -688,6 +692,7 @@ const Canvas = ({imageIndex, open, setOpen, data, setData, upload}) => {
   const clear_all = ()=>{
     [...regions].forEach(region => region.markedForDeletion = true);
     polygon = new Polygon(ctx)
+    polygon.scale = zoomLevel;
     regions.push(polygon)
     redraw_canvas()
   }

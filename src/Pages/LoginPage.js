@@ -117,7 +117,7 @@ const LoginPage =()=>{
                 password: data.get('signup password')
             })
             .then(function (response) {
-                showMsg("You will recieve an email on acceptance", "success")
+                showMsg(response.data.message, "success")
                 setSignup(false);
             })
             .catch(function (error) {
@@ -144,12 +144,12 @@ const LoginPage =()=>{
 
                         <Box component="form" noValidate onSubmit={handleSignUpSubmit} sx={{ mt: 1 }}>
 
-                        <TextField margin="normal" size='small' inputProps={{ maxLength: 100 }} required fullWidth id="email" label="Email Address" name="signup email" autoFocus/>
-                        <TextField margin="normal" size='small' inputProps={{ maxLength: 100 }} required fullWidth id="username" label="User Name" name="username"/>
-                        <TextField margin="normal" size='small' inputProps={{ maxLength: 100 }} required fullWidth id="regNo" label="Register No" name="regNo"/>
+                        <TextField margin="normal" size='small' inputProps={{ maxLength: 100}} required fullWidth id="email" label="Email Address" name="signup email" autoFocus/>
+                        <TextField margin="normal" size='small' inputProps={{ maxLength: 100}} required fullWidth id="username" label="User Name" name="username"/>
+                        <TextField margin="normal" size='small' inputProps={{ maxLength: 100}} required fullWidth id="regNo" label="Register No" name="regNo"/>
                         <FormControl margin="normal" fullWidth  variant="outlined">
                         <InputLabel required size='small' htmlFor="signup password">Password</InputLabel>
-                        <OutlinedInput required size='small' inputProps={{ maxLength: 100 }} id="signup password" type={showSignupPassword ? 'text' : 'password'} label="Password" name="signup password" autoComplete='false'
+                        <OutlinedInput required size='small' inputProps={{ maxLength: 100, autoComplete: 'new-password'}} id="signup password" type={showSignupPassword ? 'text' : 'password'} label="Password" name="signup password" autoComplete='false'
                             endAdornment={
                             <InputAdornment position="end">
                                 <IconButton aria-label="toggle password visibility" onClick={handleClickShowSignupPassword} onMouseDown={handleMouseDownPassword} edge="end">

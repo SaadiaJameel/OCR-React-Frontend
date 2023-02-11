@@ -116,7 +116,11 @@ export default function ImageCropper({imageIndex,data,setData,open,setOpen,selec
 
   useEffect(()=>{
     if(open){
-      setImgSrc(`${config["image_path"]}/${data[imageIndex].image_name}`);
+      if(upload){
+        setImgSrc(data[imageIndex].img);
+      }else{
+        setImgSrc(`${config["image_path"]}/${data[imageIndex].image_name}`);
+      }
     }
   },[open])
 

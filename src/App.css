@@ -18,6 +18,21 @@ a{
 	overflow:auto;
 }
 
+.content{
+	margin-left: 170px;
+}
+
+@media (max-width: 480px) {
+	.sidebar{
+	  display: none;
+	}
+	.content{
+		margin-left: 0px;
+	}
+	
+
+}
+
 input, select{
 	background-color: #fbfbfb!important;
 }
