@@ -17,7 +17,8 @@ const RequestsTable = () => {
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
     const [loading, setLoading] = useState(true);
     const [filt, setFilt] = useState('');
-    const userData = useSelector(state => state.userData.data);
+    const selectorData = useSelector(state => state.userData.data);
+    const [userData, setUserData] = useState(selectorData);
 
     const handleChange = (e) => {
         setFilt(e.target.value);
@@ -58,12 +59,14 @@ const RequestsTable = () => {
     }
 
     useEffect(()=>{
-
         setLoading(true);
-
+        setUserData(selectorData);
+        while(userData.accessToken.token!=null){
+            
+        }
         axios.get(`${config['path']}/admin/requests`,
         { headers: {
-            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'Authorization': `Bearer ${userData.accessToken.token}`,
             'email': JSON.parse(sessionStorage.getItem("info")).email,
         }}
         ).then(res=>{

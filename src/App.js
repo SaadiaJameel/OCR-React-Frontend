@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {createBrowserRouter, createRoutesFromElements, Route, RouterProvider , Outlet} from 'react-router-dom';
 import './App.css';
 import LoginPage from './Pages/LoginPage';
@@ -20,10 +20,43 @@ import UserDetails from './Components/AdminPortal/UserDetails';
 import UserProfile from './Components/UserProfile';
 import ImagesSearch from './Components/ImagesSearch';
 import ImageCropper from './Components/Crop/ImageCropper';
+import { useSelector, useDispatch } from 'react-redux';
+import { trySilentRefresh } from './utils/authUtils';
+import {setUserData } from './Reducers/userDataSlice';
 
 
 function App() {
+  const userData = useSelector(state => state.userData.data);
+  const dispatch = useDispatch();
 
+  const silentRefresh = () => {
+    trySilentRefresh().then(data => {
+      if(data){
+        dispatch(setUserData({
+          _id: data.ref._id,
+          username: data.ref.username,
+          email: data.ref.email,
+          roles: data.ref.role,
+          accessToken: data.accessToken,
+          reg_no: data.ref.reg_no
+        }));
+      }
+    })
+  }
+  useEffect(() => {
+    if (userData.accessToken.token == null){
+      silentRefresh();
+    }
+  }, [])
+  useEffect(() => {
+    if (localStorage.getItem('loggedOut')) {
+      setTimeout(() => {
+          localStorage.removeItem('loggedOut');
+      }, 1000);
+      silentRefresh();
+
+  }
+  });
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path='/' element={<Outlet/>}>
