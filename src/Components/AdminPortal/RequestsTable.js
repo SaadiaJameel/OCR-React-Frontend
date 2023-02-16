@@ -61,9 +61,6 @@ const RequestsTable = () => {
     useEffect(()=>{
         setLoading(true);
         setUserData(selectorData);
-        while(userData.accessToken.token!=null){
-            
-        }
         axios.get(`${config['path']}/admin/requests`,
         { headers: {
             'Authorization': `Bearer ${userData.accessToken.token}`,
