@@ -65,7 +65,7 @@ function MenuBar({roles,username}) {
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
-  const timeout = 1000 * 60 * 15;
+  const timeout = 1000 * 60 * 60 * 2;
   
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -106,6 +106,8 @@ function MenuBar({roles,username}) {
 			const res = await trySilentRefresh().then((data) => {
 				if (data) {
 					dispatch(setAccessToken(data.accessToken));
+          const object = {_id: data.ref._id,username: data.ref.username, email: data.ref.email, roles: data.ref.role, reg_no: data.ref.reg_no, atoken: data.accessToken.token }
+          sessionStorage.setItem("info",JSON.stringify(object))
 					return true;
 				}
 				return false;

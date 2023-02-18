@@ -43,11 +43,11 @@ function App() {
       }
     })
   }
-  useEffect(() => {
-    if (userData.accessToken.token == null){
-      silentRefresh();
-    }
-  }, [])
+  // useEffect(() => {
+  //   if (userData.accessToken.token == null){
+  //     silentRefresh();
+  //   }
+  // }, [])
   useEffect(() => {
     if (localStorage.getItem('loggedOut')) {
       setTimeout(() => {
