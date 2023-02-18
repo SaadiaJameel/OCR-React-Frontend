@@ -17,7 +17,7 @@ const ReviewersTable = () => {
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
     const [loading, setLoading] = useState(true);
     const [filt, setFilt] = useState('');
-    const userData = useSelector(state => state.userData.data);
+    const userData = useSelector(state => state.data);
 
     const handleChange = (e) => {
         setFilt(e.target.value);
@@ -63,7 +63,7 @@ const ReviewersTable = () => {
 
         axios.get(`${config['path']}/admin/reviewers`,
         { headers: {
-            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'Authorization': `Bearer ${userData.accessToken.token}`,
             'email': JSON.parse(sessionStorage.getItem("info")).email,
         }}
         ).then(res=>{

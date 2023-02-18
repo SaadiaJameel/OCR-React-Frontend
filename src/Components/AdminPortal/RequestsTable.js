@@ -17,7 +17,7 @@ const RequestsTable = () => {
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
     const [loading, setLoading] = useState(true);
     const [filt, setFilt] = useState('');
-    const selectorData = useSelector(state => state.userData.data);
+    const selectorData = useSelector(state => state.data);
     const [userData, setUserData] = useState(selectorData);
 
     const handleChange = (e) => {

@@ -5,7 +5,9 @@ import colors from './Components/ColorPalete';
 import './index.css';
 import App from './App';
 import { Provider } from 'react-redux';
-import store from './store';
+import { persistor, store } from './store';
+import { PersistGate } from 'redux-persist/integration/react';
+
 
 const theme = createTheme({
   palette: colors,
@@ -23,13 +25,16 @@ const theme = createTheme({
   },}
 });
 
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Provider store={store}>
-    <React.StrictMode>
-      <ThemeProvider theme={theme}>
-        <App />
-      </ThemeProvider>
-  </React.StrictMode>
+    <PersistGate loading={null} persistor={persistor}>
+      <React.StrictMode>
+        <ThemeProvider theme={theme}>
+          <App />
+        </ThemeProvider>
+    </React.StrictMode>
+    </PersistGate>
   </Provider>
 );

@@ -26,7 +26,7 @@ import {setUserData } from './Reducers/userDataSlice';
 
 
 function App() {
-  const userData = useSelector(state => state.userData.data);
+  const userData = useSelector(state => state.data);
   const dispatch = useDispatch();
 
   const silentRefresh = () => {
