@@ -63,7 +63,7 @@ const RequestsTable = () => {
         setUserData(selectorData);
         axios.get(`${config['path']}/admin/requests`,
         { headers: {
-            'Authorization': `Bearer ${userData.accessToken.token}`,
+            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
             'email': JSON.parse(sessionStorage.getItem("info")).email,
         }}
         ).then(res=>{
