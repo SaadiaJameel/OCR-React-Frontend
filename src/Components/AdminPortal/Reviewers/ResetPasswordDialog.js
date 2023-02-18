@@ -2,10 +2,10 @@ import React, {useState} from 'react';
 import {DialogTitle, Dialog, Button, DialogContent,DialogActions, } from '@mui/material';
 import { FormControl, InputLabel, InputAdornment, IconButton, OutlinedInput, Typography } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { PasswordStrengthIndicator, passwordStrength } from '../utils';
+import { PasswordStrengthIndicator, passwordStrength } from '../../utils';
 import LoadingButton from '@mui/lab/LoadingButton';
-import NotificationBar from '../NotificationBar';
-import config from '../../config.json';
+import NotificationBar from '../../NotificationBar';
+import config from '../../../config.json';
 import axios from 'axios';
 import { useSelector} from 'react-redux';
 

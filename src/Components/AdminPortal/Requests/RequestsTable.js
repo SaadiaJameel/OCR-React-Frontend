@@ -2,52 +2,49 @@ import React, { useState, useEffect} from 'react';
 import {Box, LinearProgress} from '@mui/material';
 import {TextField, InputAdornment, Skeleton} from '@mui/material';
 import {Avatar, Typography, Stack} from '@mui/material';
-import config from '../../config.json'
+import config from '../../../config.json'
 import axios from 'axios';
-import NotificationBar from '../NotificationBar';
-import { stringAvatar} from '../utils';
+import NotificationBar from '../../NotificationBar';
+import { stringAvatar} from '../../utils';
 import { DataGrid } from '@mui/x-data-grid';
 import { OpenInNew, Search } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { useSelector} from 'react-redux';
 
-const ReviewersTable = () => {
+const RequestsTable = () => {
 
     const [request, setRequests] = useState([]);
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
     const [loading, setLoading] = useState(true);
     const [filt, setFilt] = useState('');
-    const userData = useSelector(state => state.userData.data);
+    const selectorData = useSelector(state => state.userData.data);
+    const [userData, setUserData] = useState(selectorData);
 
     const handleChange = (e) => {
         setFilt(e.target.value);
     };
 
-    const showMsg = (msg, severity)=>{
-        setStatus({msg, severity, open:true})
-    }
-
     const columns = [
         {
-            field: "reg_no",
-            headerName: "Reviewers",
-            sortable: false,
-            disableColumnMenu: true,
-            align: "center",
-            renderCell: ({ row }) =>
-              <Link to={`/adminportal/reviewers/${row._id}`}>
-                  <OpenInNew fontSize='small'/>
-              </Link>
+          field: "reg_no",
+          headerName: " ",
+          sortable: false,
+          disableColumnMenu: true,
+          align: "center",
+          renderCell: ({ row }) =>
+            <Link to={`/adminportal/requests/${row._id}`}>
+                    <OpenInNew fontSize='small'/>
+            </Link>
         },
         {
           field: 'username',
-          headerName: ' ',
+          headerName: 'Requests',
           sortable: false,
           flex: 1,
           disableColumnMenu: true,
           renderCell: ({row}) =>(
               <Stack direction='row' spacing={2} alignItems='center'>
-                  <Avatar {...stringAvatar(row.username)} variant='rounded' />
+                  <Avatar {...stringAvatar(row.username)} variant='rounded'/>
                     <Stack direction='column'>
                         <Typography>{row.username}</Typography>
                         <Typography color='GrayText'>{row.reg_no}</Typography>
@@ -57,17 +54,20 @@ const ReviewersTable = () => {
         }
     ];
 
+    const showMsg = (msg, severity)=>{
+        setStatus({msg, severity, open:true})
+    }
+
     useEffect(()=>{
-
         setLoading(true);
-
-        axios.get(`${config['path']}/admin/reviewers`,
+        setUserData(selectorData);
+        axios.get(`${config['path']}/admin/requests`,
         { headers: {
-            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'Authorization': `Bearer ${userData.accessToken.token}`,
             'email': JSON.parse(sessionStorage.getItem("info")).email,
         }}
         ).then(res=>{
-            setRequests(res.data)
+            setRequests(res.data);
             setLoading(false);
         }).catch(err=>{
             if(err.response) showMsg(err.response.data.message, "error")
@@ -113,7 +113,7 @@ const ReviewersTable = () => {
                 components={{
                     NoRowsOverlay: () => (
                       <Stack height="100%" alignItems="center" justifyContent="center">
-                        No Reviewers
+                        No new requests
                       </Stack>
                     ),
                     NoResultsOverlay: () => (
@@ -132,4 +132,4 @@ const ReviewersTable = () => {
     );
 };;
 
-export default ReviewersTable;
+export default RequestsTable;

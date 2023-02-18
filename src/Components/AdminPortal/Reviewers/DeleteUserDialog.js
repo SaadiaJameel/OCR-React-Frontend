@@ -3,11 +3,11 @@ import Button from '@mui/material/Button';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import { DialogContent,DialogActions, TextField, Typography } from '@mui/material';
-import config from '../../config.json';
+import config from '../../../config.json';
 import axios from 'axios';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useNavigate } from 'react-router-dom';
-import NotificationBar from '../NotificationBar';
+import NotificationBar from '../../NotificationBar';
 import { useSelector} from 'react-redux';
 
 export default function DeleteUserDialog({user}) {
