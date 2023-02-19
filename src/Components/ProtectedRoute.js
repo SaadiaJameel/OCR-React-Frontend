@@ -11,7 +11,7 @@ const ProtectedRoute = ({allowed, children}) => {
     const info = JSON.parse(sessionStorage.getItem("info"))
     const roles = info? info["roles"]: []
     const user = info? info["username"]: null
-    const userData = useSelector(state => state.userData.data);
+    const userData = useSelector(state => state.data);
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState(true);
 

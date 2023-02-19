@@ -61,7 +61,7 @@ function MenuBar({roles,username}) {
   const open = Boolean(anchorElUser);
   const open2 = Boolean(anchorElNav);
 
-  const userData = useSelector(state => state.userData.data);
+  const userData = useSelector(state => state.data);
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
