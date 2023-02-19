@@ -16,7 +16,7 @@ export default function AddHospital({setData}) {
   const [open, setOpen] = useState(false);
   const [state, setState] = useState(0);
   const [status, setStatus] = useState({msg:"",severity:"success", open:false});
-  const selectorData = useSelector(state => state.userData.data);
+  const selectorData = useSelector(state => state.data);
   const [userData, setUserData] = useState(selectorData);
   const hospitalRef = useRef();
   const hospitalDetailsRef = useRef();
