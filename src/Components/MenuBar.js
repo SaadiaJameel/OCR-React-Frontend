@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import{ AppBar, Menu,Container,Avatar,MenuItem, Divider} from '@mui/material';
-import{ Box,Toolbar,IconButton,Typography, Button} from '@mui/material';
+import{ Box,Toolbar,IconButton,Typography, Button, Switch, Badge} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
 import logo from '../Assets/logo.svg';
@@ -11,6 +11,19 @@ import { useSelector, useDispatch } from 'react-redux';
 import { trySilentRefresh } from '../utils/authUtils';
 import {setAccessToken } from '../Reducers/userDataSlice';
 import { AccountBox, LogoutOutlined} from '@mui/icons-material';
+import { styled } from '@mui/material/styles';
+import colors from './ColorPalete';
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    boxShadow: `0 0 0 2px ${colors.primary.main}`,
+  },
+  "& .MuiBadge-dot": {
+    height: 8,
+    minWidth: 8,
+    borderRadius: 10
+  }
+}));
 
 function stringToColor(string) {
   let i, hash = 0;
@@ -52,10 +65,10 @@ const displayRole = (role)=>{
         roleName = ""
     }
 
-    return <Typography fontSize='small' color='GrayText'>{roleName}</Typography>;
+    return <Typography color='GrayText'>{roleName}</Typography>;
 }
 
-function MenuBar({roles,username}) {
+function MenuBar({roles,username, availability}) {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const open = Boolean(anchorElUser);
@@ -201,7 +214,14 @@ function MenuBar({roles,username}) {
             color="inherit"
           >
             <Typography sx={{ m: 1, textTransform: 'none'}}>{username}</Typography>
-            <Avatar {...stringAvatar(username)}/>
+            { roles.includes(2)?
+              <StyledBadge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot" color={availability?'success':'error'}>
+                <Avatar {...stringAvatar(username)}/>
+              </StyledBadge>
+              :
+              <Avatar {...stringAvatar(username)}/>
+            }
+
           </Button>
       </Box>
       <Menu
@@ -239,9 +259,12 @@ function MenuBar({roles,username}) {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <Box sx={{mx:3}}>
-          <Typography>{username}</Typography>
+        <Box sx={{mx:3, my:1}}>
+          <Typography><strong>{username}</strong></Typography>
           {displayRole(roles)}
+        </Box>
+        <Box sx={{mx:3, my:1}}>
+          <Typography color='GrayText'>Status: </Typography>
         </Box>
         <Divider sx={{my:1}}/>
         <MenuItem sx={{width:'200px'}}>
