@@ -6,17 +6,18 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { PersonAdd } from '@mui/icons-material';
 import axios from 'axios';
 import config from '../../../config.json';
-import { useNavigate } from 'react-router-dom';
 import NotificationBar from '../../NotificationBar';
 import LoadingButton from '@mui/lab/LoadingButton';
+import { useSelector} from 'react-redux';
 
-export default function AddHospital() {
+export default function AddHospital({setData}) {
   const [open, setOpen] = useState(false);
   const [state, setState] = useState(0);
-  const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
+  const [status, setStatus] = useState({msg:"",severity:"success", open:false});
+  const selectorData = useSelector(state => state.userData.data);
+  const [userData, setUserData] = useState(selectorData);
   const hospitalRef = useRef();
   const hospitalDetailsRef = useRef();
 
@@ -33,30 +34,50 @@ export default function AddHospital() {
     setStatus({msg, severity, open:true})
   };
 
+  const fetchData = ()=>{
+    axios.get(`${config['path']}/user/hospitals`,
+        { headers: {
+            'Authorization': `Bearer ${userData.accessToken.token}`,
+            'email': JSON.parse(sessionStorage.getItem("info")).email,
+        }}
+        ).then(res=>{
+            setData(res.data);
+        }).catch(err=>{
+            if(err.response) showMsg(err.response.data.message, "error")
+            else alert(err)
+            
+        })
+  }
+
   const handleCreateHospital = () =>{
 
-    const hospitalName = hospitalRef.current.value ;
-    if(hospitalName === "") {
+    const name = hospitalRef.current.value ;
+    const details = hospitalDetailsRef.current.value ;
+    if(name === "") {
       handleClose()
       return;
     };
 
-    // axios.post(`${config['path']}/user/patient/add`,
-    //     {
-    //       hospitalName
-    //     },
-    //     { headers: {
-    //         'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
-    //         'email': JSON.parse(sessionStorage.getItem("info")).email,
-    //     }}
-    //     ).then(res=>{
-    //         showMsg(res.data.message, "success");
-    //         navigate(`/manage/patients/${res.data._id}`);
-    //     }).catch(err=>{
-    //         if(err.response) showMsg(err.response.data.message, "error")
-    //         else alert(err)
-    //         setState(0);
-    //     })
+    setState(1);
+    axios.post(`${config['path']}/admin/hospital`,
+        {
+          name, details
+
+        },
+        { headers: {
+            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'email': JSON.parse(sessionStorage.getItem("info")).email,
+        }}
+        ).then(res=>{
+            showMsg(res.data.message, "success");
+            fetchData();
+            handleClose();
+        }).catch(err=>{
+            if(err.response) showMsg(err.response.data.message, "error")
+            else alert(err)
+        }).finally(()=>{
+            setState(0);
+        })
   }
 
   return (
@@ -87,8 +108,8 @@ export default function AddHospital() {
           />
         </DialogContent>
         <DialogActions>
-            <Button onClick={handleClose} variant='outlined'>Cancle</Button>
-            <LoadingButton onClick={handleCreateHospital} loading={state ===1} variant="contained" disabled={state!==0}>Create</LoadingButton>
+            <Button onClick={handleClose} variant='outlined' disabled={state!=0}>Cancle</Button>
+            <LoadingButton onClick={handleCreateHospital} loading={state === 1} variant="contained" disabled={state!==0}>Create</LoadingButton>
         </DialogActions>
     </Dialog>
     <NotificationBar status={status} setStatus={setStatus}/>

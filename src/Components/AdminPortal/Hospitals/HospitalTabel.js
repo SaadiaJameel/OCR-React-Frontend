@@ -11,7 +11,7 @@ import DeleteHospital from './DeleteHospital';
 
 const HospitalTable = () => {
 
-    const [request, setRequests] = useState([]);
+    const [data, setData] = useState([]);
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
     const [loading, setLoading] = useState(true);
     const selectorData = useSelector(state => state.userData.data);
@@ -19,32 +19,33 @@ const HospitalTable = () => {
 
     const columns = [
         {
-          field: 'username',
+          field: 'name',
           headerName: 'Hospitals',
           sortable: false,
+          flex: 1,
           disableColumnMenu: true,
           renderCell: ({row}) =>(
-                <Typography>{row.username}</Typography>    
+                <Typography>{row.name}</Typography>    
           )
         },
         {
-            field: '_id',
-            headerName: ' ',
+            field: 'details',
+            headerName: '',
             sortable: false,
             flex: 1,
             disableColumnMenu: true,
             renderCell: ({row}) =>(
-               <Typography color='GrayText'>{row.reg_no}</Typography>
+               <Typography color='GrayText'>{row.details}</Typography>
             )
         },
         {
-            field: "reg_no",
+            field: "_id",
             headerName: " ",
             sortable: false,
             disableColumnMenu: true,
             align: "right",
             renderCell: ({ row }) =>
-                <DeleteHospital name={row.username}/>
+                <DeleteHospital data={row}/>
           }
     ];
 
@@ -55,13 +56,13 @@ const HospitalTable = () => {
     useEffect(()=>{
         setLoading(true);
         setUserData(selectorData);
-        axios.get(`${config['path']}/admin/requests`,
+        axios.get(`${config['path']}/user/hospitals`,
         { headers: {
             'Authorization': `Bearer ${userData.accessToken.token}`,
             'email': JSON.parse(sessionStorage.getItem("info")).email,
         }}
         ).then(res=>{
-            setRequests(res.data);
+            setData(res.data);
             setLoading(false);
         }).catch(err=>{
             if(err.response) showMsg(err.response.data.message, "error")
@@ -74,10 +75,10 @@ const HospitalTable = () => {
     return (
         <>        
         <Box sx={{display:'flex', justifyContent:'flex-end'}}>
-            <AddHospital/>
+            <AddHospital setData={setData}/>
         </Box>
         <DataGrid
-                rows={request}
+                rows={data}
                 columns={columns}
                 pageSize={25}
                 autoHeight={true}
@@ -95,7 +96,7 @@ const HospitalTable = () => {
                 components={{
                     NoRowsOverlay: () => (
                       <Stack height="100%" alignItems="center" justifyContent="center">
-                        No new requests
+                        No new datas
                       </Stack>
                     ),
                     NoResultsOverlay: () => (

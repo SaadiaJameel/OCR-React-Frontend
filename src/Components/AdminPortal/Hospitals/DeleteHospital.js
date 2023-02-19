@@ -11,7 +11,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { IconButton, TextField } from '@mui/material';
 import { Delete } from '@mui/icons-material';
 
-export default function DeleteHospital({name}){
+export default function DeleteHospital({data}){
   const [state, setState] = useState(0);
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
@@ -43,7 +43,7 @@ export default function DeleteHospital({name}){
             Are You sure you want to delete Hospital entry?
           </DialogContentText>
           <DialogContentText>
-            Enter hospital name <strong>{name}</strong> to confirm.
+            Enter hospital name <strong>{data.name}</strong> to confirm.
           </DialogContentText>
           <TextField
             inputRef={hospitalRef}
