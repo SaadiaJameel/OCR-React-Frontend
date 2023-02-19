@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Box, Button, Stack} from '@mui/material';
 import { NavLink, Outlet } from 'react-router-dom';
-import { AccountBox, Email } from '@mui/icons-material';
+import { AccountBox, Email, LocalHospital } from '@mui/icons-material';
 
 
 const AdminPage = () => {
@@ -26,6 +26,14 @@ const AdminPage = () => {
               background: isActive ? '#f5f5f5' : '#fff',
             })}>
             Reviewers
+          </Button>     
+          <Button component={NavLink} to="/adminportal/hospitals" startIcon={<LocalHospital/>} 
+          sx={{ my: 2, display: 'flex', justifyContent: "flex-start", m:0}}
+          style={({ isActive }) => ({
+              color: isActive ? '#000' : '#000',
+              background: isActive ? '#f5f5f5' : '#fff',
+            })}>
+            Hospitals
           </Button>     
         </Stack>
       </div>
