@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState} from 'react';
 import { Box, Stack, Avatar, Typography, TextField, Skeleton,
-       Grid, Paper, Badge, Switch, Select, MenuItem, FormControl, InputLabel} from '@mui/material';
+       Grid, Paper, Badge, Select, MenuItem, FormControl, InputLabel} from '@mui/material';
 import { stringAvatar } from './utils';
 import config from '../config.json'
 import axios from 'axios';
@@ -26,6 +26,8 @@ const UserProfile = () => {
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(true);
+    const [hospital, setHospital] = useState("");
+    const [hospitalList, setHospitalList] = useState([]);
     const [availability, setAvailability] = useState(data.availability);
     const [state, setState] = useState(0);
     const formRef = useRef();
@@ -33,9 +35,28 @@ const UserProfile = () => {
 
     useEffect(()=>{
         
-        const _id = JSON.parse(sessionStorage.getItem("info"))._id
-
         setLoading(true);
+        axios.get(`${config['path']}/user/hospitals`,
+        { headers: {
+            'Authorization': `Bearer ${JSON.parse(sessionStorage.getItem("info")).atoken}`,
+            'email': JSON.parse(sessionStorage.getItem("info")).email,
+        },
+            withCredentials: true
+        }
+        ).then(res=>{
+            setHospitalList(res.data);
+            console.log(res.data);
+            fetchData();
+        }).catch(err=>{
+            if(err.response) showMsg(err.response.data.message, "error")
+            else alert(err)
+        })
+        
+
+    },[])
+
+    const fetchData = ()=>{
+        const _id = JSON.parse(sessionStorage.getItem("info"))._id
 
         axios.get(`${config['path']}/admin/users/${_id}`,
         { headers: {
@@ -51,21 +72,22 @@ const UserProfile = () => {
             if(err.response) showMsg(err.response.data.message, "error")
             else alert(err)
         })
-
-    },[])
+    }
 
     const handleUpdate = ()=>{
 
         const formData = new FormData(formRef.current);
         const username = formData.get('username');
+        const contact_no = formData.get('contact_number');
+        const designation = formData.get('designation');
       
         if(username ==="" || username.length <5){
             showMsg("Username should inlclude minimum 5 characters", "error");
             return;
         }
 
-        const toBeSend = {username};
-        if(data.role.contains(2)){
+        const toBeSend = {username, designation, hospital, contact_no};
+        if(data.role.includes(2)){
             toBeSend["availability"] = availability;
         }
 
@@ -123,6 +145,7 @@ const UserProfile = () => {
                             }
                             <Typography variant='h6'>{data.username}</Typography>
                             <Typography color='GrayText'>{data.reg_no}</Typography>
+                            <Typography color='GrayText'>{data.role[0]===1?"Admin":data.role[0]===1?"Reviewer":"Clinicain"}</Typography>
                         </Stack>
             
                         </Paper>
@@ -145,15 +168,26 @@ const UserProfile = () => {
                         { data.role.includes(2) &&
                             <FormControl>
                                 <InputLabel id="Status">Status</InputLabel>
-                                <Select fullWidth size='small'  value={availability? true: false} labelId="Status" label="Status" onChange={(e)=>setAvailability(e.target.value)} sx={{backgroundColor: "white", mb:1}}>
+                                <Select fullWidth size='small'  value={availability? true: false} labelId="Status" label="Status" onChange={(e)=>setAvailability(e.target.value)} sx={{mb:1}}>
                                 <MenuItem value={true}>Available</MenuItem>
                                 <MenuItem value={false}>Unavailable</MenuItem>
                             </Select>
                             </FormControl>
                         }
+                        <TextField defaultValue={data.designation} name='designation' size='small' label='Designation'/>
+                        <FormControl size='small'>
+                            <InputLabel id="hospital">Hospital</InputLabel>
+                            <Select fullWidth size='small'  value={hospital} labelId="hospital" label="Hospital" onChange={(e)=>setHospital(e.target.value)} sx={{ mb:1}}>
+                                {
+                                    hospitalList.map((place, index) => {
+                                        return(<MenuItem  key={index} value={place.name}>{place.name}</MenuItem>)
+                                    })
+                                }
+                            </Select>
+                        </FormControl>
+                        <TextField defaultValue={data.contact_no} name='contact_number' size='small' label='Contact Number'/>
                         <TextField  value={data.email} name='email' size='small' disabled label='Email'/>
-                        <TextField value={data.reg_no} name='reg_no' size='small' disabled label='Reg No'/>
-                        <TextField value={data.role[0]===1?"Admin":data.role[0]===1?"Reviewer":"Clinicain"} name='role' size='small' disabled label='Role'/>
+                        <TextField value={data.reg_no} name='reg_no' size='small' disabled label='SLMC Registration Number'/>
                         <TextField value={data.createdAt} name='created_at' size='small' disabled label='Created At'/>
                         <TextField value={data.updatedAt} name='updated_at' size='small' disabled label='Updated At'/>
                     </Stack>
