@@ -1,57 +1,52 @@
 import React, { useState, useEffect} from 'react';
 import {Box, LinearProgress} from '@mui/material';
-import {TextField, InputAdornment, Skeleton} from '@mui/material';
-import {Avatar, Typography, Stack} from '@mui/material';
-import config from '../../config.json'
+import {Typography, Stack} from '@mui/material';
+import config from '../../../config.json'
 import axios from 'axios';
-import NotificationBar from '../NotificationBar';
-import { stringAvatar} from '../utils';
+import NotificationBar from '../../NotificationBar';
 import { DataGrid } from '@mui/x-data-grid';
-import { OpenInNew, Search } from '@mui/icons-material';
-import { Link } from 'react-router-dom';
 import { useSelector} from 'react-redux';
+import AddHospital from './AddHospital';
+import DeleteHospital from './DeleteHospital';
 
-const RequestsTable = () => {
+const HospitalTable = () => {
 
-    const [request, setRequests] = useState([]);
+    const [data, setData] = useState([]);
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
     const [loading, setLoading] = useState(true);
-    const [filt, setFilt] = useState('');
     const selectorData = useSelector(state => state.data);
     const [userData, setUserData] = useState(selectorData);
 
-    const handleChange = (e) => {
-        setFilt(e.target.value);
-    };
-
     const columns = [
         {
-          field: "reg_no",
-          headerName: " ",
-          sortable: false,
-          disableColumnMenu: true,
-          align: "center",
-          renderCell: ({ row }) =>
-            <Link to={`/adminportal/requests/${row._id}`}>
-                    <OpenInNew fontSize='small'/>
-            </Link>
-        },
-        {
-          field: 'username',
-          headerName: 'Requests',
+          field: 'name',
+          headerName: 'Hospitals',
           sortable: false,
           flex: 1,
           disableColumnMenu: true,
           renderCell: ({row}) =>(
-              <Stack direction='row' spacing={2} alignItems='center'>
-                  <Avatar {...stringAvatar(row.username)} variant='rounded'/>
-                    <Stack direction='column'>
-                        <Typography>{row.username}</Typography>
-                        <Typography color='GrayText'>{row.reg_no}</Typography>
-                    </Stack>
-              </Stack>
+                <Typography>{row.name}</Typography>    
           )
-        }
+        },
+        {
+            field: 'details',
+            headerName: '',
+            sortable: false,
+            flex: 1,
+            disableColumnMenu: true,
+            renderCell: ({row}) =>(
+               <Typography color='GrayText'>{row.details}</Typography>
+            )
+        },
+        {
+            field: "_id",
+            headerName: " ",
+            sortable: false,
+            disableColumnMenu: true,
+            align: "right",
+            renderCell: ({ row }) =>
+                <DeleteHospital data={row}/>
+          }
     ];
 
     const showMsg = (msg, severity)=>{
@@ -61,13 +56,13 @@ const RequestsTable = () => {
     useEffect(()=>{
         setLoading(true);
         setUserData(selectorData);
-        axios.get(`${config['path']}/admin/requests`,
+        axios.get(`${config['path']}/user/hospitals`,
         { headers: {
-            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'Authorization': `Bearer ${userData.accessToken.token}`,
             'email': JSON.parse(sessionStorage.getItem("info")).email,
         }}
         ).then(res=>{
-            setRequests(res.data);
+            setData(res.data);
             setLoading(false);
         }).catch(err=>{
             if(err.response) showMsg(err.response.data.message, "error")
@@ -80,32 +75,20 @@ const RequestsTable = () => {
     return (
         <>        
         <Box sx={{display:'flex', justifyContent:'flex-end'}}>
-            <TextField  onChange={(e)=>handleChange(e)} variant="standard" placeholder='Search by username'
-                inputProps={{ maxLength: 20}}
-                InputProps={{
-                startAdornment: (
-                    <InputAdornment position="start">
-                        <Search fontSize='small'/>
-                    </InputAdornment>
-                )
-                }}
-            />
+            <AddHospital setData={setData}/>
         </Box>
         <DataGrid
-                rows={request}
+                rows={data}
                 columns={columns}
-                pageSize={5}
+                pageSize={25}
                 autoHeight={true}
                 disableSelectionOnClick
-                rowsPerPageOptions={[5]}
+                rowsPerPageOptions={[25]}
                 experimentalFeatures={{ newEditingApi: true }}
                 getRowId={(row) =>  row._id}
 
                 loading={loading}   // you need to set your boolean loading
-                filterModel={{
-                    items: [{ columnField: 'username', operatorValue: 'contains', value: filt }]
-                }}
-
+        
                 sx={{
                     "&.MuiDataGrid-root .MuiDataGrid-cell:focus-within": {outline: "none !important"},
                     ".MuiDataGrid-columnSeparator": {display: "none !important"},
@@ -113,7 +96,7 @@ const RequestsTable = () => {
                 components={{
                     NoRowsOverlay: () => (
                       <Stack height="100%" alignItems="center" justifyContent="center">
-                        No new requests
+                        No new datas
                       </Stack>
                     ),
                     NoResultsOverlay: () => (
@@ -132,4 +115,4 @@ const RequestsTable = () => {
     );
 };;
 
-export default RequestsTable;
+export default HospitalTable;

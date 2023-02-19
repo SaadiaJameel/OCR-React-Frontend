@@ -8,21 +8,22 @@ import Canvas from './Components/Annotation/Canvas';
 import PatientsPage from './Components/Patients/PatientsPage';
 import ImagesPage from './Pages/ImagesPage';
 import AdminPage from './Pages/AdminPage';
-import Requests from './Components/AdminPortal/Requests';
-import Reviewers from './Components/AdminPortal/Reviewers';
+import Requests from './Components/AdminPortal/Requests/Requests';
+import Reviewers from './Components/AdminPortal/Reviewers/Reviewers';
 import Manage from './Pages/Manage';
 import PatientsTable from './Components/Patients/PatientsTable';
 import PatientDetails from './Components/Patients/PatientDetails';
-import RequestsTable from './Components/AdminPortal/RequestsTable';
-import RequestDetails from './Components/AdminPortal/RequestDetails';
-import ReviewersTable from './Components/AdminPortal/ReviewersTable';
-import UserDetails from './Components/AdminPortal/UserDetails';
+import RequestsTable from './Components/AdminPortal/Requests/RequestsTable';
+import RequestDetails from './Components/AdminPortal/Requests/RequestDetails';
+import ReviewersTable from './Components/AdminPortal/Reviewers/ReviewersTable';
+import UserDetails from './Components/AdminPortal/Reviewers/UserDetails';
 import UserProfile from './Components/UserProfile';
 import ImagesSearch from './Components/ImagesSearch';
 import ImageCropper from './Components/Crop/ImageCropper';
 import { useSelector, useDispatch } from 'react-redux';
 import { trySilentRefresh } from './utils/authUtils';
 import {setUserData } from './Reducers/userDataSlice';
+import Hospitals from './Components/AdminPortal/Hospitals/Hospitals';
 
 
 function App() {
@@ -75,6 +76,8 @@ function App() {
               <Route index element={<ReviewersTable/>}/>
               <Route path='/adminportal/reviewers/:id' element={<UserDetails/>}/>
             </Route>
+
+            <Route path='/adminportal/hospitals' element={<Hospitals/>} ></Route>
         </Route>
 
         <Route path='/manage' element={<ProtectedRoute allowed={[1,2]}><Manage/></ProtectedRoute>}>
