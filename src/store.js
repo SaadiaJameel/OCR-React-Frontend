@@ -1,5 +1,5 @@
 import userDataSlice from './Reducers/userDataSlice';
-import storage from 'redux-persist/lib/storage';
+import storageSession from 'reduxjs-toolkit-persist/lib/storage/session'
 import { persistReducer, persistStore } from 'redux-persist';
 import thunk from 'redux-thunk';
 
@@ -8,9 +8,8 @@ import { configureStore } from "@reduxjs/toolkit";
 
 const persistConfig = {
   key: 'root',
-  storage,
-};
-
+  storage: storageSession,
+}
 const persistedReducer = persistReducer(persistConfig, userDataSlice)
 
 export const store = configureStore({
