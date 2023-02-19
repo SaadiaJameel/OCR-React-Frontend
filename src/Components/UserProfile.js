@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState} from 'react';
 import { Box, Stack, Avatar, Typography, TextField, Skeleton,
-       Grid, Paper} from '@mui/material';
+       Grid, Paper, Badge, Switch, Select, MenuItem, FormControl, InputLabel} from '@mui/material';
 import { stringAvatar } from './utils';
 import config from '../config.json'
 import axios from 'axios';
@@ -8,15 +8,28 @@ import NotificationBar from './NotificationBar';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useSelector} from 'react-redux';
 import ChangePasswordDialog from './ChangePasswordDialog';
+import { styled } from '@mui/material/styles';
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    boxShadow: `0 0 0 5px ${theme.palette.background.paper}`,
+  },
+  "& .MuiBadge-dot": {
+    height: 10,
+    minWidth: 10,
+    borderRadius: 10
+  }
+}));
 
 const UserProfile = () => {
 
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(true);
+    const [availability, setAvailability] = useState(data.availability);
     const [state, setState] = useState(0);
     const formRef = useRef();
-    const userData = useSelector(state => state.userData.data);
+    const userData = useSelector(state => state.data);
 
     useEffect(()=>{
         
@@ -51,12 +64,15 @@ const UserProfile = () => {
             return;
         }
 
+        const toBeSend = {username};
+        if(data.role.contains(2)){
+            toBeSend["availability"] = availability;
+        }
+
         setState(1);
 
         axios.post(`${config['path']}/auth/update`,
-        {
-          username: username,
-        },
+        toBeSend,
         { headers: {
             'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
             'email': JSON.parse(sessionStorage.getItem("info")).email,
@@ -89,7 +105,7 @@ const UserProfile = () => {
                 <Grid item xs={12} md={4}>
                 {loading?
                         <Paper sx={{p:3}}>
-                        <Stack direction='column' spacing={2} alignItems='center'>
+                        <Stack direction='column' spacing={1} alignItems='center'>
                             <Skeleton variant="circular" width={60} height={60} />
                             <Skeleton variant="text" width={210} sx={{ fontSize: '2rem' }} />
                             <Skeleton variant="text" width={210} />
@@ -97,8 +113,14 @@ const UserProfile = () => {
                         </Paper>
                     :
                         <Paper sx={{p:3, background:"#fbfbfb"}}>
-                       <Stack direction='column' spacing={2} alignItems='center'>
-                            <Avatar {...stringAvatar(data.username, 60)}/>
+                       <Stack direction='column' spacing={1} alignItems='center'>
+                            {data.role.includes(2)?
+                                <StyledBadge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot" color={data.availability?'success':'error'}>
+                                <Avatar {...stringAvatar(data.username, 60)}/>
+                                </StyledBadge>
+                            :
+                                <Avatar {...stringAvatar(data.username, 60)}/>
+                            }
                             <Typography variant='h6'>{data.username}</Typography>
                             <Typography color='GrayText'>{data.reg_no}</Typography>
                         </Stack>
@@ -120,8 +142,17 @@ const UserProfile = () => {
 
                     <Stack direction='column' spacing={3}>
                         <TextField defaultValue={data.username} name='username' size='small' label='User name'/>
+                        { data.role.includes(2) &&
+                            <FormControl>
+                                <InputLabel id="Status">Status</InputLabel>
+                                <Select fullWidth size='small'  value={availability? true: false} labelId="Status" label="Status" onChange={(e)=>setAvailability(e.target.value)} sx={{backgroundColor: "white", mb:1}}>
+                                <MenuItem value={true}>Available</MenuItem>
+                                <MenuItem value={false}>Unavailable</MenuItem>
+                            </Select>
+                            </FormControl>
+                        }
                         <TextField  value={data.email} name='email' size='small' disabled label='Email'/>
-                        <TextField value={data.reg_no} name='reg_no' size='small' disabled label='Reg NO'/>
+                        <TextField value={data.reg_no} name='reg_no' size='small' disabled label='Reg No'/>
                         <TextField value={data.role[0]===1?"Admin":data.role[0]===1?"Reviewer":"Clinicain"} name='role' size='small' disabled label='Role'/>
                         <TextField value={data.createdAt} name='created_at' size='small' disabled label='Created At'/>
                         <TextField value={data.updatedAt} name='updated_at' size='small' disabled label='Updated At'/>
