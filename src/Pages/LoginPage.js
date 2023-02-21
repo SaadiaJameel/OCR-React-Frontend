@@ -11,7 +11,14 @@ import { useNavigate } from "react-router-dom";
 import NotificationBar from '../Components/NotificationBar';
 import { useDispatch } from 'react-redux';
 import { setUserData } from '../Reducers/userDataSlice';
+import Dropdown from 'react-dropdown';
+import Select from "react-dropdown-select";
+import 'react-dropdown/style.css';
+import './style.css';
+import MuiPhoneNumber from 'material-ui-phone-number';
 
+
+var hospital = null;
 
 const LoginPage =()=>{
 
@@ -22,11 +29,32 @@ const LoginPage =()=>{
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
 
+    const options = [];
+
+    axios.get(`${config['path']}/user/hospitals`).then(resp =>{
+        for(let i = 0; i < resp.data.length; i++){
+            options[i] = resp.data[i]['name']
+        }
+    }).catch(function (error) {
+        if(error.response){
+            showMsg(error.response.data.message, "error")
+        }else{
+            alert(error)
+        }
+    });
+ 
     const navigate = useNavigate();
     
     const showMsg = (msg, severity)=>{
         setStatus({msg, severity, open:true})
     }
+    
+    const [value,setValue]=useState('');
+    const handleSelect=(e)=>{
+        hospital = e.value;
+        setValue(e);
+    }
+    
 
     const dispatch = useDispatch();
     const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -40,7 +68,6 @@ const LoginPage =()=>{
     const toggleSignin = ()=>{
         setSignup(!singup);
     }
-
 
     const handleSignInSubmit = (event) => {
         event.preventDefault();
@@ -95,10 +122,28 @@ const LoginPage =()=>{
         
         if(data.get('signup email')==="" || data.get('regNo')==="" 
         || data.get('signup password')==="" || data.get('confirm password')===""
-        || data.get('username')===""){
+        || data.get('username')==="" || data.get('telephoneNo').length <= 4){
             showMsg("Cannot leave required fields empty","error")
             return
         }
+
+        if(hospital == null){
+            showMsg("Select a hospital (again)","error")
+            return
+        }
+
+
+        if(!/\S+@\S+\.\S+/.test(data.get("signup email"))){
+            showMsg("Invalid email address","error")
+            return
+        }
+       
+
+        if(data.get("username").length < 5){
+            showMsg("Username too short","error")
+            return
+        }
+
         if(data.get("signup password").length < 8){
             showMsg("Password should contain atleast 8 charactors","error")
             return
@@ -107,13 +152,17 @@ const LoginPage =()=>{
             showMsg("Passwords doesn't match", 'error')
             return
         }
+    
+        
 
         setLoading(true)
         axios.post(`${config['path']}/auth/signup`, {
                 username: data.get('username'),
                 email: data.get('signup email'),
                 reg_no: data.get('regNo'),
-                password: data.get('signup password')
+                password: data.get('signup password'),
+                hospital: hospital,
+                contact_no: data.get('telephoneNo')
             })
             .then(function (response) {
                 showMsg(response.data.message, "success")
@@ -146,6 +195,21 @@ const LoginPage =()=>{
                         <TextField margin="normal" size='small' inputProps={{ maxLength: 100}} required fullWidth id="email" label="Email Address" name="signup email" autoFocus/>
                         <TextField margin="normal" size='small' inputProps={{ maxLength: 100}} required fullWidth id="username" label="User Name" name="username"/>
                         <TextField margin="normal" size='small' inputProps={{ maxLength: 100}} required fullWidth id="regNo" label="Register No" name="regNo"/>
+                        <p></p>
+                        <div>
+                        <MuiPhoneNumber
+                            required
+                            name='telephoneNo'
+                            defaultCountry={'lk'}
+                            onChange={(c, t) => {
+                            return true;
+                            }}
+                        />
+                        <p></p>
+                        </div> 
+                        <Dropdown margin="normal" size='small' options={options} name='hospital' placeholder="Select a hospital *" onChange={handleSelect} required={true} />
+                        
+
                         <FormControl margin="normal" fullWidth  variant="outlined">
                         <InputLabel required size='small' htmlFor="signup password">Password</InputLabel>
                         <OutlinedInput required size='small' inputProps={{ maxLength: 100, autoComplete: 'new-password'}} id="signup password" type={showSignupPassword ? 'text' : 'password'} label="Password" name="signup password" autoComplete='false'
@@ -223,5 +287,6 @@ const LoginPage =()=>{
         </Grid>
     );
 }
+
 
 export default  LoginPage;
