@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState} from 'react';
 import { Link, useNavigate, useParams} from 'react-router-dom';
 import { ArrowBack } from '@mui/icons-material';
-import { Box, Stack, Avatar, Typography, TextField, FormControl, MenuItem, Select, InputLabel, Skeleton} from '@mui/material';
+import { Box, Stack, Avatar, Typography, TextField, FormControl, MenuItem, Select, InputLabel, Skeleton, Grid, Divider} from '@mui/material';
 import { stringAvatar } from '../../utils';
 import config from '../../../config.json'
 import axios from 'axios';
@@ -19,7 +19,7 @@ const RequestDetails = () => {
     const formRef = useRef();
     const { id } = useParams();
     const navigate = useNavigate();
-    const userData = useSelector(state => state.userData.data);
+    const userData = useSelector(state => state.data);
 
     const handleChange = (event) => {
         setRole(event.target.value);
@@ -133,31 +133,40 @@ const RequestDetails = () => {
             </Stack>
             <Box component="form" noValidate ref={formRef} sx={{ mt: 5 }}>
 
+            <Grid container sx={{my:3, p:2, background:'#fbfbfb', border: '1px solid lightgray', borderRadius:1}} rowSpacing={1}>
+                <Grid item sm={12} md={6}><Typography>Name: <strong>{data.username}</strong></Typography></Grid>
+                <Grid item sm={12} md={6}><Typography>SLMC Register Number: <strong>{data.reg_no}</strong></Typography></Grid>
+                <Grid item sm={12} md={6}><Typography>Email: <strong>{data.email}</strong></Typography></Grid>
+                <Grid item sm={12} md={6}><Typography>Contact No: <strong>{data.contact_no? data.contact_no.replace(/\s/g, ''):""}</strong></Typography></Grid>
+                <Grid item sm={12} md={6}><Typography>Hospital: <strong>{data.hospital}</strong></Typography></Grid>
+            </Grid>
+
+            <Divider sx={{my:5}}/>
+
             <Stack direction='column' spacing={3}>
                 <TextField defaultValue={data.username} name='username' size='small' label='User name' inputProps={{maxLength: 50}}/>
                 <FormControl fullWidth size='small'>
-                    <InputLabel id="demo-simple-select-label">Role</InputLabel>
+                    <InputLabel id="demo-simple-select-label" required >Role</InputLabel>
                     <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
                     value={role}
                     label="Role"
                     name='role'
+                    required
                     onChange={handleChange}
-                    sx={{background:'#fbfbfb'}}
+                    sx={{background:'#fbfbfb', color:'#d32f2f'}}
                     >
                     <MenuItem value={1}>Admin</MenuItem>
                     <MenuItem value={2}>Reviewer</MenuItem>
                     <MenuItem value={3}>Clinician</MenuItem>
                     </Select>
                 </FormControl>
-                <TextField  value={data.email} name='email' size='small' disabled label='Email'/>
-                <TextField value={data.reg_no} name='reg_no' size='small' disabled label='Reg no'/>
                 <TextField label="Reason (optional)" multiline maxRows={4} name='reason' size='small' inputProps={{maxLength: 200}} sx={{background:'#fbfbfb'}}/>
             </Stack>
             <Stack direction='row' spacing={2} sx={{my:3}}>
-                <LoadingButton size="small" onClick={handleAccept} loading={state=== 1} variant="contained" disabled={state!==0}>Accept</LoadingButton>
-                <LoadingButton size="small" onClick={handleReject} loading={state === 2} variant="outlined" disabled={state!==0}>Reject</LoadingButton>
+                <LoadingButton onClick={handleAccept} loading={state=== 1} variant="contained" disabled={state!==0}>Accept</LoadingButton>
+                <LoadingButton onClick={handleReject} loading={state === 2} variant="outlined" disabled={state!==0}>Reject</LoadingButton>
             </Stack>
             </Box>
             </>

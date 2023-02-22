@@ -263,9 +263,6 @@ function MenuBar({roles,username, availability}) {
           <Typography><strong>{username}</strong></Typography>
           {displayRole(roles)}
         </Box>
-        <Box sx={{mx:3, my:1}}>
-          <Typography color='GrayText'>Status: </Typography>
-        </Box>
         <Divider sx={{my:1}}/>
         <MenuItem sx={{width:'200px'}}>
           <AccountBox sx={{mx:1}}/><Typography onClick={GoToProfile}> Profile</Typography>
