@@ -1,41 +1,32 @@
 import * as React from 'react';
-import {Box, Button, Stack} from '@mui/material';
+import {Box, Button} from '@mui/material';
 import { NavLink, Outlet } from 'react-router-dom';
-import { AccountBox, Email, LocalHospital } from '@mui/icons-material';
+import { AccountBox, Email, LocalHospital} from '@mui/icons-material';
 
+const NavButton = ({path,startIcon,name}) => (
+  <Button
+    component={NavLink}
+    to={path}
+    startIcon={startIcon}
+    sx={{ my: 2, display: 'flex', justifyContent: "flex-start", m:0, minWidth:'fit-content' }}
+    style={({ isActive }) => ({
+      color: isActive ? '#000' : '#000',
+      background: isActive ? '#f5f5f5' : '#fff',
+    })}
+  >
+  {name}
+  </Button>
+)
 
 const AdminPage = () => {
 
   return (
     <div className='body'>
-    <Box sx={{ bgcolor: 'background.paper', display: 'flex', flexDirection:'row'}}>
+    <Box className="content_wrapper">
       <div className='sidebar'>
-        <Stack direction='column' spacing={1} color='GrayText'>
-          <Button component={NavLink} to="/adminportal/requests" startIcon={<Email/>} 
-          sx={{ my: 2, display: 'flex', justifyContent: "flex-start", m:0}}
-          style={({ isActive }) => ({
-              color: isActive ? '#000' : '#000',
-              background: isActive ? '#f5f5f5' : '#fff',
-            })}>
-            Requests
-          </Button>     
-          <Button component={NavLink} to="/adminportal/reviewers" startIcon={<AccountBox/>} 
-          sx={{ my: 2, display: 'flex', justifyContent: "flex-start", m:0}}
-          style={({ isActive }) => ({
-              color: isActive ? '#000' : '#000',
-              background: isActive ? '#f5f5f5' : '#fff',
-            })}>
-            Reviewers
-          </Button>     
-          <Button component={NavLink} to="/adminportal/hospitals" startIcon={<LocalHospital/>} 
-          sx={{ my: 2, display: 'flex', justifyContent: "flex-start", m:0}}
-          style={({ isActive }) => ({
-              color: isActive ? '#000' : '#000',
-              background: isActive ? '#f5f5f5' : '#fff',
-            })}>
-            Hospitals
-          </Button>     
-        </Stack>
+          <NavButton path={"/adminportal/requests"} startIcon={<Email color='action'/>} name={"Requests"}/> 
+          <NavButton path={"/adminportal/reviewers"} startIcon={<AccountBox color='action'/>} name={"Reviewers"}/> 
+          <NavButton path={"/adminportal/hospitals"} startIcon={<LocalHospital color='action'/>} name={"Hospitals"}/> 
       </div>
       <Box sx={{flexGrow:1}} className='content'>
         <Outlet/>
