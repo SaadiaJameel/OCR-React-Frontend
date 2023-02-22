@@ -8,29 +8,45 @@ a{
     color: inherit;
 }
 
+.content_wrapper{
+	display: flex;
+	flex-direction: row;
+}
+
 /* side bar */
 .sidebar{
 	height:100%;
-	width:150px;
+	width:200px;
 	border-right: 1px solid lightgray;
-	position:fixed!important;
+	position:fixed;
 	z-index:1;
 	overflow:auto;
+	display: flex;
+	gap: 15px;
+	flex-direction: column;
 }
 
 .content{
-	margin-left: 170px;
+	margin-left: 220px;
 }
 
 @media (max-width: 480px) {
 	.sidebar{
-	  display: none;
+	  position: relative;
+	  flex-direction: row;
+	  overflow: scroll;
+	  border: 0;
+	  gap: 0;
+	  width: 100%;
 	}
+
+	.content_wrapper{
+		flex-direction: column;
+	}
+
 	.content{
 		margin-left: 0px;
 	}
-	
-
 }
 
 input, select{
