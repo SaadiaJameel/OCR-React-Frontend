@@ -109,6 +109,7 @@ export default function AddNewPatient() {
         }}
         ).then(res=>{
             showMsg(res.data.message, "success");
+            handleClose();
             navigate(`/manage/patients/${res.data._id}`);
         }).catch(err=>{
             if(err.response) showMsg(err.response.data.message, "error")
@@ -123,10 +124,10 @@ export default function AddNewPatient() {
     <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Add New Patient</DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          {/* <DialogContentText>
             <b>Enter the patients' Details to create new patients account.</b>
-          </DialogContentText>
-          <FormLabel component="legend">Register Number</FormLabel>
+          </DialogContentText> */}
+          <FormLabel component="legend"><b>Register Number</b></FormLabel>
           <TextField
             inputRef={idRef}
             autoFocus
@@ -137,13 +138,12 @@ export default function AddNewPatient() {
             variant="standard"
             onChange={e => setRegNo(e.target.value)}
           />
-          <FormLabel component="legend">Date of Birth</FormLabel>
+          <FormLabel component="legend"><b>Date of Birth</b></FormLabel>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DesktopDatePicker
                 // label="Date desktop"
                 inputFormat="MM/DD/YYYY"
                 value={value}
-                // onChange={handleChange}
                 renderInput={(params) => <TextField {...params} />}
                 onChange ={e => {setBirthDate(value)
                 console.log(value.$d)}}
@@ -151,7 +151,7 @@ export default function AddNewPatient() {
              
           </LocalizationProvider>
 
-       
+          <FormLabel component="legend"><b>Gender</b></FormLabel>
         <RadioGroup
           
           row
@@ -165,7 +165,7 @@ export default function AddNewPatient() {
         </RadioGroup>
 
         {/*Risk habits */}
-        <FormLabel component="legend">Risk Habits</FormLabel>
+        <FormLabel component="legend"><b>Risk Habits</b></FormLabel>
         <FormGroup >
             <FormControlLabel control={<Checkbox />} label="Smoking"  value="Smoking" onChange={e =>setSmoking(e.target.value)} />
             <FormControlLabel control={<Checkbox />} label="Alcohol" value="Alcohol" onChange={e =>setAlcohol(e.target.value)} />
@@ -176,7 +176,7 @@ export default function AddNewPatient() {
             onChange={e =>setFamilyHistory(e.target.value)} />
           </FormGroup>
         
-          <FormLabel component="legend">Medical History</FormLabel>
+          <FormLabel component="legend"><b>Medical History</b></FormLabel>
           <TextField
             inputRef={idRef}
             autoFocus
@@ -189,7 +189,7 @@ export default function AddNewPatient() {
           />
           
           <Stack direction="row" alignItems="center" spacing={2}>
-          <FormLabel component="legend">Please Upload Consent form(pdf)</FormLabel>
+          <FormLabel component="legend"><b>Please Upload Consent form(pdf)</b></FormLabel>
             <Button variant="contained" component="label">
               Upload
               <input hidden accept=".pdf"  type="file"   onChange={e => {setConsentFile(e.target.value)
