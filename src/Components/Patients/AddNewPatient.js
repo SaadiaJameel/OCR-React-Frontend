@@ -69,7 +69,9 @@ export default function AddNewPatient() {
   const showMsg = (msg, severity)=>{
     setStatus({msg, severity, open:true})
   };
-
+  
+  //for axios post request
+  const data ={ regno:regNo,birthDate:birthDate,}
 
   const fileupload =() =>{
    
@@ -100,22 +102,19 @@ export default function AddNewPatient() {
     // };
   
 
-    // axios.post(`${config['path']}/user/patient/add`,
-    //     {
-    //       // patient_id
-    //     },
-    //     { headers: {
-    //         'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
-    //         'email': JSON.parse(sessionStorage.getItem("info")).email,
-    //     }}
-    //     ).then(res=>{
-    //         showMsg(res.data.message, "success");
-    //         navigate(`/manage/patients/${res.data._id}`);
-    //     }).catch(err=>{
-    //         if(err.response) showMsg(err.response.data.message, "error")
-    //         else alert(err)
-    //         setState(0);
-    //     })
+    axios.post(`${config['path']}/user/patient/add`,data,
+        { headers: {
+            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'email': JSON.parse(sessionStorage.getItem("info")).email,
+        }}
+        ).then(res=>{
+            showMsg(res.data.message, "success");
+            navigate(`/manage/patients/${res.data._id}`);
+        }).catch(err=>{
+            if(err.response) showMsg(err.response.data.message, "error")
+            else alert(err)
+            setState(0);
+        })
   }
 
   return (
