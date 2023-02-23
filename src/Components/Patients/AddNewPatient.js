@@ -42,7 +42,8 @@ export default function AddNewPatient() {
   const [medicalHistory,setMedicalHistory] = useState("");
   const [consentFile,setConsentFile] = useState("");
   const [consentFileUploaded,setConsentFileUploded] = useState(false);
-
+  const [consentFileSelected,setConsentFileSelected] = useState(false);
+  const [uploading,setUploading] = useState(false);
 
   const idRef = useRef()
   const navigate = useNavigate()
@@ -69,6 +70,27 @@ export default function AddNewPatient() {
     setStatus({msg, severity, open:true})
   };
 
+
+  const fileupload =() =>{
+   
+      const formData = new FormData();
+      formData.append('file', consentFile);
+      setUploading(true);
+
+      axios.post('https://example.com/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }).then((response) => {
+        console.log(response);
+        setConsentFileUploded(true)
+      }).catch((error) => {
+        console.error(error);
+        setConsentFileUploded(false)
+      });
+
+  }
+
   const handleCreateNewPatient = () =>{
 
     // const patient_id = idRef.current.value ;
@@ -78,22 +100,22 @@ export default function AddNewPatient() {
     // };
   
 
-    axios.post(`${config['path']}/user/patient/add`,
-        {
-          // patient_id
-        },
-        { headers: {
-            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
-            'email': JSON.parse(sessionStorage.getItem("info")).email,
-        }}
-        ).then(res=>{
-            showMsg(res.data.message, "success");
-            navigate(`/manage/patients/${res.data._id}`);
-        }).catch(err=>{
-            if(err.response) showMsg(err.response.data.message, "error")
-            else alert(err)
-            setState(0);
-        })
+    // axios.post(`${config['path']}/user/patient/add`,
+    //     {
+    //       // patient_id
+    //     },
+    //     { headers: {
+    //         'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+    //         'email': JSON.parse(sessionStorage.getItem("info")).email,
+    //     }}
+    //     ).then(res=>{
+    //         showMsg(res.data.message, "success");
+    //         navigate(`/manage/patients/${res.data._id}`);
+    //     }).catch(err=>{
+    //         if(err.response) showMsg(err.response.data.message, "error")
+    //         else alert(err)
+    //         setState(0);
+    //     })
   }
 
   return (
@@ -172,22 +194,27 @@ export default function AddNewPatient() {
             <Button variant="contained" component="label">
               Upload
               <input hidden accept=".pdf"  type="file"   onChange={e => {setConsentFile(e.target.value)
-              setConsentFileUploded(true)
-              console.log(e.target.files[0])}}  />
+              setConsentFileSelected(true);
+              console.log(e.target.files[0]);
+              fileupload();}}  />
             </Button>
            
           </Stack>
           <div>
-            {consentFileUploaded?  <Alert severity="success">Conset file Selected</Alert>:  <Alert severity="error">Consent is required</Alert>}
+            {consentFileUploaded?  <Alert severity="success">Conset file Uploaded</Alert>: uploading ? 
+            <Alert severity="info">Consent file Uplaoding </Alert> : consentFileSelected ?  <Alert severity="info">Consent file Selected</Alert> 
+            : <Alert severity="error">Consent file is required</Alert>}
   
           </div>
 
 
         </DialogContent>
         <DialogActions>
-            <Button onClick={() =>{handleClose()
-                                  setConsentFileUploded(false)}} variant='outlined'>Cancle</Button>
-            <LoadingButton onClick={handleCreateNewPatient} loading={state ===1} variant="contained" disabled={state!==0}>Create</LoadingButton>
+            <Button onClick={() =>{handleClose();
+                                  setConsentFileSelected(false);
+                                  setUploading(false);
+                                  }} variant='outlined'>Cancle</Button>
+            <LoadingButton onClick={()=>{handleCreateNewPatient()}} loading={state ===1} variant="contained" disabled={state!==0}>Create</LoadingButton>
         </DialogActions>
     </Dialog>
     <NotificationBar status={status} setStatus={setStatus}/>
