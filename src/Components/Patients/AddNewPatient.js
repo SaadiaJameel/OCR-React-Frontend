@@ -29,6 +29,9 @@ export default function AddNewPatient() {
   const [open, setOpen] = useState(false);
   const [state, setState] = useState(0);
   const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
+
+  const [regNo,setRegNo] = useState("");
+  const [birthDate,setBirthDate] = useState("");
   const idRef = useRef()
   const navigate = useNavigate()
 
@@ -125,8 +128,8 @@ export default function AddNewPatient() {
 
         {/*Risk habits */}
         <FormLabel component="legend">Risk Habits</FormLabel>
-        <FormGroup>
-            <FormControlLabel control={<Checkbox />} label="Smoking" />
+        <FormGroup >
+            <FormControlLabel control={<Checkbox />} label="Smoking"  />
             <FormControlLabel control={<Checkbox />} label="Alcohol" />
             <FormControlLabel control={<Checkbox />} label="Betal quid" />
             <FormControlLabel control={<Checkbox />} label="Smokeless tobacco use" />
