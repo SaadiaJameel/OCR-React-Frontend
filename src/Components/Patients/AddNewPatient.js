@@ -23,6 +23,7 @@ import dayjs from 'dayjs';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import Stack from '@mui/material/Stack';
+import Alert from '@mui/material/Alert';
 
 
 export default function AddNewPatient() {
@@ -32,6 +33,17 @@ export default function AddNewPatient() {
 
   const [regNo,setRegNo] = useState("");
   const [birthDate,setBirthDate] = useState("");
+  const [gender,setGender] = useState("");
+  const [smoking,setSmoking] = useState("");
+  const [alcohol,setAlcohol] = useState("");
+  const [betalQuid,setBetalquid] = useState("");
+  const [smokelessTobacco,setSmokelessTobacco] = useState("");
+  const [familyHistory,setFamilyHistory] = useState("");
+  const [medicalHistory,setMedicalHistory] = useState("");
+  const [consentFile,setConsentFile] = useState("");
+  const [consentFileUploaded,setConsentFileUploded] = useState(false);
+
+
   const idRef = useRef()
   const navigate = useNavigate()
 
@@ -59,28 +71,29 @@ export default function AddNewPatient() {
 
   const handleCreateNewPatient = () =>{
 
-    const patient_id = idRef.current.value ;
-    if(patient_id === "") {
-      handleClose()
-      return;
-    };
+    // const patient_id = idRef.current.value ;
+    // if(patient_id === "") {
+    //   handleClose()
+    //   return;
+    // };
+  
 
-    // axios.post(`${config['path']}/user/patient/add`,
-    //     {
-    //       patient_id
-    //     },
-    //     { headers: {
-    //         'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
-    //         'email': JSON.parse(sessionStorage.getItem("info")).email,
-    //     }}
-    //     ).then(res=>{
-    //         showMsg(res.data.message, "success");
-    //         navigate(`/manage/patients/${res.data._id}`);
-    //     }).catch(err=>{
-    //         if(err.response) showMsg(err.response.data.message, "error")
-    //         else alert(err)
-    //         setState(0);
-    //     })
+    axios.post(`${config['path']}/user/patient/add`,
+        {
+          // patient_id
+        },
+        { headers: {
+            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'email': JSON.parse(sessionStorage.getItem("info")).email,
+        }}
+        ).then(res=>{
+            showMsg(res.data.message, "success");
+            navigate(`/manage/patients/${res.data._id}`);
+        }).catch(err=>{
+            if(err.response) showMsg(err.response.data.message, "error")
+            else alert(err)
+            setState(0);
+        })
   }
 
   return (
@@ -101,15 +114,18 @@ export default function AddNewPatient() {
             type='text'
             fullWidth
             variant="standard"
+            onChange={e => setRegNo(e.target.value)}
           />
           <FormLabel component="legend">Date of Birth</FormLabel>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DesktopDatePicker
                 // label="Date desktop"
                 inputFormat="MM/DD/YYYY"
-                // value={value}
+                value={value}
                 // onChange={handleChange}
                 renderInput={(params) => <TextField {...params} />}
+                onChange ={e => {setBirthDate(value)
+                console.log(value.$d)}}
               />
              
           </LocalizationProvider>
@@ -120,6 +136,7 @@ export default function AddNewPatient() {
           row
           aria-labelledby="demo-row-radio-buttons-group-label"
           name="row-radio-buttons-group"
+          onChange={e =>setGender(e.target.value)}
         >
             <FormControlLabel value="female" control={<Radio />} label="Female" />
             <FormControlLabel value="male" control={<Radio />} label="Male" />
@@ -129,11 +146,13 @@ export default function AddNewPatient() {
         {/*Risk habits */}
         <FormLabel component="legend">Risk Habits</FormLabel>
         <FormGroup >
-            <FormControlLabel control={<Checkbox />} label="Smoking"  />
-            <FormControlLabel control={<Checkbox />} label="Alcohol" />
-            <FormControlLabel control={<Checkbox />} label="Betal quid" />
-            <FormControlLabel control={<Checkbox />} label="Smokeless tobacco use" />
-            <FormControlLabel control={<Checkbox />} label="Family history of cancer" />
+            <FormControlLabel control={<Checkbox />} label="Smoking"  value="Smoking" onChange={e =>setSmoking(e.target.value)} />
+            <FormControlLabel control={<Checkbox />} label="Alcohol" value="Alcohol" onChange={e =>setAlcohol(e.target.value)} />
+            <FormControlLabel control={<Checkbox />} label="Betal quid" value="Betal quid" onChange={e =>setBetalquid(e.target.value)} />
+            <FormControlLabel control={<Checkbox />} label="Smokeless tobacco use"value="Smokeless tobacco use" 
+            onChange={e =>setSmokelessTobacco(e.target.value)} />
+            <FormControlLabel control={<Checkbox />} label="Family history of cancer" value="Family history of cancer"
+            onChange={e =>setFamilyHistory(e.target.value)} />
           </FormGroup>
         
           <FormLabel component="legend">Medical History</FormLabel>
@@ -145,21 +164,29 @@ export default function AddNewPatient() {
             type='text'
             fullWidth
             variant="standard"
+            onChange={e => setMedicalHistory(e.target.value)}
           />
           
           <Stack direction="row" alignItems="center" spacing={2}>
-          <FormLabel component="legend">Please Upload Consest form(pdf)</FormLabel>
+          <FormLabel component="legend">Please Upload Consent form(pdf)</FormLabel>
             <Button variant="contained" component="label">
               Upload
-              <input hidden accept=".pdf" multiple type="file" />
+              <input hidden accept=".pdf"  type="file"   onChange={e => {setConsentFile(e.target.value)
+              setConsentFileUploded(true)
+              console.log(e.target.files[0])}}  />
             </Button>
            
           </Stack>
+          <div>
+            {consentFileUploaded?  <Alert severity="success">Conset file Selected</Alert>:  <Alert severity="error">Consent is required</Alert>}
+  
+          </div>
 
 
         </DialogContent>
         <DialogActions>
-            <Button onClick={handleClose} variant='outlined'>Cancle</Button>
+            <Button onClick={() =>{handleClose()
+                                  setConsentFileUploded(false)}} variant='outlined'>Cancle</Button>
             <LoadingButton onClick={handleCreateNewPatient} loading={state ===1} variant="contained" disabled={state!==0}>Create</LoadingButton>
         </DialogActions>
     </Dialog>
