@@ -12,6 +12,18 @@ import config from '../../config.json';
 import { useNavigate } from 'react-router-dom';
 import NotificationBar from '../NotificationBar';
 import LoadingButton from '@mui/lab/LoadingButton';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import FormLabel from '@mui/material/FormLabel';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import dayjs from 'dayjs';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import Stack from '@mui/material/Stack';
+
 
 export default function AddNewPatient() {
   const [open, setOpen] = useState(false);
@@ -19,6 +31,15 @@ export default function AddNewPatient() {
   const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
   const idRef = useRef()
   const navigate = useNavigate()
+
+
+  ////
+  // const [alignment, setAlignment] = React.useState('');
+  const [value, setValue] = React.useState(dayjs('2014-08-18T21:11:54'));
+
+  // const handleChangegender = (event, newAlignment) => {
+  //   setAlignment(newAlignment);
+  // };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -41,22 +62,22 @@ export default function AddNewPatient() {
       return;
     };
 
-    axios.post(`${config['path']}/user/patient/add`,
-        {
-          patient_id
-        },
-        { headers: {
-            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
-            'email': JSON.parse(sessionStorage.getItem("info")).email,
-        }}
-        ).then(res=>{
-            showMsg(res.data.message, "success");
-            navigate(`/manage/patients/${res.data._id}`);
-        }).catch(err=>{
-            if(err.response) showMsg(err.response.data.message, "error")
-            else alert(err)
-            setState(0);
-        })
+    // axios.post(`${config['path']}/user/patient/add`,
+    //     {
+    //       patient_id
+    //     },
+    //     { headers: {
+    //         'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+    //         'email': JSON.parse(sessionStorage.getItem("info")).email,
+    //     }}
+    //     ).then(res=>{
+    //         showMsg(res.data.message, "success");
+    //         navigate(`/manage/patients/${res.data._id}`);
+    //     }).catch(err=>{
+    //         if(err.response) showMsg(err.response.data.message, "error")
+    //         else alert(err)
+    //         setState(0);
+    //     })
   }
 
   return (
@@ -66,8 +87,9 @@ export default function AddNewPatient() {
         <DialogTitle>Add New Patient</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Enter the patients' register number to create new patients account.
+            <b>Enter the patients' Details to create new patients account.</b>
           </DialogContentText>
+          <FormLabel component="legend">Register Number</FormLabel>
           <TextField
             inputRef={idRef}
             autoFocus
@@ -77,6 +99,61 @@ export default function AddNewPatient() {
             fullWidth
             variant="standard"
           />
+          <FormLabel component="legend">Date of Birth</FormLabel>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DesktopDatePicker
+                // label="Date desktop"
+                inputFormat="MM/DD/YYYY"
+                // value={value}
+                // onChange={handleChange}
+                renderInput={(params) => <TextField {...params} />}
+              />
+             
+          </LocalizationProvider>
+
+       
+        <RadioGroup
+          
+          row
+          aria-labelledby="demo-row-radio-buttons-group-label"
+          name="row-radio-buttons-group"
+        >
+            <FormControlLabel value="female" control={<Radio />} label="Female" />
+            <FormControlLabel value="male" control={<Radio />} label="Male" />
+            <FormControlLabel value="other" control={<Radio />} label="Other" />
+        </RadioGroup>
+
+        {/*Risk habits */}
+        <FormLabel component="legend">Risk Habits</FormLabel>
+        <FormGroup>
+            <FormControlLabel control={<Checkbox />} label="Smoking" />
+            <FormControlLabel control={<Checkbox />} label="Alcohol" />
+            <FormControlLabel control={<Checkbox />} label="Betal quid" />
+            <FormControlLabel control={<Checkbox />} label="Smokeless tobacco use" />
+            <FormControlLabel control={<Checkbox />} label="Family history of cancer" />
+          </FormGroup>
+        
+          <FormLabel component="legend">Medical History</FormLabel>
+          <TextField
+            inputRef={idRef}
+            autoFocus
+            margin="dense"
+            label="medical history"
+            type='text'
+            fullWidth
+            variant="standard"
+          />
+          
+          <Stack direction="row" alignItems="center" spacing={2}>
+          <FormLabel component="legend">Please Upload Consest form(pdf)</FormLabel>
+            <Button variant="contained" component="label">
+              Upload
+              <input hidden accept=".pdf" multiple type="file" />
+            </Button>
+           
+          </Stack>
+
+
         </DialogContent>
         <DialogActions>
             <Button onClick={handleClose} variant='outlined'>Cancle</Button>
