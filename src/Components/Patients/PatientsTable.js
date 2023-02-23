@@ -9,6 +9,7 @@ import NotificationBar from '../NotificationBar';
 import axios from 'axios';
 import config from '../../config.json';
 import AddNewPatient from './AddNewPatient';
+import Autocomplete from '@mui/material/Autocomplete';
 
 
 const PatientsTable = () => {
@@ -18,6 +19,8 @@ const PatientsTable = () => {
     const [pageSize, setPageSize] = useState(5);
     const [data, setData] = useState([]);
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
+    const [options, setOptions] = useState([]);
+
 
     const handleChange = (e) => {
         setFilt(e.target.value);
@@ -26,6 +29,36 @@ const PatientsTable = () => {
     const showMsg = (msg, severity)=>{
         setStatus({msg, severity, open:true})
     }
+
+    function searchCall(name){
+        axios.get(`${config['path']}/user/patient/search`,{
+            headers: {
+                'Authorization': `Bearer ${JSON.parse(sessionStorage.getItem("info")).atoken}`,
+                'email': JSON.parse(sessionStorage.getItem("info")).email,
+            },
+            params: {
+                "query" : name,
+                "field" : "patient_id"
+            },
+            withCredentials: true
+        }).then(res=>{
+            setOptions(res.data);
+        }).catch(err=>{
+            if(err.response) showMsg(err.response.data.message, "error")
+            else alert(err)
+            
+        })
+    };
+
+    const onInputChange = (event, value, reason) => {
+        if(value){
+            searchCall(value);
+        }else{
+            setOptions([]);
+        }
+    };
+
+    
 
     useEffect(()=>{
 
@@ -114,6 +147,20 @@ const PatientsTable = () => {
                       }}
                 />  
                 <NotificationBar status={status} setStatus={setStatus}/>  
+                <Autocomplete
+                    options={options}
+                    onInputChange={onInputChange}
+                    getOptionLabel={(option) => option.patient_id}
+                    style={{ width: 300 }}
+                    autoComplete
+                    includeInputInList
+                    filterSelectedOptions
+                    noOptionsText="No Patients"
+                    renderInput={(params) => (
+                    <TextField {...params} label="Search By ID" variant="outlined" />
+                    )}
+                />
+
 
             </Box>   
     );
