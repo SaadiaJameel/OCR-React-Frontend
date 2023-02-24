@@ -31,14 +31,15 @@ export default function AddNewPatient() {
   const [state, setState] = useState(0);
   const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
 
+  const [name,setName] = useState("");
   const [regNo,setRegNo] = useState("");
   const [birthDate,setBirthDate] = useState("");
   const [gender,setGender] = useState("");
-  const [smoking,setSmoking] = useState("");
-  const [alcohol,setAlcohol] = useState("");
-  const [betalQuid,setBetalquid] = useState("");
-  const [smokelessTobacco,setSmokelessTobacco] = useState("");
-  const [familyHistory,setFamilyHistory] = useState("");
+  const [smoking,setSmoking] = useState(false);
+  const [alcohol,setAlcohol] = useState(false);
+  const [betalQuid,setBetalquid] = useState(false);
+  const [smokelessTobacco,setSmokelessTobacco] = useState(false);
+  const [familyHistory,setFamilyHistory] = useState(false);
   const [medicalHistory,setMedicalHistory] = useState("");
   const [consentFile,setConsentFile] = useState("");
   const [consentFileUploaded,setConsentFileUploded] = useState(false);
@@ -71,7 +72,9 @@ export default function AddNewPatient() {
   };
   
   //for axios post request
-  const data ={ regno:regNo,birthDate:birthDate,}
+  /* needs be updated*/
+  const data ={name:name, regno:regNo,birthDate:birthDate,risk_factors:{gender,smoking,alcohol,betalQuid,smokelessTobacco,familyHistory},
+                DOB:birthDate,gender:gender, histo_diagnosis:medicalHistory}
 
   const fileupload =() =>{
    
@@ -79,7 +82,7 @@ export default function AddNewPatient() {
       formData.append('file', consentFile);
       setUploading(true);
 
-      axios.post('https://example.com/upload', formData, {
+      axios.post('https://example.com/upload', formData, { //to be updated
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -127,9 +130,20 @@ export default function AddNewPatient() {
           {/* <DialogContentText>
             <b>Enter the patients' Details to create new patients account.</b>
           </DialogContentText> */}
+          <FormLabel component="legend"><b>Patient Name</b></FormLabel>
+          <TextField
+            // inputRef={idRef}
+            autoFocus
+            margin="dense"
+            label="Name"
+            type='text'
+            fullWidth
+            variant="standard"
+            onChange={e => setName(e.target.value)}
+          />
           <FormLabel component="legend"><b>Register Number</b></FormLabel>
           <TextField
-            inputRef={idRef}
+            // inputRef={idRef}
             autoFocus
             margin="dense"
             label="Reg No"
@@ -167,13 +181,17 @@ export default function AddNewPatient() {
         {/*Risk habits */}
         <FormLabel component="legend"><b>Risk Habits</b></FormLabel>
         <FormGroup >
-            <FormControlLabel control={<Checkbox />} label="Smoking"  value="Smoking" onChange={e =>setSmoking(e.target.value)} />
-            <FormControlLabel control={<Checkbox />} label="Alcohol" value="Alcohol" onChange={e =>setAlcohol(e.target.value)} />
-            <FormControlLabel control={<Checkbox />} label="Betal quid" value="Betal quid" onChange={e =>setBetalquid(e.target.value)} />
+            <FormControlLabel control={<Checkbox />} label="Smoking"  value="Smoking" 
+            onChange ={e =>{setSmoking(e.target.checked)
+            console.log(e.target.checked)}} />
+            <FormControlLabel control={<Checkbox />} label="Alcohol" value="Alcohol" 
+            onChange={e =>setAlcohol(e.target.checked)} />
+            <FormControlLabel control={<Checkbox />} label="Betal quid" value="Betal quid" 
+            onChange={e =>setBetalquid(e.target.checked)} />
             <FormControlLabel control={<Checkbox />} label="Smokeless tobacco use"value="Smokeless tobacco use" 
-            onChange={e =>setSmokelessTobacco(e.target.value)} />
+            onChange={e =>setSmokelessTobacco(e.target.checked)} />
             <FormControlLabel control={<Checkbox />} label="Family history of cancer" value="Family history of cancer"
-            onChange={e =>setFamilyHistory(e.target.value)} />
+            onChange={e =>setFamilyHistory(e.target.checked)} />
           </FormGroup>
         
           <FormLabel component="legend"><b>Medical History</b></FormLabel>
@@ -186,6 +204,7 @@ export default function AddNewPatient() {
             fullWidth
             variant="standard"
             onChange={e => setMedicalHistory(e.target.value)}
+          
           />
           
           <Stack direction="row" alignItems="center" spacing={2}>
