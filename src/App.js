@@ -24,6 +24,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { trySilentRefresh } from './utils/authUtils';
 import {setUserData } from './Reducers/userDataSlice';
 import Hospitals from './Components/AdminPortal/Hospitals/Hospitals';
+import EntryPage from './Components/Entry/EntryPage';
 
 
 
@@ -83,8 +84,9 @@ function App() {
         </Route>
 
         <Route path='/manage' element={<ProtectedRoute allowed={[1,2]}><Manage/></ProtectedRoute>}>
-            <Route index element={<ImagesSearch/>}/>
-            <Route path='/manage/images' element={<ImagesSearch/>}/>
+            <Route index element={<EntryPage/>}/>
+            <Route path='/manage/entry' element={<EntryPage/>}/>
+            {/* <Route path='/manage/images' element={<ImagesSearch/>}/> */}
             <Route path ='/manage/patients' element={<PatientsPage/>}>
                 <Route  index element={<PatientsTable/>}></Route>
                 <Route  index path="/manage/patients/all" element={<PatientsTable/>}></Route>

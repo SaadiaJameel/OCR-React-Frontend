@@ -1,4 +1,4 @@
-import {LinearProgress, Typography } from '@mui/material';
+import {LinearProgress} from '@mui/material';
 
 export function stringToColor(string) {
     let i, hash = 0;

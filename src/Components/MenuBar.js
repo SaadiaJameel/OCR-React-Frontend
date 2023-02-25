@@ -183,7 +183,7 @@ function MenuBar({roles,username, availability}) {
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
                 <MenuItem>
-                  <Typography textAlign="center"><Link to="/manage/images" replace>Manage</Link></Typography>
+                  <Typography textAlign="center"><Link to="/manage/entry" replace>Manage</Link></Typography>
                 </MenuItem>
                 {roles.includes(1) && 
                 <MenuItem>
@@ -193,7 +193,7 @@ function MenuBar({roles,username, availability}) {
           </Menu>
          
             <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex'}}}>
-                <Button sx={{ my: 2, color: 'white', display: 'block', m:0}} component={NavLink} to="/manage/images"> 
+                <Button sx={{ my: 2, color: 'white', display: 'block', m:0}} component={NavLink} to="/manage/entry"> 
                     Manage
                 </Button>
                 { roles.includes(1) &&

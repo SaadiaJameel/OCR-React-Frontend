@@ -24,7 +24,7 @@ const PatientDetails = () => {
     const [value, setValue] = React.useState('1');
     const [status, setStatus] = useState({msg:"",severity:"success", open:false});
     const { id } = useParams();
-    const userData = useSelector(state => state.userData.data);
+    const userData = useSelector(state => state.data);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);

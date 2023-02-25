@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Box, Button} from '@mui/material';
 import { NavLink, Outlet } from 'react-router-dom';
-import { Photo, People } from '@mui/icons-material';
+import { Photo, People, ViewList } from '@mui/icons-material';
 
 const NavButton = ({path,startIcon,name}) => (
   <Button
@@ -24,7 +24,7 @@ const Manage = () => {
     <div className='body'>
     <Box className="content_wrapper">
       <div className='sidebar'>
-          <NavButton path={"/manage/images"} startIcon={<Photo color='action'/>} name={"Images"}/> 
+          <NavButton path={"/manage/entry"} startIcon={<ViewList color='action'/>} name={"Entry"}/> 
           <NavButton path={"/manage/patients"} startIcon={<People color='action'/>} name={"Patients"}/> 
       </div>
       <Box sx={{flexGrow:1}} className='content'>

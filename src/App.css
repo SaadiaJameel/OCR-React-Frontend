@@ -30,6 +30,28 @@ a{
 	margin-left: 220px;
 }
 
+.entry_page{
+	position: absolute;
+	display: flex;
+	flex-direction: row;
+	border: 1px solid red;
+	top:0;
+}
+
+.entries_right{
+	margin-top: 80px;
+	padding-inline: 20px;
+	overflow: auto;
+	flex-grow: 1;
+}
+
+.entries_left{
+	margin-top: 80px;
+	padding-right: 20px;
+	overflow: auto;
+	flex-grow: 1;
+}
+
 @media (max-width: 480px) {
 	.sidebar{
 	  position: relative;
@@ -46,6 +68,14 @@ a{
 
 	.content{
 		margin-left: 0px;
+	}
+
+	.entries_right{
+		margin-top: 130px;
+	}
+	
+	.entries_left{
+		margin-top: 130px;
 	}
 }
 
