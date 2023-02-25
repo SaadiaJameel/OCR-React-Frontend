@@ -5,10 +5,12 @@ import { Outlet } from 'react-router-dom';
 const Requests = () => {
 
     return (
-        <Box>
+        <div className="inner_content">
+        <div>
             <Typography sx={{ fontWeight: 700}} variant="h5">Requests</Typography>    
             <Outlet/>  
-        </Box>
+        </div>
+        </div>
     );
 };;
 

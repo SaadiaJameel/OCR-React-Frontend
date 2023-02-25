@@ -5,10 +5,12 @@ import HospitalTable from './HospitalTabel';
 const Hospitals = () => {
 
     return (
-        <Box>
+        <div className="inner_content">
+        <div>
             <Typography sx={{ fontWeight: 700}} variant="h5">Hospitals</Typography> 
             <HospitalTable/>
-        </Box>
+        </div>
+        </div>
     );
 };;
 

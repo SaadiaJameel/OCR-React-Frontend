@@ -1,3 +1,4 @@
+import { Box, Typography } from "@mui/material";
 import { useState } from "react";
 import Entries from "./Entries";
 import EntryDetails from "./EntryDetails";
@@ -8,22 +9,25 @@ const EntryPage = () => {
     const [showList, setShowList] = useState(true);
 
     return (
-        <div className="entry_page">
-        {
-            showList &&
-            <div className="entries_left">
-                <Entries setDetails={setDetails}/> 
-            </div>
-        }
-        
-        {
+        <>
+            <div className="inner_content">
+            {
+                showList &&
+                <div>
+                    <Typography sx={{ fontWeight: 700}} variant="h5">Entry</Typography> 
+                    <Entries setDetails={setDetails}/>
+                </div>
+            }
+            {
             !!details && 
-            <div className="entries_right">
+            <div>
                <EntryDetails details={details} setDetails={setDetails} setShowList={setShowList}/>
             </div>
 
-        }
-        </div>
+            }
+            </div>
+            
+        </>
     );
 };
 

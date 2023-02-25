@@ -71,7 +71,7 @@ const Entries = ({setDetails}) => {
     }
 
     return (
-        <div>
+        <div style={{paddingRight:'10px'}}>
             <Stack direction='row' alignItems='center' spacing={1}>
                 <IconButton
                     id="fade-button"
@@ -123,7 +123,6 @@ const Entries = ({setDetails}) => {
                 })
             }
             </Stack>
-           
         </div>
     );
 };

@@ -56,12 +56,14 @@ const ProtectedRoute = ({allowed, children}) => {
         )
     }else{
         return (
-            <>
-            <MenuBar roles={roles} username={user}/>
-            <div>
+            <div className='main'>
+            <div className='main_menu'>
+                <MenuBar roles={roles} username={user}/>
+            </div>
+            <div className='main_content'>
                 {children}
             </div>
-            </>
+            </div>
         );
     }
 };
