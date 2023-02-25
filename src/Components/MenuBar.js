@@ -13,6 +13,7 @@ import {setAccessToken } from '../Reducers/userDataSlice';
 import { AccountBox, LogoutOutlined} from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import colors from './ColorPalete';
+import MenuOptions from '../MenuItems.json';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -137,11 +138,11 @@ function MenuBar({roles,username, availability}) {
     <AppBar position="fixed">
       <Container maxWidth="xl" >
         <Toolbar disableGutters>
-            <Typography variant="h5" noWrap component="div" sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}>
+            <Typography variant="h5" noWrap component="div" sx={{ mr: 2, display: { xs: 'none', sm: 'flex' } }}>
                 <img src={logo} alt="logo" style={{width: '100%', height : "30px"}} />
             </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', sm: 'none' } }}>
             <IconButton onClick={handleOpenNavMenu} size="large" aria-controls={open2 ? 'nav-menu' : undefined} aria-haspopup="true" aria-expanded={open2 ? 'true' : undefined} color="inherit">
                 <MenuIcon />
             </IconButton>
@@ -182,18 +183,25 @@ function MenuBar({roles,username, availability}) {
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
-                <MenuItem>
-                  <Typography textAlign="center"><Link to="/manage/entry" replace>Manage</Link></Typography>
-                </MenuItem>
+              {
+                MenuOptions.recruiter.map((item,index)=>{
+                  return(<MenuItem key={index}>
+                    <Typography textAlign="center"><Link to={item.path} replace>{item.name}</Link></Typography>
+                  </MenuItem>)
+                })
+                }
                 {roles.includes(1) && 
-                <MenuItem>
-                  <Typography textAlign="center"><Link to="/adminportal/requests" replace>Admin Portal</Link></Typography>
-                </MenuItem>}
+               
+                MenuOptions.admin.map((item,index)=>{
+                  return(<MenuItem key={index}>
+                    <Typography textAlign="center"><Link to={item.path} replace>{item.name}</Link></Typography>
+                  </MenuItem>)
+                })               
+                }
                               
           </Menu>
-         
-            <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex'}}}>
-                <Button sx={{ my: 2, color: 'white', display: 'block', m:0}} component={NavLink} to="/manage/entry"> 
+            <Box sx={{ flexGrow: 0, display: { xs: 'none', sm: 'flex'}}}>
+                <Button sx={{ my: 2, color: 'white', display: 'block', m:0}} component={NavLink} to="/manage/patients"> 
                     Manage
                 </Button>
                 { roles.includes(1) &&
@@ -213,7 +221,7 @@ function MenuBar({roles,username, availability}) {
             aria-expanded={open ? 'true' : undefined}
             color="inherit"
           >
-            <Typography sx={{ m: 1, textTransform: 'none'}}>{username}</Typography>
+            <Typography sx={{ m: 1, textTransform: 'none', display: { xs: 'none', sm: 'block'}}}>{username}</Typography>
             { roles.includes(2)?
               <StyledBadge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot" color={availability?'success':'error'}>
                 <Avatar {...stringAvatar(username)}/>

@@ -14,7 +14,7 @@ const NavButton = ({path,startIcon,name}) => (
       <ListItemIcon>
         {startIcon}
       </ListItemIcon>
-      <ListItemText primary={name} />
+      <ListItemText primary={name}/>
     </ListItemButton>
   </ListItem>
 )

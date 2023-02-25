@@ -4,7 +4,6 @@ import './App.css';
 import LoginPage from './Pages/LoginPage';
 import NotFound from './Components/NotFound';
 import ProtectedRoute from './Components/ProtectedRoute';
-import Canvas from './Components/Annotation/Canvas';
 import PatientsPage from './Components/Patients/PatientsPage';
 import ImagesPage from './Pages/ImagesPage';
 import AdminPage from './Pages/AdminPage';
@@ -18,7 +17,6 @@ import RequestDetails from './Components/AdminPortal/Requests/RequestDetails';
 import ReviewersTable from './Components/AdminPortal/Reviewers/ReviewersTable';
 import UserDetails from './Components/AdminPortal/Reviewers/UserDetails';
 import UserProfile from './Components/UserProfile';
-import ImagesSearch from './Components/ImagesSearch';
 import ImageCropper from './Components/Crop/ImageCropper';
 import { useSelector, useDispatch } from 'react-redux';
 import { trySilentRefresh } from './utils/authUtils';
@@ -86,7 +84,6 @@ function App() {
         <Route path='/manage' element={<ProtectedRoute allowed={[1,2]}><Manage/></ProtectedRoute>}>
             <Route index element={<EntryPage/>}/>
             <Route path='/manage/entry' element={<EntryPage/>}/>
-            {/* <Route path='/manage/images' element={<ImagesSearch/>}/> */}
             <Route path ='/manage/patients' element={<PatientsPage/>}>
                 <Route  index element={<PatientsTable/>}></Route>
                 <Route  index path="/manage/patients/all" element={<PatientsTable/>}></Route>

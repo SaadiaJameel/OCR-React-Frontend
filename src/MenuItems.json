@@ -1,0 +1,11 @@
+{
+    "admin":[
+        {"path":"/adminportal/requests", "name":"Requests"},
+        {"path":"/adminportal/reviewers", "name":"Reviewers"},
+        {"path":"/adminportal/hospitals", "name":"Hospitals"}
+    ],
+    "recruiter":[
+        {"path":"/manage/patients", "name":"Patients"},
+        {"path":"/manage/entry", "name":"Entry"}
+    ]
+}

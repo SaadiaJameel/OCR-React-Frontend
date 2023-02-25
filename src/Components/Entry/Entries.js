@@ -1,5 +1,5 @@
 import { FilterList, Photo, Comment, MoreVert } from '@mui/icons-material';
-import { Avatar, AvatarGroup, IconButton, Menu, MenuItem, Paper, Typography } from '@mui/material';
+import { Avatar, AvatarGroup, IconButton, Menu, MenuItem, Paper, Tooltip, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import React from 'react';
 
@@ -7,7 +7,7 @@ const filtOptions = ["All","New","Updated","Assigned","Unassigned"]
 const entry = [{
     "patient": {
         "name":"patient name",
-        "patient_id":"patient_id"
+        "patient_id":"patient_id",
     },
     "assignees": [{"name":"P Silva", "availability":false},{"name":"M Perera", "availability":true}],
     "images":["1","2","3"],
@@ -112,7 +112,10 @@ const Entries = ({setDetails}) => {
                                 <AvatarGroup>
                                     {
                                         entry.assignees.map((reviewer, index)=>{
-                                            return(<Avatar key={index} alt={reviewer.name} sx={{height:'25px', width:'25px'}} src="/"></Avatar>)
+                                            return(
+                                            <Tooltip title={reviewer.name} placement="bottom-end" arrow  key={index}>
+                                                <Avatar sx={{height:'25px',width:'25px'}}>{reviewer.name[0]}</Avatar>
+                                            </Tooltip>)
                                         })
                                     }
                                 </AvatarGroup>

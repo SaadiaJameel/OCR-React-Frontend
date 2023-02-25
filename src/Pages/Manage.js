@@ -24,8 +24,8 @@ const Manage = () => {
     <Box className="content_wrapper">
       <div className='sidebar'>
         <List disablePadding>
-          <NavButton path={"/manage/entry"} startIcon={<ViewList color='action'/>} name={"Entry"}/> 
           <NavButton path={"/manage/patients"} startIcon={<People color='action'/>} name={"Patients"}/> 
+          <NavButton path={"/manage/entry"} startIcon={<ViewList color='action'/>} name={"Entry"}/> 
         </List>
       </div>
       <Box sx={{flexGrow:1}} className='content'>

@@ -61,30 +61,9 @@ a{
 	flex-grow: 1;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
 	.sidebar{
-	  position: relative;
-	  flex-direction: row;
-	  overflow: scroll;
-	  border: 0;
-	  gap: 0;
-	  width: 100%;
-	}
-
-	.content_wrapper{
-		flex-direction: column;
-	}
-
-	.content{
-		margin-left: 0px;
-	}
-
-	.entries_right{
-		margin-top: 130px;
-	}
-	
-	.entries_left{
-		margin-top: 130px;
+		display: none;
 	}
 }
 
