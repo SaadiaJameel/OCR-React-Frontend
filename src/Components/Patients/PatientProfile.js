@@ -15,7 +15,7 @@ const PatientProfile = ({data}) => {
     const [category, setCategory] = useState(data.category);
     const [gender, setGender] = useState(data.gender);
     const [state, setState] = useState(0);
-    const userData = useSelector(state => state.userData.data);
+    const userData = useSelector(state => state.data);
 
     const formRef = useRef();
     

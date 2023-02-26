@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState} from 'react';
 import { Link, useNavigate, useParams} from 'react-router-dom';
 import { ArrowBack } from '@mui/icons-material';
-import { Box, Stack, Avatar, Typography, TextField, FormControl, MenuItem, Select, InputLabel, Skeleton, Grid, Divider} from '@mui/material';
+import { Box, Stack, Avatar, Typography, TextField, FormControl, 
+     Skeleton, Divider, Button, Table, TableBody, TableCell, TableRow, FormControlLabel, FormLabel, RadioGroup, Radio, Checkbox, FormGroup} from '@mui/material';
 import { stringAvatar } from '../../utils';
 import config from '../../../config.json'
 import axios from 'axios';
@@ -11,7 +12,6 @@ import { useSelector} from 'react-redux';
 
 const RequestDetails = () => {
 
-    const [role, setRole] = useState(3);
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(true);
@@ -20,10 +20,22 @@ const RequestDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const userData = useSelector(state => state.data);
-
-    const handleChange = (event) => {
-        setRole(event.target.value);
+    const [selected, setSelected] = React.useState("Recruiter");
+    const [permisions, setPermissions] = React.useState({
+        admin: false,
+        reviewer: false,
+        recruiter: false,
+    });
+    
+    const handlePermissions = (event) => {
+    setPermissions({
+        ...permisions,
+        [event.target.name]: event.target.checked,
+    });
     };
+    
+    const { admin, reviewer, recruiter } = permisions;
+    const error = [admin, reviewer, recruiter].filter((v) => v).length === 0;
 
     useEffect(()=>{
 
@@ -43,19 +55,31 @@ const RequestDetails = () => {
 
     },[])
 
+    const handleRole = (e)=>{
+        setSelected(e.target.value);
+        setPermissions({
+            admin: false,
+            reviewer: false,
+            recruiter: false,
+        })
+    }
+
     const handleAccept = ()=>{
 
         const formData = new FormData(formRef.current);
-        const role = parseInt(formData.get('role'));
-        const username = formData.get('username');
         const reason = formData.get('reason');
+
+        const role = [];
+        if(permisions.admin) role.push(1);
+        if(permisions.reviewer) role.push(2);
+        if(permisions.recruiter) role.push(3);
 
         setState(1);
 
         axios.post(`${config['path']}/admin/accept/${data._id}`,
         {
-          username: username,
-          role: [role],
+          username: data.username,
+          role: role,
           reason: reason
         },
         { headers: {
@@ -102,15 +126,16 @@ const RequestDetails = () => {
     }
 
     return (
-        <Box sx={{my:3}}>
-            <Stack direction='row' sx={{my:1}} >
-            <ArrowBack fontSize='small' color='action'/>
-            <Link to='/adminportal/requests'><Typography fontSize='small' color='GrayText'>Go back to Requests</Typography></Link>
-            </Stack>
+        <div className="inner_content">
+        <div style={{paddingBottom:'100px'}}>
+            <Box>    
+            <Typography sx={{ fontWeight: 700}} variant="h5">Requests</Typography>    
+            </Box>  
+            <Button component={Link} to='/adminportal/requests' size='small' startIcon={<ArrowBack/>} sx={{p:0}}>Go Back To Requests</Button>
             
             {loading?
             <>
-            <Stack direction='row' spacing={2} alignItems='center' sx={{my:3}}>
+            <Stack direction='row' spacing={2} alignItems='center' sx={{my:1}}>
                 <Skeleton variant="rounded" width={60} height={60} />
                 <Stack direction='column'>
                     <Skeleton variant="text" width={210} sx={{ fontSize: '2rem' }} />
@@ -132,47 +157,100 @@ const RequestDetails = () => {
                 </Stack>
             </Stack>
             <Box component="form" noValidate ref={formRef} sx={{ mt: 5 }}>
-
-            <Grid container sx={{my:3, p:2, background:'#fbfbfb', border: '1px solid lightgray', borderRadius:1}} rowSpacing={1}>
-                <Grid item sm={12} md={6}><Typography>Name: <strong>{data.username}</strong></Typography></Grid>
-                <Grid item sm={12} md={6}><Typography>SLMC Register Number: <strong>{data.reg_no}</strong></Typography></Grid>
-                <Grid item sm={12} md={6}><Typography>Email: <strong>{data.email}</strong></Typography></Grid>
-                <Grid item sm={12} md={6}><Typography>Contact No: <strong>{data.contact_no? data.contact_no.replace(/\s/g, ''):""}</strong></Typography></Grid>
-                <Grid item sm={12} md={6}><Typography>Hospital: <strong>{data.hospital}</strong></Typography></Grid>
-            </Grid>
-
+            <Table  sx={{border: '1px solid lightgray'}}>
+                <TableBody>
+                    <TableRow>
+                        <TableCell>Name:</TableCell>
+                        <TableCell>{data.username}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell>SLMC Register Number:</TableCell>
+                        <TableCell>{data.reg_no}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell>Email:</TableCell>
+                        <TableCell>{data.email}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell>Contact No:</TableCell>
+                        <TableCell>{data.contact_no? data.contact_no.replace(/\s/g, ''):""}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell>Hospital</TableCell>
+                        <TableCell>{data.hospital}</TableCell>
+                    </TableRow>
+                </TableBody>
+            </Table>
+            
             <Divider sx={{my:5}}/>
 
-            <Stack direction='column' spacing={3}>
-                <TextField defaultValue={data.username} name='username' size='small' label='User name' inputProps={{maxLength: 50}}/>
-                <FormControl fullWidth size='small'>
-                    <InputLabel id="demo-simple-select-label" required >Role</InputLabel>
-                    <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={role}
-                    label="Role"
-                    name='role'
-                    required
-                    onChange={handleChange}
-                    sx={{background:'#fbfbfb', color:'#d32f2f'}}
-                    >
-                    <MenuItem value={1}>Admin</MenuItem>
-                    <MenuItem value={2}>Reviewer</MenuItem>
-                    <MenuItem value={3}>Clinician</MenuItem>
-                    </Select>
+            <Stack direction='row' spacing={2} my={5}>
+            <FormControl>
+            <FormLabel>User Role</FormLabel>
+            <RadioGroup
+                defaultValue="Recruiter"
+                name="radio-buttons-group"
+                sx={{px:2}}
+                onChange={handleRole}
+            >
+                <FormControlLabel value="Admin" control={<Radio />} label="Admin" />
+                <FormControlLabel value="Reviewer" control={<Radio />} label="Reviewer" />
+                <FormControlLabel value="Recruiter" control={<Radio />} label="Recruiter" />
+            </RadioGroup>
+            </FormControl>
+            { selected === 'Admin' &&
+                <FormControl required error={error} component="fieldset" variant="standard">
+                <FormLabel component="legend">Permisions</FormLabel>
+                <FormGroup>
+                <FormControlLabel control={<Checkbox checked={admin} onChange={handlePermissions} name="admin" />}
+                    label="Administrative work: Accept/Reject Login Requests, Add hospitals, Manage user accounts"
+                />
+                <FormControlLabel control={ <Checkbox checked={reviewer} onChange={handlePermissions} name="reviewer" /> }
+                    label="Review assigned consultation entries and add comments"
+                />
+                <FormControlLabel control={<Checkbox checked={recruiter} onChange={handlePermissions} name="recruiter" />}
+                    label="Add patients and add consultation entries"
+                />
+                </FormGroup>
                 </FormControl>
-                <TextField label="Reason (optional)" multiline maxRows={4} name='reason' size='small' inputProps={{maxLength: 200}} sx={{background:'#fbfbfb'}}/>
+            }
+            { selected === 'Reviewer' &&
+                <FormControl required error={error} component="fieldset" variant="standard">
+                <FormLabel component="legend">Permisions</FormLabel>
+                <FormGroup>
+                <FormControlLabel control={ <Checkbox checked={reviewer} onChange={handlePermissions} name="reviewer" /> }
+                    label="Review assigned consultation entries and add comments"
+                />
+                <FormControlLabel control={<Checkbox checked={recruiter} onChange={handlePermissions} name="recruiter" />}
+                    label="Add patients and add consultation entries"
+                />
+                </FormGroup>
+                </FormControl>
+            }
+            { selected === 'Recruiter' &&
+                <FormControl required error={error} component="fieldset" variant="standard">
+                <FormLabel component="legend">Permisions</FormLabel>
+                <FormGroup>
+                <FormControlLabel control={<Checkbox checked={recruiter} onChange={handlePermissions} name="recruiter" />}
+                    label="Add patients and add consultation entries"
+                />
+                </FormGroup>
+                </FormControl>
+            }
             </Stack>
+        
+            <TextField label="Reason for Approval/Rejection (optional)" fullWidth multiline maxRows={4} name='reason' size='small' inputProps={{maxLength: 200}}/>
+            
             <Stack direction='row' spacing={2} sx={{my:3}}>
-                <LoadingButton onClick={handleAccept} loading={state=== 1} variant="contained" disabled={state!==0}>Accept</LoadingButton>
+                <LoadingButton onClick={handleAccept} loading={state=== 1} variant="contained" disabled={state!==0 || error}>Accept</LoadingButton>
                 <LoadingButton onClick={handleReject} loading={state === 2} variant="outlined" disabled={state!==0}>Reject</LoadingButton>
             </Stack>
             </Box>
             </>
 }
             <NotificationBar status={status} setStatus={setStatus}/>
-        </Box>
+        </div>
+    </div>
     );
 };
 

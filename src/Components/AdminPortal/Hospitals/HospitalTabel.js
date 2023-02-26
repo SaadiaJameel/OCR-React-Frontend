@@ -1,5 +1,5 @@
 import React, { useState, useEffect} from 'react';
-import {Box, LinearProgress} from '@mui/material';
+import {Box, Button, FormControl, IconButton, InputAdornment, LinearProgress, OutlinedInput} from '@mui/material';
 import {Typography, Stack} from '@mui/material';
 import config from '../../../config.json'
 import axios from 'axios';
@@ -8,6 +8,8 @@ import { DataGrid } from '@mui/x-data-grid';
 import { useSelector} from 'react-redux';
 import AddHospital from './AddHospital';
 import DeleteHospital from './DeleteHospital';
+import { useNavigate } from 'react-router-dom';
+import { Search } from '@mui/icons-material';
 
 const HospitalTable = () => {
 
@@ -16,6 +18,12 @@ const HospitalTable = () => {
     const [loading, setLoading] = useState(true);
     const selectorData = useSelector(state => state.data);
     const [userData, setUserData] = useState(selectorData);
+    const [filt, setFilt] = useState('');
+    const navigate = useNavigate();
+
+    const handleChange = (e) => {
+        setFilt(e.target.value);
+    };
 
     const columns = [
         {
@@ -30,23 +38,14 @@ const HospitalTable = () => {
         },
         {
             field: 'details',
-            headerName: '',
+            headerName: 'Details',
             sortable: false,
             flex: 1,
             disableColumnMenu: true,
             renderCell: ({row}) =>(
                <Typography color='GrayText'>{row.details}</Typography>
             )
-        },
-        {
-            field: "_id",
-            headerName: " ",
-            sortable: false,
-            disableColumnMenu: true,
-            align: "right",
-            renderCell: ({ row }) =>
-                <DeleteHospital data={row}/>
-          }
+        }
     ];
 
     const showMsg = (msg, severity)=>{
@@ -72,11 +71,35 @@ const HospitalTable = () => {
     },[])
   
 
-    return (
-        <>        
-        <Box sx={{display:'flex', justifyContent:'flex-end'}}>
-            <AddHospital setData={setData}/>
+    return ( 
+        <div className="inner_content">
+        <div>
+        <Box>    
+        <Typography sx={{ fontWeight: 700}} variant="h5">Hospitals</Typography>    
+        <Box sx={{display:'flex', justifyContent:'space-between',alignItems:'center',my:1}}>
+        {/* <AddHospital setData={setData}/> */}
+        <Button variant='contained'>Add New</Button>
+        <FormControl sx={{width: '30ch' }} variant="outlined">
+          <OutlinedInput
+            id="outlined-adornment-password"
+            placeholder='Search by name'
+            size='small'
+            inputProps={{ maxLength: 20}}
+            onChange={(e)=>handleChange(e)}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  edge="end"
+                >
+                  <Search/>
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+        </FormControl>
         </Box>
+        </Box>  
         <DataGrid
                 rows={data}
                 columns={columns}
@@ -86,10 +109,14 @@ const HospitalTable = () => {
                 rowsPerPageOptions={[25]}
                 experimentalFeatures={{ newEditingApi: true }}
                 getRowId={(row) =>  row._id}
-
+                hideFooter={true}
                 loading={loading}   // you need to set your boolean loading
-        
+
+                filterModel={{
+                    items: [{ columnField: 'username', operatorValue: 'contains', value: filt }]
+                }}
                 sx={{
+                    cursor:'pointer',
                     "&.MuiDataGrid-root .MuiDataGrid-cell:focus-within": {outline: "none !important"},
                     ".MuiDataGrid-columnSeparator": {display: "none !important"},
                 }}
@@ -110,8 +137,8 @@ const HospitalTable = () => {
                   }}
             />
             <NotificationBar status={status} setStatus={setStatus}/>
-
-        </>
+            </div>
+        </div>
     );
 };;
 

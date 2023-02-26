@@ -16,10 +16,8 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import FormLabel from '@mui/material/FormLabel';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import dayjs from 'dayjs';
+// import { DesktopDatePicker, LocalizationProvider, AdapterDayjs } from '@mui/x-date-pickers';
+// import dayjs from 'dayjs';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import Stack from '@mui/material/Stack';
@@ -52,7 +50,7 @@ export default function AddNewPatient() {
 
   ////
   // const [alignment, setAlignment] = React.useState('');
-  const [value, setValue] = React.useState(dayjs('2014-08-18T21:11:54'));
+  // const [value, setValue] = React.useState(dayjs('2014-08-18T21:11:54'));
 
   // const handleChangegender = (event, newAlignment) => {
   //   setAlignment(newAlignment);
@@ -152,7 +150,7 @@ export default function AddNewPatient() {
             variant="standard"
             onChange={e => setRegNo(e.target.value)}
           />
-          <FormLabel component="legend"><b>Date of Birth</b></FormLabel>
+          {/* <FormLabel component="legend"><b>Date of Birth</b></FormLabel>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DesktopDatePicker
                 // label="Date desktop"
@@ -165,7 +163,7 @@ export default function AddNewPatient() {
              
           </LocalizationProvider>
 
-          <FormLabel component="legend"><b>Gender</b></FormLabel>
+          <FormLabel component="legend"><b>Gender</b></FormLabel> */}
         <RadioGroup
           
           row

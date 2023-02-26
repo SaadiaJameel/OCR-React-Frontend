@@ -1,37 +1,37 @@
 import * as React from 'react';
-import {Box, Button} from '@mui/material';
+import {Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText} from '@mui/material';
 import { NavLink, Outlet } from 'react-router-dom';
-import { Photo, People } from '@mui/icons-material';
+import { People, ViewList } from '@mui/icons-material';
 
 const NavButton = ({path,startIcon,name}) => (
-  <Button
-    component={NavLink}
-    to={path}
-    startIcon={startIcon}
-    sx={{ my: 2, display: 'flex', justifyContent: "flex-start", m:0, minWidth:'fit-content' }}
+    <ListItem disablePadding component={NavLink} to={path}
     style={({ isActive }) => ({
-      color: isActive ? '#000' : '#000',
-      background: isActive ? '#f5f5f5' : '#fff',
-    })}
-  >
-  {name}
-  </Button>
+          background: isActive ? '#f5f5f5' : '#fff',
+        })}
+    >
+      <ListItemButton>
+        <ListItemIcon>
+          {startIcon}
+        </ListItemIcon>
+        <ListItemText primary={name} />
+      </ListItemButton>
+    </ListItem>
 )
 
 const Manage = () => {
   
   return (
-    <div className='body'>
     <Box className="content_wrapper">
       <div className='sidebar'>
-          <NavButton path={"/manage/images"} startIcon={<Photo color='action'/>} name={"Images"}/> 
+        <List disablePadding>
           <NavButton path={"/manage/patients"} startIcon={<People color='action'/>} name={"Patients"}/> 
+          <NavButton path={"/manage/entries"} startIcon={<ViewList color='action'/>} name={"Entries"}/> 
+        </List>
       </div>
       <Box sx={{flexGrow:1}} className='content'>
         <Outlet/>
       </Box>
     </Box>
-    </div>
   );
 }
 

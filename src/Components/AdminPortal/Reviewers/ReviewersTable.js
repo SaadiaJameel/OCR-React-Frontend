@@ -1,5 +1,5 @@
 import React, { useState, useEffect} from 'react';
-import {Box, LinearProgress} from '@mui/material';
+import {Box, Button, FormControl, IconButton, LinearProgress, OutlinedInput} from '@mui/material';
 import {TextField, InputAdornment, Skeleton} from '@mui/material';
 import {Avatar, Typography, Stack} from '@mui/material';
 import config from '../../../config.json'
@@ -8,7 +8,7 @@ import NotificationBar from '../../NotificationBar';
 import { stringAvatar} from '../../utils';
 import { DataGrid } from '@mui/x-data-grid';
 import { OpenInNew, Search } from '@mui/icons-material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSelector} from 'react-redux';
 
 const ReviewersTable = () => {
@@ -18,6 +18,7 @@ const ReviewersTable = () => {
     const [loading, setLoading] = useState(true);
     const [filt, setFilt] = useState('');
     const userData = useSelector(state => state.data);
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFilt(e.target.value);
@@ -27,33 +28,36 @@ const ReviewersTable = () => {
         setStatus({msg, severity, open:true})
     }
 
+    const handleClick = (params) => {
+        navigate(`/adminportal/reviewers/${params.row._id}`)
+    };
+
     const columns = [
         {
-            field: "reg_no",
-            headerName: "Reviewers",
+            field: "_id",
+            headerName: "Avatar",
             sortable: false,
             disableColumnMenu: true,
-            align: "center",
             renderCell: ({ row }) =>
-              <Link to={`/adminportal/reviewers/${row._id}`}>
-                  <OpenInNew fontSize='small'/>
-              </Link>
+                <Avatar {...stringAvatar(row.username)} variant='rounded' />
         },
         {
           field: 'username',
-          headerName: ' ',
-          sortable: false,
+          headerName: 'Name',
           flex: 1,
           disableColumnMenu: true,
-          renderCell: ({row}) =>(
-              <Stack direction='row' spacing={2} alignItems='center'>
-                  <Avatar {...stringAvatar(row.username)} variant='rounded' />
-                    <Stack direction='column'>
-                        <Typography>{row.username}</Typography>
-                        <Typography color='GrayText'>{row.reg_no}</Typography>
-                    </Stack>
-              </Stack>
-          )
+        },
+        {
+          field: 'reg_no',
+          headerName: 'SLMC Reg No',
+          flex: 1,
+          disableColumnMenu: true,
+        },
+        {
+          field: 'hospital',
+          headerName: 'Hospital',
+          flex: 1,
+          disableColumnMenu: true,
         }
     ];
 
@@ -78,26 +82,38 @@ const ReviewersTable = () => {
   
 
     return (
-        <>        
-        <Box sx={{display:'flex', justifyContent:'flex-end'}}>
-            <TextField  onChange={(e)=>handleChange(e)} variant="standard" placeholder='Search by username'
+        <div className="inner_content">
+        <div>  
+        <Typography sx={{ fontWeight: 700}} variant="h5">Reviewers</Typography>          
+        <Box sx={{display:'flex', justifyContent:'space-between',alignItems:'center',my:1}}>
+        <Button variant='contained'>Add New</Button>
+            <FormControl sx={{width: '30ch' }} variant="outlined">
+            <OutlinedInput
+                id="outlined-adornment-password"
+                placeholder='Search by name'
+                size='small'
                 inputProps={{ maxLength: 20}}
-                InputProps={{
-                startAdornment: (
-                    <InputAdornment position="start">
-                        <Search fontSize='small'/>
-                    </InputAdornment>
-                )
-                }}
+                onChange={(e)=>handleChange(e)}
+                endAdornment={
+                <InputAdornment position="end">
+                    <IconButton
+                    aria-label="toggle password visibility"
+                    edge="end"
+                    >
+                    <Search/>
+                    </IconButton>
+                </InputAdornment>
+                }
             />
+            </FormControl>
         </Box>
         <DataGrid
                 rows={request}
                 columns={columns}
-                pageSize={5}
+                onRowClick={handleClick}
+                hideFooter={true}
                 autoHeight={true}
                 disableSelectionOnClick
-                rowsPerPageOptions={[5]}
                 experimentalFeatures={{ newEditingApi: true }}
                 getRowId={(row) =>  row._id}
 
@@ -107,6 +123,7 @@ const ReviewersTable = () => {
                 }}
 
                 sx={{
+                    cursor:'pointer',
                     "&.MuiDataGrid-root .MuiDataGrid-cell:focus-within": {outline: "none !important"},
                     ".MuiDataGrid-columnSeparator": {display: "none !important"},
                 }}
@@ -128,7 +145,8 @@ const ReviewersTable = () => {
             />
             <NotificationBar status={status} setStatus={setStatus}/>
 
-        </>
+        </div>
+        </div>
     );
 };;
 

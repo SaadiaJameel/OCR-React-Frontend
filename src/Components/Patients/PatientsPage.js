@@ -4,10 +4,12 @@ import { Outlet } from 'react-router-dom';
 
 const PatientsPage = () => {
     return (
-        <Box>
+        <div className="inner_content">
+        <div>
             <Typography sx={{ fontWeight: 700}} variant="h5">Patients</Typography> 
             <Outlet/>  
-        </Box>
+        </div>
+        </div>
     );
 };
 

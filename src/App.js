@@ -4,12 +4,9 @@ import './App.css';
 import LoginPage from './Pages/LoginPage';
 import NotFound from './Components/NotFound';
 import ProtectedRoute from './Components/ProtectedRoute';
-import Canvas from './Components/Annotation/Canvas';
 import PatientsPage from './Components/Patients/PatientsPage';
 import ImagesPage from './Pages/ImagesPage';
 import AdminPage from './Pages/AdminPage';
-import Requests from './Components/AdminPortal/Requests/Requests';
-import Reviewers from './Components/AdminPortal/Reviewers/Reviewers';
 import Manage from './Pages/Manage';
 import PatientsTable from './Components/Patients/PatientsTable';
 import PatientDetails from './Components/Patients/PatientDetails';
@@ -18,12 +15,13 @@ import RequestDetails from './Components/AdminPortal/Requests/RequestDetails';
 import ReviewersTable from './Components/AdminPortal/Reviewers/ReviewersTable';
 import UserDetails from './Components/AdminPortal/Reviewers/UserDetails';
 import UserProfile from './Components/UserProfile';
-import ImagesSearch from './Components/ImagesSearch';
 import ImageCropper from './Components/Crop/ImageCropper';
 import { useSelector, useDispatch } from 'react-redux';
 import { trySilentRefresh } from './utils/authUtils';
 import {setUserData } from './Reducers/userDataSlice';
-import Hospitals from './Components/AdminPortal/Hospitals/Hospitals';
+import EntryDetails from './Components/Entry/EntryDetails';
+import HospitalTable from './Components/AdminPortal/Hospitals/HospitalTabel';
+import Entries from './Components/Entry/Entries';
 
 
 
@@ -69,22 +67,23 @@ function App() {
 
         <Route path='/adminportal' element={<ProtectedRoute allowed={[1]}><AdminPage/></ProtectedRoute>}>
 
-            <Route path='/adminportal/requests' element={<Requests/>}>
+            <Route path='/adminportal/requests' element={<Outlet/>}>
               <Route index element={<RequestsTable/>}/>
               <Route path='/adminportal/requests/:id' element={<RequestDetails/>}/>
             </Route>
 
-            <Route path='/adminportal/reviewers' element={<Reviewers/>}>
+            <Route path='/adminportal/reviewers' element={<Outlet/>}>
               <Route index element={<ReviewersTable/>}/>
               <Route path='/adminportal/reviewers/:id' element={<UserDetails/>}/>
             </Route>
 
-            <Route path='/adminportal/hospitals' element={<Hospitals/>} ></Route>
+            <Route path='/adminportal/hospitals' element={<HospitalTable/>} ></Route>
         </Route>
 
         <Route path='/manage' element={<ProtectedRoute allowed={[1,2]}><Manage/></ProtectedRoute>}>
-            <Route index element={<ImagesSearch/>}/>
-            <Route path='/manage/images' element={<ImagesSearch/>}/>
+            <Route index element={<Entries/>}/>
+            <Route path='/manage/entries' element={<Entries/>}/>
+            <Route path='/manage/entries/:id' element={<EntryDetails/>}/>
             <Route path ='/manage/patients' element={<PatientsPage/>}>
                 <Route  index element={<PatientsTable/>}></Route>
                 <Route  index path="/manage/patients/all" element={<PatientsTable/>}></Route>

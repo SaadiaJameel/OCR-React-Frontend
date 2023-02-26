@@ -158,7 +158,7 @@ const LoginPage =()=>{
             {
                 singup?
                 <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square container justify="flex-end" alignItems="center">
-                    <Box sx={{ my: 8, mx: 4, p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                    <Box sx={{mx: 4, p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                         <Avatar sx={{ m: 1, bgcolor: 'primary.main' }} alt="Oral" src={logo}/>
                         <Typography component="h1" variant="h5"> Sign up </Typography>
 
@@ -211,7 +211,7 @@ const LoginPage =()=>{
                 </Grid>
                 :
                 <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square container justify="flex-end" alignItems="center">
-                    <Box sx={{ my: 8, mx: 4, p:2, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                    <Box sx={{mx: 4, p:2, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                         <Avatar sx={{ m: 1, bgcolor: 'primary.main' }} alt="Oral" src={logo}/>
                         <Typography component="h1" variant="h5"> Sign in </Typography>
                         

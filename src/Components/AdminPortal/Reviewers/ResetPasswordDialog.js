@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {DialogTitle, Dialog, Button, DialogContent,DialogActions, } from '@mui/material';
+import {Button, Stack, } from '@mui/material';
 import { FormControl, InputLabel, InputAdornment, IconButton, OutlinedInput, Typography } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { PasswordStrengthIndicator, passwordStrength } from '../../utils';
@@ -9,20 +9,14 @@ import config from '../../../config.json';
 import axios from 'axios';
 import { useSelector} from 'react-redux';
 
-export default function ResetPasswordDialog({user}) {
-
-    const [open, setOpen] =  useState(false);
+export default function ResetPasswordDialog({user, setIsReset}) {
     const [showPassword, setShowPassword] = useState(false);
     const [confirm, setConfirm] = useState(false);
     const [password, setPassword] = useState("");
     const [state, setState] = useState(0);
     const [status, setStatus] = useState({msg:"",severity:"success", open:false});
-    const userData = useSelector(state => state.userData.data);
+    const userData = useSelector(state => state.data);
    
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-
     const handlePasswordChange = (e)=>{
         const ok = passwordStrength(e.target.value) > 30;
         setPassword(e.target.value);
@@ -30,7 +24,7 @@ export default function ResetPasswordDialog({user}) {
     }
 
     const handleClose = () => {
-        setOpen(false);
+        setIsReset(false);
     };
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -68,11 +62,7 @@ export default function ResetPasswordDialog({user}) {
     }
 
   return (
-    <div>
-        <Button variant='contained' color='error' onClick={handleClickOpen}>Reset Password</Button>
-        <Dialog onClose={handleClose} open={open}>
-        <DialogTitle>Reset User Password</DialogTitle>
-        <DialogContent dividers>
+    <div style={{background:'#fbfbfb', padding:'5px', border:'1px solid lightgray', borderRadius:'3px', maxWidth:'600px'}}>
         <Typography color='red'>WARNING: </Typography>
         <Typography>Please note that after changing the password the user will no longer be able to log into the application using the current password.</Typography>
         <br/>
@@ -90,12 +80,10 @@ export default function ResetPasswordDialog({user}) {
             />
         </FormControl>
         <PasswordStrengthIndicator password={password}/>
-        </DialogContent>
-        <DialogActions>
+        <Stack direction='row' justifyContent='flex-end' spacing={2}>
             <LoadingButton size="small" onClick={handleReset} loading={state === 1} variant="contained" disabled={!confirm || state !==0}>Reset Password</LoadingButton>
             <Button onClick={handleClose} color='inherit' variant='outlined' disabled={state !==0}>Cancel</Button>
-            </DialogActions>
-        </Dialog>
+        </Stack>
         <NotificationBar status={status} setStatus={setStatus}/>
     </div>
   );
