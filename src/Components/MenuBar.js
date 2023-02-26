@@ -202,11 +202,14 @@ function MenuBar({roles,username, availability}) {
           </Menu>
             <Box sx={{ flexGrow: 0, display: { xs: 'none', sm: 'flex'}}}>
                 <Button sx={{ my: 2, color: 'white', display: 'block', m:0}} component={NavLink} to="/manage/patients"> 
-                    Manage
+                    Recruiter
+                </Button>
+                <Button sx={{ my: 2, color: 'white', display: 'block', m:0}} component={NavLink} to="/review/entries"> 
+                    Reviewer
                 </Button>
                 { roles.includes(1) &&
                   <Button sx={{ my: 2, color: 'white', display: 'block', m:0}} color='secondary' component={NavLink} to="/adminportal/requests">
-                    Admin Portal
+                    Admin
                 </Button>}
             </Box>
 

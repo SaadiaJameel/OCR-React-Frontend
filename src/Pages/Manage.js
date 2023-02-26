@@ -25,7 +25,7 @@ const Manage = () => {
       <div className='sidebar'>
         <List disablePadding>
           <NavButton path={"/manage/patients"} startIcon={<People color='action'/>} name={"Patients"}/> 
-          <NavButton path={"/manage/entry"} startIcon={<ViewList color='action'/>} name={"Entry"}/> 
+          <NavButton path={"/manage/entries"} startIcon={<ViewList color='action'/>} name={"Entries"}/> 
         </List>
       </div>
       <Box sx={{flexGrow:1}} className='content'>

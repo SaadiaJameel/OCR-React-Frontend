@@ -6,6 +6,6 @@
     ],
     "recruiter":[
         {"path":"/manage/patients", "name":"Patients"},
-        {"path":"/manage/entry", "name":"Entry"}
+        {"path":"/manage/entries", "name":"Entries"}
     ]
 }

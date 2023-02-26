@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState} from 'react';
 import { Link, useParams} from 'react-router-dom';
 import { ArrowBack, AccountBox, AddAPhoto, Image} from '@mui/icons-material';
-import { Box, Stack, Avatar, Typography, Skeleton,Tab} from '@mui/material';
+import { Box, Stack, Avatar, Typography, Skeleton,Tab, Button} from '@mui/material';
 import {TabContext,TabList,TabPanel} from '@mui/lab';
 import { stringAvatar } from '../utils';
 import config from '../../config.json'
@@ -54,11 +54,8 @@ const PatientDetails = () => {
 
    
     return (
-        <Box sx={{my:3}}>
-            <Stack direction='row' sx={{my:1}} >
-            <ArrowBack fontSize='small' color='action'/>
-            <Link to='/manage/patients'><Typography fontSize='small' color='GrayText'>Go back to Patients</Typography></Link>
-            </Stack>
+        <Box>
+            <Button component={Link} to='/manage/patients' size='small' startIcon={<ArrowBack/>} sx={{p:0}}>Go Back To Entries</Button>
             
             {loading?
             <>
