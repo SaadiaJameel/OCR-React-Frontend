@@ -9,6 +9,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { useSelector} from 'react-redux';
 import ChangePasswordDialog from './ChangePasswordDialog';
 import { styled } from '@mui/material/styles';
+import { MuiTelInput } from 'mui-tel-input';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -32,6 +33,11 @@ const UserProfile = () => {
     const [state, setState] = useState(0);
     const formRef = useRef();
     const userData = useSelector(state => state.data);
+    const [value, setValue] = useState('+94');
+    
+    const handleChange = (newValue) => {
+        setValue(newValue)
+    }
 
     useEffect(()=>{
         
@@ -67,6 +73,7 @@ const UserProfile = () => {
         }
         ).then(res=>{
             setData(res.data);
+            setValue(res.data.contact_no? res.data.contact_no:'+94');
             setLoading(false);
         }).catch(err=>{
             if(err.response) showMsg(err.response.data.message, "error")
@@ -78,7 +85,7 @@ const UserProfile = () => {
 
         const formData = new FormData(formRef.current);
         const username = formData.get('username');
-        const contact_no = formData.get('contact_number');
+        const contact_no = value;
         const designation = formData.get('designation');
       
         if(username ==="" || username.length <5){
@@ -122,7 +129,7 @@ const UserProfile = () => {
 
     return (
         <div className='body'>
-        <Box sx={{my:3}}>
+        <Box sx={{my:3}} style={{paddingLeft:'20px'}}>
             <Grid container spacing={2}>
                 <Grid item xs={12} md={4}>
                 {loading?
@@ -185,7 +192,7 @@ const UserProfile = () => {
                                 }
                             </Select>
                         </FormControl>
-                        <TextField defaultValue={data.contact_no} name='contact_number' size='small' label='Contact Number'/>
+                        <MuiTelInput value={value} onChange={handleChange} size='small' name='contactNo' placeholder='Phone Number' margin="normal" fullWidth/>
                         <TextField  value={data.email} name='email' size='small' disabled label='Email'/>
                         <TextField value={data.reg_no} name='reg_no' size='small' disabled label='SLMC Registration Number'/>
                         <TextField value={data.createdAt} name='created_at' size='small' disabled label='Created At'/>

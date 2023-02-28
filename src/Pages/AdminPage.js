@@ -25,9 +25,9 @@ const AdminPage = () => {
     <Box className="content_wrapper">
       <div className='sidebar'>
         <List disablePadding>
-          <NavButton path={"/adminportal/requests"} startIcon={<Email color='action'/>} name={"Requests"}/> 
-          <NavButton path={"/adminportal/reviewers"} startIcon={<AccountBox color='action'/>} name={"Reviewers"}/> 
-          <NavButton path={"/adminportal/hospitals"} startIcon={<LocalHospital color='action'/>} name={"Hospitals"}/> 
+          <NavButton path={"/adminportal/requests"} startIcon={<Email/>} name={"Requests"}/> 
+          <NavButton path={"/adminportal/reviewers"} startIcon={<AccountBox/>} name={"Reviewers"}/> 
+          <NavButton path={"/adminportal/hospitals"} startIcon={<LocalHospital/>} name={"Hospitals"}/> 
         </List>
       </div>
       <Box sx={{flexGrow:1}} className='content'>
