@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowBack, ArrowLeft, AssignmentInd, Edit, People} from '@mui/icons-material';
-import { Avatar, AvatarGroup, Tooltip, Typography , Stack, Box, Divider, Grid, Slide, Dialog, IconButton, Button} from '@mui/material';
+import { Avatar, AvatarGroup, Tooltip, Typography , Stack, Box, Divider, Grid, Slide, Dialog, IconButton, Button, Table, TableRow, TableCell, TableBody} from '@mui/material';
 import { stringAvatar } from '../utils';
 import image from '../../Assets/noImage.jpg'
 import { styled } from '@mui/material/styles';
@@ -64,11 +64,12 @@ const EntryDetails = () => {
     return (
             <div className="inner_content">
                 <div>  
+                    <div style={{position:'sticky', top:0, background:'white',zIndex:1}}>
                     <Typography sx={{ fontWeight: 700}} variant="h5">Tele Consultation Entry</Typography>                  
-                    <Box>
                     <Button component={Link} to='/manage/entries' size='small' startIcon={<ArrowBack/>} sx={{p:0}}>Go Back To Entries</Button>
+                    </div>
                     <Stack direction='row' spacing={2} alignItems='center' sx={{my:3}}>
-                        <AssignmentInd sx={{color:'lightgray', width:'60px',height:'60px'}}/>
+                        <AssignmentInd sx={{color:'black', width:'60px',height:'60px'}}/>
                         <Stack direction='column'>
                             <Tooltip title='Go to patients profile' arrow placement="right"><Typography variant='h5' color='Highlight' sx={{cursor:'pointer'}}>
                                 {details.patient.name}
@@ -83,7 +84,7 @@ const EntryDetails = () => {
                         <Typography><b>duration</b></Typography>
                     </Stack>
                     <Divider sx={{my:1}}/>
-                    <Typography>Reviewers:</Typography>
+                    <Typography variant='body2'>Reviewers:</Typography>
                     <AvatarGroup sx={{width:'fit-content'}}>
                         {
                             details.assignees.map((reviewer, index)=>{
@@ -93,18 +94,23 @@ const EntryDetails = () => {
                     </AvatarGroup>
 
                     <Divider sx={{my:1}}/>
-                    <Stack direction='column' spacing={1} sx={{my:2}}>
-                        <Typography><b>Complaint:</b></Typography>
-                        <Typography>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quis fermentum orci, sed dapibus sem. Ut in pretium odio. Donec lorem orci</Typography>
-
-                        <Typography><b>Findings:</b></Typography>
-                        <Typography>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quis fermentum orci, sed dapibus sem. Ut in pretium odio. Donec lorem orci, volutpat at lectus sit amet, fermentum consequat eros. Aliquam quis nulla blandit, tristique ipsum vitae, suscipit tortor. Vivamus in aliquam turpis. Donec in elit quis risus pulvinar condimentum quis at magna. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse potenti. Integer et consectetur tellus. Vestibulum ac neque tempus, </Typography>
-                        
-                        <Typography><b>Current Habits:</b></Typography>
-                        <Typography>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quis fermentum orci, sed dapibus sem. Ut in pretium odio. Donec lorem orci</Typography>
-                        
-                        <Typography><b>Images:</b></Typography>
-                    </Stack>    
+             
+                    <Table  sx={{border: '1px solid lightgray', my:5}}>
+                        <TableBody>
+                            <TableRow>
+                                <TableCell>Complaint:</TableCell>
+                                <TableCell>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quis fermentum orci, sed dapibus sem.</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>Findings:</TableCell>
+                                <TableCell>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quis fermentum orci, sed dapibus sem.</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>Current Habits:</TableCell>
+                                <TableCell>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quis fermentum orci, sed dapibus sem.</TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table> 
                     <Grid container spacing={2}>
                     {[...data].map((item, index) => (
                         <Grid item key={index} xs={4} md={3} lg={2}>
@@ -130,8 +136,8 @@ const EntryDetails = () => {
                         </Grid>
                     ))}
                     </Grid>
-                    <Stack sx={{my:2}} direction='column' spacing={1}>
-                        <Typography><b>Reviews:</b></Typography>
+                    <Stack sx={{my:5}} direction='column' spacing={1}>
+                        <Typography variant='body2'>Reviews:</Typography>
                     {
                         details.reviews.map((item,index)=>{
                             return(
@@ -151,7 +157,6 @@ const EntryDetails = () => {
                         })
                     }
                     </Stack>
-                    </Box>
                     <Dialog fullScreen open={openAnnotation} onClose={handleClose} TransitionComponent={Transition}>
                         <Canvas imageIndex={imageIndex} open={openAnnotation} setOpen={setOpenAnnotation} data={data} setData={setData} upload={false}/>
                     </Dialog>

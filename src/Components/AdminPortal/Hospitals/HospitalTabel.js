@@ -25,6 +25,10 @@ const HospitalTable = () => {
         setFilt(e.target.value);
     };
 
+    const handleClick = (params) => {
+        navigate(`/adminportal/hospitals/${params.row._id}`);
+    };
+
     const columns = [
         {
           field: 'name',
@@ -32,9 +36,6 @@ const HospitalTable = () => {
           sortable: false,
           flex: 1,
           disableColumnMenu: true,
-          renderCell: ({row}) =>(
-                <Typography>{row.name}</Typography>    
-          )
         },
         {
             field: 'details',
@@ -42,9 +43,6 @@ const HospitalTable = () => {
             sortable: false,
             flex: 1,
             disableColumnMenu: true,
-            renderCell: ({row}) =>(
-               <Typography color='GrayText'>{row.details}</Typography>
-            )
         }
     ];
 
@@ -78,7 +76,7 @@ const HospitalTable = () => {
         <Typography sx={{ fontWeight: 700}} variant="h5">Hospitals</Typography>    
         <Box sx={{display:'flex', justifyContent:'space-between',alignItems:'center',my:1}}>
         {/* <AddHospital setData={setData}/> */}
-        <Button variant='contained'>Add New</Button>
+        <Button variant='outlined' >Add New</Button>
         <FormControl sx={{width: '30ch' }} variant="outlined">
           <OutlinedInput
             id="outlined-adornment-password"
@@ -105,6 +103,7 @@ const HospitalTable = () => {
                 columns={columns}
                 pageSize={25}
                 autoHeight={true}
+                onRowClick={handleClick}
                 disableSelectionOnClick
                 rowsPerPageOptions={[25]}
                 experimentalFeatures={{ newEditingApi: true }}

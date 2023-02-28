@@ -22,6 +22,7 @@ import {setUserData } from './Reducers/userDataSlice';
 import EntryDetails from './Components/Entry/EntryDetails';
 import HospitalTable from './Components/AdminPortal/Hospitals/HospitalTabel';
 import Entries from './Components/Entry/Entries';
+import HospitalDetails from './Components/AdminPortal/Hospitals/HospitalDetails';
 
 
 
@@ -78,6 +79,9 @@ function App() {
             </Route>
 
             <Route path='/adminportal/hospitals' element={<HospitalTable/>} ></Route>
+            <Route path='/adminportal/hospitals/new' element={<HospitalTable/>} ></Route>
+            <Route path='/adminportal/hospitals/:id' element={<HospitalDetails/>} ></Route>
+            <Route path='/adminportal/hospitals/:id/edit' element={<HospitalTable/>} ></Route>
         </Route>
 
         <Route path='/manage' element={<ProtectedRoute allowed={[1,2]}><Manage/></ProtectedRoute>}>

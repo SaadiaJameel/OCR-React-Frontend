@@ -7,7 +7,7 @@ import axios from 'axios';
 import NotificationBar from '../../NotificationBar';
 import { stringAvatar} from '../../utils';
 import { DataGrid } from '@mui/x-data-grid';
-import { OpenInNew, Search } from '@mui/icons-material';
+import { Add, OpenInNew, Search } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector} from 'react-redux';
 
@@ -86,7 +86,7 @@ const ReviewersTable = () => {
         <div>  
         <Typography sx={{ fontWeight: 700}} variant="h5">Reviewers</Typography>          
         <Box sx={{display:'flex', justifyContent:'space-between',alignItems:'center',my:1}}>
-        <Button variant='contained'>Add New</Button>
+        <Button  variant='outlined'>Add New</Button>
             <FormControl sx={{width: '30ch' }} variant="outlined">
             <OutlinedInput
                 id="outlined-adornment-password"

@@ -127,7 +127,7 @@ const RequestDetails = () => {
 
     return (
         <div className="inner_content">
-        <div style={{paddingBottom:'100px'}}>
+        <div>
             <Box>    
             <Typography sx={{ fontWeight: 700}} variant="h5">Requests</Typography>    
             </Box>  
@@ -249,6 +249,7 @@ const RequestDetails = () => {
             </>
 }
             <NotificationBar status={status} setStatus={setStatus}/>
+            <Box sx={{padding:'100px'}}></Box>
         </div>
     </div>
     );
