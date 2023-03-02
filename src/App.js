@@ -51,13 +51,10 @@ function App() {
   //   }
   // }, [])
   useEffect(() => {
-    if (localStorage.getItem('loggedOut')) {
       setTimeout(() => {
-          localStorage.removeItem('loggedOut');
-      }, 1000);
-      silentRefresh();
+        silentRefresh();
+      }, 1000*60*2);
 
-  }
   });
   const router = createBrowserRouter(
     createRoutesFromElements(
