@@ -198,7 +198,7 @@ const UserDetails = () => {
                 </Stack>
                 {
                     isDeelete &&
-                    <Stack sx={{p:3}} justifyContent='center' direction='row'>
+                    <Stack sx={{p:3}} direction='row'>
                         <DeleteUserDialog user={data} setIsDelete={setIsDelete}/>
                     </Stack>
                     

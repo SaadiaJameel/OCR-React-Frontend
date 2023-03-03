@@ -9,7 +9,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { useNavigate } from 'react-router-dom';
 import NotificationBar from '../../NotificationBar';
 import { useSelector} from 'react-redux';
-export default function DeleteUserDialog({user, setIsDelete}) {
+export default function DeleteHospitalDialog({hospital, setIsDelete}) {
 
     const [state, setState] = useState(0);
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
@@ -23,7 +23,7 @@ export default function DeleteUserDialog({user, setIsDelete}) {
     };
 
     const handleConfirm = (e)=>{
-        setConfirmed(e.target.value === user.username)
+        setConfirmed(e.target.value === hospital.name)
     }
 
     const showMsg = (msg, severity)=>{
@@ -34,13 +34,13 @@ export default function DeleteUserDialog({user, setIsDelete}) {
       
         setState(1);
 
-        axios.post(`${config['path']}/admin/delete/user/${user._id}`,
+        axios.post(`${config['path']}/admin/hospitals/delete/${hospital._id}`,
         {},
         { headers: {
             'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
             'email': JSON.parse(sessionStorage.getItem("info")).email,
         }}).then(res=>{
-            navigate("/adminportal/reviewers");
+            navigate("/adminportal/hospitals");
         }).catch(err=>{
             if(err.response) showMsg(err.response.data.message, "error")
             else alert(err)
@@ -52,19 +52,20 @@ export default function DeleteUserDialog({user, setIsDelete}) {
 
 
   return (
-    <div style={{background:'#fbfbfb'}}>
+    <div style={{background:'#fbfbfb', padding:'5px'}}>
         
         <Typography color='red'>WARNING: </Typography>
         <Typography>
-        This action is irreversible and will permanently delete the user. Please proceed with caution.
-        Enter username: <strong>'{user.username}'</strong> to confirm the action.
+        This action is irreversible and will permanently delete the hospital entry. Please proceed with caution.
+        Enter the name: <strong>'{hospital.name}'</strong> to confirm the action.
         </Typography>
         <br/>
         <Stack direction='column' spacing={4} maxWidth="75ch">
-            <TextField label='confirm username' color='error' variant='standard' focused onChange={(e)=>handleConfirm(e)}/>
+            <TextField label='confirm the hospital name' color='error' variant='standard' focused onChange={(e)=>handleConfirm(e)}/>
         </Stack>
-        <Stack spacing={2} direction='row' justifyContent='flex-end'>
-            <LoadingButton size="small" onClick={handleDelete} loading={state === 1} variant="contained" disabled={!confirmed || state !==0}>Delete User</LoadingButton>
+        
+        <Stack spacing={2} direction='row' justifyContent='flex-end' sx={{mt:5}}>
+            <LoadingButton color="error" size="small" onClick={handleDelete} loading={state === 1} variant="contained" disabled={!confirmed || state !==0}>Delete Hospital</LoadingButton>
             <Button onClick={handleClose} color='inherit' variant='outlined' disabled={state!==0}>Cancel</Button>
         </Stack>
         <NotificationBar status={status} setStatus={setStatus}/>

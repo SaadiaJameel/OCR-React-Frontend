@@ -79,7 +79,7 @@ const LoginPage =()=>{
             if(response.data.others.role.includes(1)){
                 navigate("/adminportal/requests");
             }else{
-                navigate("/manage/images");
+                navigate("/manage/");
             }
         })
         .catch(function (error) {

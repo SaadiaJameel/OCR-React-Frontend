@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Box, Button, Stack, Table, TableBody, TableCell, TableRow, TextField} from '@mui/material';
+import { Box, Button, CircularProgress, Stack, Typography, TextField} from '@mui/material';
 import { Cancel, Delete, Edit, Save } from '@mui/icons-material';
 import { MuiTelInput } from 'mui-tel-input';
 import axios from 'axios';
 import config from '../../../config.json'
 import LoadingButton from '@mui/lab/LoadingButton';
 import NotificationBar from '../../NotificationBar';
+import DeleteHospitalDialog from './DeleteHospitalDialog';
 
 const View = ({data}) => {
     const [ editEnable, setEditEnable] = useState(true);
@@ -16,6 +17,7 @@ const View = ({data}) => {
     const [address, setAddress] = useState(data.address);
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) ;
     const [loading, setLoading] = useState(false);
+    const [isDelete, setIsDelete] = useState(false);
     
     const handleChange = (newValue) => {
         setNumber(newValue)
@@ -32,7 +34,7 @@ const View = ({data}) => {
 
     const onSave = () => {
         setLoading(true);
-        axios.post(`${config['path']}/user/hospitals/update`,
+        axios.post(`${config['path']}/admin/hospitals/update`,
         {data, name, city, category, address, number},
         { headers: {
             'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
@@ -42,8 +44,11 @@ const View = ({data}) => {
             setLoading(false);
             setEditEnable(!editEnable);          
         }).catch(err=>{
-            alert(err)
-        })
+            if(err.response) showMsg(err.response.data.message, "error")
+            else alert(err)
+        }).finally(
+            setLoading(false)
+        )
         
     }
 
@@ -51,11 +56,23 @@ const View = ({data}) => {
             <Box>
                 <Stack direction='row' spacing={2} py={1} justifyContent='flex-end'>
                     <Button variant='outlined' endIcon={<Edit/>} onClick={() => setEditEnable(!editEnable)}
-                    style={{ display: !editEnable ? 'none' : undefined }}>Edit</Button>
+                    style={{ display: !(editEnable && !isDelete) ? 'none' : undefined }}>Edit</Button>
                     <Button variant='outlined' endIcon={<Delete/>}
                     color="error"
-                    style={{ display: !editEnable ? 'none' : undefined }}>Delete</Button>
+                    onClick={() => setIsDelete(!isDelete)}
+                    style={{ display: !(editEnable && !isDelete) ? 'none' : undefined }}>Delete</Button>
                 </Stack>
+                
+                {
+                    isDelete &&
+                    <Box sx={{border: '1px solid red', borderRadius:'5px', my:5}}>
+                    <Stack sx={{p:3}} justifyContent='center' direction='row'>
+                        <DeleteHospitalDialog hospital={data} setIsDelete={setIsDelete}/>
+                    </Stack>
+                    </Box>
+                    
+                }
+
                 <Stack direction='column' spacing={3}>
             <TextField disabled={editEnable} defaultValue={data.name} name='Name' size='small' label='Name' InputLabelProps={{shrink: true,}} 
             onChange={(e) => setName(e.target.value)}
@@ -100,40 +117,14 @@ const View = ({data}) => {
             </Stack>
             <Stack direction='row' spacing={2} py={1} justifyContent='flex-start'>
                     <LoadingButton
+                    loadingIndicator={<CircularProgress color="inherit" size={16}/>}
                     loading={loading}
                      style={{ display: editEnable ? 'none' : undefined }} variant='contained' endIcon={<Save/>}
                     onClick={onSave}>Save</LoadingButton>
                     <Button style={{ display: editEnable ? 'none' : undefined }} variant='outlined' endIcon={<Cancel/>}
                     onClick={onCancel}>Cancel</Button>
             </Stack>
-            {/* <Table  sx={{border: '1px solid lightgray'}}>
-                <TableBody>
-                    <TableRow>
-                        <TableCell>Name:</TableCell>
-                        <TableCell>{data.name}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell>Category:</TableCell>
-                        <TableCell>{data.category}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                   <TableCell>City:</TableCell>
-                        <TableCell>{data.city}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                   <TableCell>Address:</TableCell>
-                        <TableCell>{data.address}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell>Contact No:</TableCell>
-                        <TableCell>{data.contact_no? data.contact_no.replace(/\s/g, ''):""}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell>Created</TableCell>
-                        <TableCell>{(data.createdAt.split("T"))[0]}</TableCell>
-                    </TableRow>
-                </TableBody>
-            </Table> */}
+            
             <NotificationBar status={status} setStatus={setStatus}/>
             </Box>
             
