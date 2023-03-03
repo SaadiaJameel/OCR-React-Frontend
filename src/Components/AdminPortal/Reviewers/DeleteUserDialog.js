@@ -52,7 +52,7 @@ export default function DeleteUserDialog({user, setIsDelete}) {
 
 
   return (
-    <div style={{background:'#fbfbfb', padding:'5px', border:'1px solid lightgray', borderRadius:'3px', maxWidth:'600px'}}>
+    <div style={{background:'#fbfbfb'}}>
         
         <Typography color='red'>WARNING: </Typography>
         <Typography>
@@ -60,8 +60,9 @@ export default function DeleteUserDialog({user, setIsDelete}) {
         Enter username: <strong>'{user.username}'</strong> to confirm the action.
         </Typography>
         <br/>
-        <TextField label='confirm username' size='small' color='error' variant='standard' focused onChange={(e)=>handleConfirm(e)}/>
-        
+        <Stack direction='column' spacing={4} maxWidth="75ch">
+            <TextField label='confirm username' color='error' variant='standard' focused onChange={(e)=>handleConfirm(e)}/>
+        </Stack>
         <Stack spacing={2} direction='row' justifyContent='flex-end'>
             <LoadingButton size="small" onClick={handleDelete} loading={state === 1} variant="contained" disabled={!confirmed || state !==0}>Delete User</LoadingButton>
             <Button onClick={handleClose} color='inherit' variant='outlined' disabled={state!==0}>Cancel</Button>
