@@ -46,7 +46,7 @@ const HospiatalDetails = () => {
     return (
         <div className="inner_content">
         <div>
-            <Box sx={{position:'sticky', top:0}}>    
+            <Box>    
             <Typography sx={{ fontWeight: 700}} variant="h5">Hospital</Typography>    
             
             <Button component={Link} to='/adminportal/hospitals' size='small' startIcon={<ArrowBack/>} sx={{p:0}}>Go Back To Hospitals</Button>
