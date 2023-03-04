@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState } from 'react';
 import { LinearProgress, Stack, TextField} from '@mui/material';
 import { InputAdornment} from '@mui/material';
 import {Box, IconButton} from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
 import { Edit, Search } from '@mui/icons-material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import NotificationBar from '../NotificationBar';
 import axios from 'axios';
 import config from '../../config.json';
@@ -20,6 +20,7 @@ const PatientsTable = () => {
     const [data, setData] = useState([]);
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
     const [options, setOptions] = useState([]);
+    const navigate = useNavigate();
 
 
     const handleChange = (e) => {
@@ -95,6 +96,11 @@ const PatientsTable = () => {
         {field: 'category', headerName: 'Category', flex: 1, disableColumnMenu: true},
     ];
 
+    const handleClick = (value) => {
+        console.log(value);
+        // window.location.href = `/manage/patients/${value._id}`
+    };
+
     return (
             <Box>   
                 <AddNewPatient/>
@@ -148,14 +154,13 @@ const PatientsTable = () => {
                 />  
                 <NotificationBar status={status} setStatus={setStatus}/>  
                 <Autocomplete
+                    sx={{mt:2}}
                     options={options}
                     onInputChange={onInputChange}
                     getOptionLabel={(option) => option.patient_id}
                     style={{ width: 300 }}
-                    autoComplete
-                    includeInputInList
-                    filterSelectedOptions
                     noOptionsText="No Patients"
+                    onChange={(event, value) => {navigate(`/manage/patients/${value._id}`)}} 
                     renderInput={(params) => (
                     <TextField {...params} label="Search By ID" variant="outlined" />
                     )}

@@ -42,7 +42,8 @@ const View = ({data}) => {
         }}
         ).then(res=>{
             setLoading(false);
-            setEditEnable(!editEnable);          
+            setEditEnable(!editEnable);
+            showMsg("Sucessfully Updated the entry", "success")
         }).catch(err=>{
             if(err.response) showMsg(err.response.data.message, "error")
             else alert(err)
