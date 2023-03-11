@@ -62,8 +62,13 @@ a{
 	flex-grow: 1;
 }
 
+/* mobile view */
 @media (max-width: 600px) {
 	.sidebar{
+		display: none;
+	}
+
+	.cell{
 		display: none;
 	}
 }

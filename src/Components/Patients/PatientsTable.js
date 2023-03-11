@@ -1,9 +1,9 @@
 import React, {useEffect, useState } from 'react';
-import { LinearProgress, Stack, TextField} from '@mui/material';
+import { FormControl, LinearProgress, Menu, MenuItem, OutlinedInput, Stack, TextField, Typography} from '@mui/material';
 import { InputAdornment} from '@mui/material';
 import {Box, IconButton} from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
-import { Edit, Search } from '@mui/icons-material';
+import { Edit, FilterList, Search } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 import NotificationBar from '../NotificationBar';
 import axios from 'axios';
@@ -11,9 +11,12 @@ import config from '../../config.json';
 import AddNewPatient from './AddNewPatient';
 import Autocomplete from '@mui/material/Autocomplete';
 
+const filtOptions = ["All","New","Updated","Assigned","Unassigned"]
 
 const PatientsTable = () => {
-    
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [value, setValue] = React.useState("All");
+    const open = Boolean(anchorEl);
     const [filt, setFilt] = useState('') // Initialize it with an empty filter
     const [loading, setLoading] = useState(false);
     const [pageSize, setPageSize] = useState(5);
@@ -22,9 +25,25 @@ const PatientsTable = () => {
     const [options, setOptions] = useState([]);
     const navigate = useNavigate();
 
+    
+    const handleOpen = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
     const handleChange = (e) => {
         setFilt(e.target.value);
+    };
+
+    const handleFilter = (name)=>{
+        setValue(name);
+        handleClose();
+    }
+
+    const handleClick = (params) => {
+        navigate(`/manage/patients/${params.row._id}`)
     };
 
     const showMsg = (msg, severity)=>{
@@ -82,44 +101,58 @@ const PatientsTable = () => {
   
 
     const columns = [
-        { field: "action", headerName: " ", sortable: false, disableColumnMenu: true, align: "center",
-            renderCell: ({ row }) =>
-            <Link to={`/manage/patients/${row._id}`}>
-              <IconButton>
-                <Edit fontSize='small'/>
-              </IconButton>
-            </Link>
-        },
         {field: 'patient_id', headerName: 'Patient Id', flex: 1, disableColumnMenu: true},
         {field: 'age', headerName: 'Age', flex: 1, disableColumnMenu: true},
         {field: 'gender', headerName: 'Gender', sortable: false, flex: 1, disableColumnMenu: true},
         {field: 'category', headerName: 'Category', flex: 1, disableColumnMenu: true},
     ];
 
-    const handleClick = (value) => {
-        console.log(value);
-        // window.location.href = `/manage/patients/${value._id}`
-    };
-
     return (
+        <div className="inner_content">
+        <div>
+        <div style={{position:'sticky', top:0, left:0, background:'white', width:'100%', zIndex:1}}>
+            <Typography sx={{ fontWeight: 700}} variant="h5">Patients</Typography> 
+        </div>
             <Box>   
                 <AddNewPatient/>
-                <Box sx={{display:'flex', justifyContent:'flex-end'}}>
-                    <TextField onChange={(e)=>handleChange(e)} size='small' variant="standard" placeholder='Search by patient Id'
-                        InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <Search fontSize='small'/>
-                            </InputAdornment>
-                        )
-                        }}
+                <Stack direction='row' justifyContent='space-between' my={1}>
+                <IconButton
+                    id="fade-button"
+                    aria-controls={open ? 'fade-menu' : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open ? 'true' : undefined}
+                    onClick={handleOpen}
+                ><FilterList/></IconButton>
+                <FormControl sx={{width: '30ch' }} variant="outlined">
+                    <OutlinedInput
+                        id="outlined-adornment-password"
+                        placeholder='Search by name'
+                        size='small'
+                        inputProps={{ maxLength: 20}}
+                        onChange={(e)=>handleChange(e)}
+                        endAdornment={
+                        <InputAdornment position="end">
+                            <IconButton
+                            aria-label="toggle password visibility"
+                            edge="end"
+                            >
+                            <Search/>
+                            </IconButton>
+                        </InputAdornment>
+                        }
                     />
-                </Box>
+                </FormControl>
+                </Stack>
 
+                <Menu id="fade-menu" MenuListProps={{ 'aria-labelledby': 'fade-button'}} anchorEl={anchorEl} open={open} onClose={handleClose}>
+                {filtOptions.map((item,index)=>{ return(<MenuItem key={index} onClick={()=>handleFilter(item)}>{item}</MenuItem>)})}
+                </Menu>
                 <DataGrid
+
                     rows={data}
                     columns={columns}
                     pageSize={pageSize}
+                    onRowClick={handleClick}
                     onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
                     autoHeight={true}
                     disableSelectionOnClick
@@ -133,6 +166,7 @@ const PatientsTable = () => {
                         items: [{ columnField: 'patient_id', operatorValue: 'contains', value: filt }]
                     }}
                     sx={{
+                        cursor:'pointer',
                         "&.MuiDataGrid-root .MuiDataGrid-cell:focus-within": {outline: "none !important"},
                         ".MuiDataGrid-columnSeparator": {display: "none !important"}
                     }}
@@ -168,6 +202,8 @@ const PatientsTable = () => {
 
 
             </Box>   
+        </div>
+    </div> 
     );
 };
 

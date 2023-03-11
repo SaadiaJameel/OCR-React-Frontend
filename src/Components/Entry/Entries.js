@@ -1,5 +1,5 @@
 import { FilterList, Photo, Comment, MoreVert } from '@mui/icons-material';
-import { Avatar, AvatarGroup, Box, IconButton, Menu, MenuItem, Paper, Tooltip, Typography } from '@mui/material';
+import { Avatar, AvatarGroup, Box, IconButton, Menu, MenuItem, Paper, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -96,44 +96,48 @@ const Entries = () => {
                 {filtOptions.map((item,index)=>{ return(<MenuItem key={index} onClick={()=>handleFilter(item)}>{item}</MenuItem>)})}
             </Menu>
 
-            <Stack direction='column' spacing={2} sx={{my:3}}>
-            {
-                [...Array.from({ length: 4 }, () => entry).flat()].map((entry, index)=>{
-                    return(
-                    <Box key={index} sx={{p:1, cursor:'pointer', border:'1px solid lightgray','&:hover':{background: '#f0f0f0'}}} onClick={()=>handleSelect(entry._id)}>
-                        <Typography><strong>{entry.createdAt}</strong></Typography>
-                        <Typography>{entry.patient.name} [{entry.patient.patient_id}]</Typography>
-                        {/* <Typography color='GrayText' fontSize='small'
-                            sx={{
-                                display: '-webkit-box',
-                                overflow: 'hidden',
-                                WebkitBoxOrient: 'vertical',
-                                WebkitLineClamp: 1,
-                            }}
-                        >
-                            {entry.findings}</Typography> */}
-                        <Stack direction='row' spacing={2} sx={{my:1}}>
-                            <IconInfo><Photo fontSize='small' color={entry.images.length>0?'info':'action'}/>{entry.images.length}</IconInfo>
-                            <IconInfo><Comment fontSize='small' color={entry.reviews.length>0?'warning':'action'}/>{entry.reviews.length}</IconInfo>
-                            <IconInfo><Typography color='GrayText' fontSize='small'>Update: {entry.updatedAt}</Typography></IconInfo>
-                            <Stack flex={1} justifyContent='flex-end' direction='row'>
-                                <AvatarGroup>
-                                    {
-                                        entry.assignees.map((reviewer, index)=>{
-                                            return(
-                                            <Tooltip title={reviewer.name} placement="bottom-end" arrow  key={index}>
-                                                <Avatar sx={{height:'25px',width:'25px'}}>{reviewer.name[0]}</Avatar>
-                                            </Tooltip>)
-                                        })
-                                    }
-                                </AvatarGroup>
-                            </Stack>
-                        </Stack>                        
-                    </Box>
-                    )
-                })
-            }
-            </Stack>
+            <Table  sx={{border: '1px solid lightgray', mb:3}}>
+                {/* <TableHead>
+                    <TableRow>
+                        <TableCell>Created At</TableCell>
+                        <TableCell>Patient Name</TableCell>
+                        <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }}}>Patient ID</TableCell>
+                        <TableCell>Images/Reviews</TableCell>
+                        <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }}}>Updated At</TableCell>
+                        <TableCell>Reviewers</TableCell>
+                    </TableRow>
+                </TableHead> */}
+                <TableBody>                    
+                    {
+                        [...Array.from({ length: 4 }, () => entry).flat()].map((entry, index)=>{
+                            return(
+                                <TableRow key={index} sx={{cursor:'pointer', '&:hover':{background: '#f0f0f0'}}} onClick={()=>handleSelect(entry._id)}>
+                                    <TableCell>{entry.createdAt}</TableCell>
+                                    <TableCell>{entry.patient.name}</TableCell>
+                                    <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }}}>{entry.patient.patient_id}</TableCell>
+                                    <TableCell>
+                                        <Photo sx={{mx:1}} fontSize='small' color={entry.images.length>0?'info':'action'}/>{entry.images.length} 
+                                        <Comment sx={{mx:1}} fontSize='small' color={entry.reviews.length>0?'warning':'action'}/>{entry.reviews.length}
+                                    </TableCell>
+                                    <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }}}>{entry.updatedAt}</TableCell>
+                                    <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }}}>
+                                        <AvatarGroup>
+                                            {
+                                                entry.assignees.map((reviewer, index)=>{
+                                                    return(
+                                                    <Tooltip title={reviewer.name} placement="bottom-end" arrow  key={index}>
+                                                        <Avatar sx={{height:'25px',width:'25px'}}>{reviewer.name[0]}</Avatar>
+                                                    </Tooltip>)
+                                                })
+                                            }
+                                        </AvatarGroup>
+                                    </TableCell>
+                                </TableRow>
+                            )
+                        })
+                    }
+                </TableBody>
+            </Table>
         </div>
         </div>
     );

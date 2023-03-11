@@ -9,18 +9,15 @@ import axios from 'axios';
 import { useSelector} from 'react-redux';
 import PatientProfile from './PatientProfile';
 import NotificationBar from '../NotificationBar';
-import UploadPage from './UploadPage';
-import PatientImages from './PatientImages';
-
-const tempdata = {_id: '63c771ab19fa3b752054d449', patient_id: 'P1', risk_factors: {smoking: false, betel: false, alcohol: true}, age: 28, gender: '',updatedAt
-: "2023-01-18T04:12:27.061Z",createdAt : "2023-01-18T04:12:27.061Z",histo_diagnosis: "", category: "Unknown"}
+import NewEntry from './NewEntry';
+import PatientsEntries from './PatientsEntries';
 
 
 const PatientDetails = () => {
 
   
-    const [data, setData] = useState(tempdata);
-    const [loading, setLoading] = useState(false);
+    const [data, setData] = useState({});
+    const [loading, setLoading] = useState(true);
     const [value, setValue] = React.useState('1');
     const [status, setStatus] = useState({msg:"",severity:"success", open:false});
     const { id } = useParams();
@@ -54,9 +51,13 @@ const PatientDetails = () => {
 
    
     return (
-        <Box>
-            <Button component={Link} to='/manage/patients' size='small' startIcon={<ArrowBack/>} sx={{p:0}}>Go Back To Entries</Button>
-            
+        <div className="inner_content">
+        <div>
+        <div style={{position:'sticky', top:0, left:0, background:'white', width:'100%', zIndex:10}}>
+            <Typography sx={{ fontWeight: 700}} variant="h5">Patients</Typography> 
+            <Button component={Link} to='/manage/patients' size='small' startIcon={<ArrowBack/>} sx={{p:0}}>Go Back To Patients</Button>
+        </div>
+        <Box>            
             {loading?
             <>
             <Stack direction='row' spacing={2} alignItems='center' sx={{my:3}}>
@@ -84,21 +85,22 @@ const PatientDetails = () => {
             <TabContext value={value}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <TabList onChange={handleChange} aria-label="lab API tabs example">
-                    <Tab icon={<AccountBox fontSize='small'/>}  disableRipple label="Profile" value="1" />
-                    <Tab icon={<Image fontSize='small'/>} disableRipple label="Images" value="2" />
-                    <Tab icon={<AddAPhoto fontSize='small'/>} disableRipple label="Upload" value="3" />
+                    <Tab disableRipple label="Profile" value="1" />
+                    <Tab disableRipple label="New Entry" value="2" />
+                    <Tab disableRipple label="Entries" value="3" />
                 </TabList>
                 </Box>
                 <TabPanel value="1" sx={{px:0}}><PatientProfile data={data}/></TabPanel>
-                <TabPanel value="2" sx={{px:0}}><PatientImages/></TabPanel>
-                <TabPanel value="3" sx={{px:0}}><UploadPage/></TabPanel>
+                <TabPanel value="2" sx={{px:0}}><NewEntry data={data}/></TabPanel>
+                <TabPanel value="3" sx={{px:0}}><PatientsEntries/></TabPanel>
             </TabContext>
             </Box>
-
             </>
 }
             <NotificationBar status={status} setStatus={setStatus}/>
         </Box>
+        </div>
+    </div>
     );
 };
 

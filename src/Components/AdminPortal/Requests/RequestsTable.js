@@ -117,7 +117,7 @@ const RequestsTable = () => {
                 onRowClick={handleClick}
                 experimentalFeatures={{ newEditingApi: true }}
                 getRowId={(row) =>  row._id}
-                hideFooter={ true}
+                hideFooter={request.length < 100}
                 loading={loading}   // you need to set your boolean loading
                 filterModel={{
                     items: [{ columnField: 'username', operatorValue: 'contains', value: filt }]
