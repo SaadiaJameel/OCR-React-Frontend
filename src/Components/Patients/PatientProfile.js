@@ -217,7 +217,7 @@ const PatientProfile = ({data}) => {
 
     return (
         <div>
-         <Stack direction='row' spacing={2} py={1} justifyContent='flex-end'>
+         <Stack direction='row' spacing={2} justifyContent='flex-end'>
             <Button variant='outlined' endIcon={<Edit/>} onClick={() => setEditEnable(!editEnable)}
             style={{ display: !(editEnable) ? 'none' : undefined }}>Edit</Button>
             <Button style={{ display: editEnable ? 'none' : undefined }} variant='outlined' onClick={onCancel}>Cancel</Button>
@@ -288,7 +288,7 @@ const PatientProfile = ({data}) => {
                         </TableCell>
                     </TableRow>
                     <TableRow>
-                        <TableCell>Medical history of cancer</TableCell>
+                        <TableCell>Previous history of cancer</TableCell>
                         <TableCell sx={{py:0}}>
                         <EditableMultiSelection disabled={editEnable} value={medicalHistory} name={'medical_history'} setValue={setMedicalHistory} options={medicalHistoryOptions}/>
                         </TableCell>

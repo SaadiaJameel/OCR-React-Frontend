@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState} from 'react';
 import { Link, useParams} from 'react-router-dom';
 import { ArrowBack } from '@mui/icons-material';
 import { Box, Stack, Avatar, Typography, Skeleton, Button, Divider, 
-         Table, TableBody, TableCell, TableRow, ButtonGroup} from '@mui/material';
+         Table, TableBody, TableCell, TableRow, ButtonGroup, Paper} from '@mui/material';
 import { stringAvatar } from '../../utils';
 import config from '../../../config.json'
 import axios from 'axios';
@@ -59,7 +59,6 @@ const UserDetails = () => {
         ).then(res=>{
             setData(res.data);
             setLoading(false);
-            console.log(res.data)
         }).catch(err=>{
             if(err.response) showMsg(err.response.data.message, "error")
             else alert(err)
@@ -104,14 +103,14 @@ const UserDetails = () => {
     return (
         <div className="inner_content">
         <div> 
-        <Box>    
+        <Box className='sticky'>    
             <Typography sx={{ fontWeight: 700}} variant="h5">Reviewers</Typography>    
-        </Box>  
+        
         <Button component={Link} to='/adminportal/reviewers' size='small' startIcon={<ArrowBack/>} sx={{p:0}}>Go Back To Reviewers</Button>
-            
+        </Box>
         <Box sx={{my:3}}>            
             {loading?
-            <>
+            <Paper sx={{p:2, my:3}}>
             <Stack direction='row' spacing={2} alignItems='center' sx={{my:3}}>
                 <Skeleton variant="rounded" width={60} height={60} />
                 <Stack direction='column'>
@@ -123,9 +122,10 @@ const UserDetails = () => {
                 <Skeleton variant="rounded" height={40} width={600}/>
                 <Skeleton variant="rounded" height={40} width={600}/>
             </Stack>
-            </>
+            </Paper>
             :
             <>
+            <Paper sx={{p:2, my:3}}>
             <Stack direction='row' spacing={2} alignItems='center' sx={{my:3}}>
                 <Avatar {...stringAvatar(data.username, 60)} variant='rounded' />
                 <Stack direction='column'>
@@ -164,7 +164,7 @@ const UserDetails = () => {
                     </TableRow>
                     <TableRow>
                         <TableCell>Created at:</TableCell>
-                        <TableCell>{data.createdAt}</TableCell>
+                        <TableCell>{(data.createdAt?.split("T"))[0]}</TableCell>
                     </TableRow>
                 </TableBody>
             </Table>
@@ -172,8 +172,9 @@ const UserDetails = () => {
                 <LoadingButton onClick={handleUpdate} loading={state=== 1} variant="contained" disabled={state!==0}>Update</LoadingButton>
             </Stack> */}
             </Box>
-
-            <Box sx={{border: '1px solid red', borderRadius:'5px', my:10}}>
+            </Paper>
+            <Paper sx={{p:2, my:3}}>
+            <Box sx={{border: '1px solid red', borderRadius:'5px'}}>
                 <Stack direction='row' sx={{p:3}} alignItems='end'>
                     <div style={{flexGrow: 1}}>
                     <Typography color='error'>Reset Password</Typography>
@@ -204,6 +205,7 @@ const UserDetails = () => {
                     
                 }
             </Box>
+            </Paper>
             </>
 }
             <NotificationBar status={status} setStatus={setStatus}/>

@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import Button from '@mui/material/Button';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
-import { DialogContent,DialogActions, TextField, Typography, Stack } from '@mui/material';
+import { DialogContent,DialogActions, TextField, Typography, Stack, Box } from '@mui/material';
 import config from '../../../config.json';
 import axios from 'axios';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -52,22 +52,19 @@ export default function DeleteUserDialog({user, setIsDelete}) {
 
 
   return (
-    <div style={{background:'#fbfbfb'}}>
-        
-        <Typography color='red'>WARNING: </Typography>
-        <Typography>
-        This action is irreversible and will permanently delete the user. Please proceed with caution.
+    <Box sx={{width:'100%'}}>
+        <Typography variant='body2'>
         Enter username: <strong>'{user.username}'</strong> to confirm the action.
         </Typography>
         <br/>
         <Stack direction='column' spacing={4} maxWidth="75ch">
             <TextField label='confirm username' color='error' variant='standard' focused onChange={(e)=>handleConfirm(e)}/>
         </Stack>
-        <Stack spacing={2} direction='row' justifyContent='flex-end'>
+        <Stack spacing={2} direction='row' justifyContent='flex-end' sx={{mt:3}}>
             <LoadingButton size="small" onClick={handleDelete} loading={state === 1} variant="contained" disabled={!confirmed || state !==0}>Delete User</LoadingButton>
             <Button onClick={handleClose} color='inherit' variant='outlined' disabled={state!==0}>Cancel</Button>
         </Stack>
         <NotificationBar status={status} setStatus={setStatus}/>
-    </div>
+    </Box>
   );
 }

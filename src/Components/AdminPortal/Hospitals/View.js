@@ -82,9 +82,9 @@ const View = ({data}) => {
     return (
             <Box>
                 <Stack direction='row' spacing={2} py={1} justifyContent='flex-end'>
-                    <Button variant='outlined' endIcon={<Edit/>} onClick={() => setEditEnable(!editEnable)}
+                    <Button variant='contained' endIcon={<Edit/>} onClick={() => setEditEnable(!editEnable)}
                     style={{ display: !(editEnable && !isDelete) ? 'none' : undefined }}>Edit</Button>
-                    <Button variant='outlined' endIcon={<Delete/>}
+                    <Button variant='contained' endIcon={<Delete/>}
                     color="error"
                     onClick={() => setIsDelete(!isDelete)}
                     style={{ display: !(editEnable && !isDelete) ? 'none' : undefined }}>Delete</Button>

@@ -85,9 +85,11 @@ const RequestsTable = () => {
         <div className="inner_content">
         <div>
 
-        <Box>    
-        <Typography sx={{ fontWeight: 700}} variant="h5">Requests</Typography>    
-        <Box sx={{display:'flex', justifyContent:'flex-end',alignItems:'center',my:1}}>
+        <Box className='sticky'>    
+        <Typography sx={{ fontWeight: 700}} variant="h5">Requests</Typography> 
+        </Box>   
+        <Paper sx={{p:2, my:3}}> 
+        <Stack direction='row' justifyContent='flex-end' sx={{mb:2}} >
         <FormControl sx={{width: '30ch' }} variant="outlined">
           <OutlinedInput
             id="outlined-adornment-password"
@@ -107,8 +109,7 @@ const RequestsTable = () => {
             }
           />
         </FormControl>
-        </Box>
-        </Box>  
+        </Stack>
         <DataGrid
                 rows={request}
                 columns={columns}
@@ -145,6 +146,7 @@ const RequestsTable = () => {
                     )
                   }}
             />
+             </Paper>
             <NotificationBar status={status} setStatus={setStatus}/>
             </div>
         </div>

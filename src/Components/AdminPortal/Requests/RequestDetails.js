@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState} from 'react';
 import { Link, useNavigate, useParams} from 'react-router-dom';
 import { ArrowBack } from '@mui/icons-material';
 import { Box, Stack, Avatar, Typography, TextField, FormControl, 
-     Skeleton, Divider, Button, Table, TableBody, TableCell, TableRow, FormControlLabel, FormLabel, RadioGroup, Radio, Checkbox, FormGroup} from '@mui/material';
+     Skeleton, Divider, Button, Table, TableBody, TableCell, TableRow, FormControlLabel, FormLabel, RadioGroup, Radio, Checkbox, FormGroup, Paper} from '@mui/material';
 import { stringAvatar } from '../../utils';
 import config from '../../../config.json'
 import axios from 'axios';
@@ -128,13 +128,13 @@ const RequestDetails = () => {
     return (
         <div className="inner_content">
         <div>
-            <Box>    
+            <Box className='sticky'>    
             <Typography sx={{ fontWeight: 700}} variant="h5">Requests</Typography>    
-            </Box>  
-            <Button component={Link} to='/adminportal/requests' size='small' startIcon={<ArrowBack/>} sx={{p:0}}>Go Back To Requests</Button>
             
+            <Button component={Link} to='/adminportal/requests' size='small' startIcon={<ArrowBack/>} sx={{p:0}}>Go Back To Requests</Button>
+            </Box>
             {loading?
-            <>
+            <Paper sx={{p:2, my:3}}>
             <Stack direction='row' spacing={2} alignItems='center' sx={{my:1}}>
                 <Skeleton variant="rounded" width={60} height={60} />
                 <Stack direction='column'>
@@ -146,9 +146,10 @@ const RequestDetails = () => {
                 <Skeleton variant="rounded" height={40} />
                 <Skeleton variant="rounded" height={40} />
             </Stack>
-            </>
+            </Paper>
             :
             <>
+            <Paper sx={{p:2, my:3}}>
             <Stack direction='row' spacing={2} alignItems='center' sx={{my:3}}>
                 <Avatar {...stringAvatar(data.username, 60)} variant='rounded' />
                 <Stack direction='column'>
@@ -156,7 +157,6 @@ const RequestDetails = () => {
                     <Typography color='GrayText'>{data.reg_no}</Typography>
                 </Stack>
             </Stack>
-            <Box component="form" noValidate ref={formRef} sx={{ mt: 5 }}>
             <Table  sx={{border: '1px solid lightgray'}}>
                 <TableBody>
                     <TableRow>
@@ -181,16 +181,16 @@ const RequestDetails = () => {
                     </TableRow>
                 </TableBody>
             </Table>
-            
-            <Divider sx={{my:5}}/>
-
-            <Stack direction='row' spacing={2} my={5}>
+        
+            </Paper>
+            <Paper sx={{p:2, my:3}}>
+            <Box component="form" noValidate ref={formRef}>
+            <Stack direction='row' spacing={2} sx={{my:2}}>
             <FormControl>
             <FormLabel>User Role</FormLabel>
             <RadioGroup
                 defaultValue="Recruiter"
                 name="radio-buttons-group"
-                sx={{px:2}}
                 onChange={handleRole}
             >
                 <FormControlLabel value="Admin" control={<Radio />} label={<Typography variant='body2' >Admin</Typography>} />
@@ -241,11 +241,12 @@ const RequestDetails = () => {
         
             <TextField label="Reason for Approval/Rejection (optional)" fullWidth multiline maxRows={4} name='reason' size='small' inputProps={{maxLength: 200}}/>
             
-            <Stack direction='row' spacing={2} sx={{my:3}}>
+            <Stack direction='row' spacing={2} sx={{mt:3}}>
                 <LoadingButton onClick={handleAccept} loading={state=== 1} variant="contained" disabled={state!==0 || error}>Accept</LoadingButton>
                 <LoadingButton onClick={handleReject} loading={state === 2} variant="outlined" disabled={state!==0}>Reject</LoadingButton>
             </Stack>
             </Box>
+            </Paper>
             </>
 }
             <NotificationBar status={status} setStatus={setStatus}/>

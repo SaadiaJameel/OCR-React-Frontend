@@ -82,7 +82,7 @@ export default function AddHospital({setData}) {
 
   return (
     <div>
-    <Button size='small' sx={{mt:2}} onClick={handleClickOpen}>Add New</Button>   
+    <Button sx={{mt:2}} onClick={handleClickOpen}>Add New</Button>   
     <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Add New Hospital</DialogTitle>
         <DialogContent>

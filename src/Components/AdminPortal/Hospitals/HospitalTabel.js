@@ -1,13 +1,11 @@
 import React, { useState, useEffect} from 'react';
-import {Box, Button, FormControl, IconButton, InputAdornment, LinearProgress, OutlinedInput} from '@mui/material';
+import {Box, Button, FormControl, IconButton, InputAdornment, LinearProgress, OutlinedInput, Paper} from '@mui/material';
 import {Typography, Stack} from '@mui/material';
 import config from '../../../config.json'
 import axios from 'axios';
 import NotificationBar from '../../NotificationBar';
 import { DataGrid } from '@mui/x-data-grid';
 import { useSelector} from 'react-redux';
-import AddHospital from './AddHospital';
-import DeleteHospital from './DeleteHospital';
 import { useNavigate } from 'react-router-dom';
 import { Search } from '@mui/icons-material';
 
@@ -72,11 +70,15 @@ const HospitalTable = () => {
     return ( 
         <div className="inner_content">
         <div>
-        <Box>    
+        <Box className='sticky'>    
         <Typography sx={{ fontWeight: 700}} variant="h5">Hospitals</Typography>    
-        <Box sx={{display:'flex', justifyContent:'space-between',alignItems:'center',my:1}}>
+
         {/* <AddHospital setData={setData}/> */}
-        <Button variant='outlined' >Add New</Button>
+        <Button sx={{mt:2}} variant='contained' >Add New</Button>
+        </Box>
+        
+        <Paper sx={{p:2, my:3}}> 
+        <Stack direction='row' justifyContent='flex-end' sx={{mb:2}}>
         <FormControl sx={{width: '30ch' }} variant="outlined">
           <OutlinedInput
             id="outlined-adornment-password"
@@ -95,9 +97,8 @@ const HospitalTable = () => {
               </InputAdornment>
             }
           />
-        </FormControl>
-        </Box>
-        </Box>  
+        </FormControl> 
+        </Stack> 
         <DataGrid
                 rows={data}
                 columns={columns}
@@ -135,6 +136,7 @@ const HospitalTable = () => {
                     )
                   }}
             />
+            </Paper>
             <NotificationBar status={status} setStatus={setStatus}/>
             </div>
         </div>

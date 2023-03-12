@@ -1,5 +1,5 @@
 import React, {useEffect, useState } from 'react';
-import { FormControl, LinearProgress, Menu, MenuItem, OutlinedInput, Stack, TextField, Typography} from '@mui/material';
+import { FormControl, LinearProgress, Menu, MenuItem, OutlinedInput, Paper, Stack, TextField, Typography} from '@mui/material';
 import { InputAdornment} from '@mui/material';
 import {Box, IconButton} from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
@@ -110,12 +110,14 @@ const PatientsTable = () => {
     return (
         <div className="inner_content">
         <div>
-        <div style={{position:'sticky', top:0, left:0, background:'white', width:'100%', zIndex:1}}>
+        <div className="sticky">
             <Typography sx={{ fontWeight: 700}} variant="h5">Patients</Typography> 
         </div>
-            <Box>   
+            
                 <AddNewPatient/>
-                <Stack direction='row' justifyContent='space-between' my={1}>
+                
+                <Paper sx={{p:2, my:3}}>
+                <Stack direction='row' justifyContent='space-between' mb={2}>
                 <IconButton
                     id="fade-button"
                     aria-controls={open ? 'fade-menu' : undefined}
@@ -186,6 +188,7 @@ const PatientsTable = () => {
                         )
                       }}
                 />  
+                </Paper>
                 <NotificationBar status={status} setStatus={setStatus}/>  
                 <Autocomplete
                     sx={{mt:2}}
@@ -199,9 +202,7 @@ const PatientsTable = () => {
                     <TextField {...params} label="Search By ID" variant="outlined" />
                     )}
                 />
-
-
-            </Box>   
+   
         </div>
     </div> 
     );

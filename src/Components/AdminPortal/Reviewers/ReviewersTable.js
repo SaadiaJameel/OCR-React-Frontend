@@ -1,5 +1,5 @@
 import React, { useState, useEffect} from 'react';
-import {Box, Button, FormControl, IconButton, LinearProgress, OutlinedInput} from '@mui/material';
+import {Box, Button, FormControl, IconButton, LinearProgress, OutlinedInput, Paper} from '@mui/material';
 import {TextField, InputAdornment, Skeleton} from '@mui/material';
 import {Avatar, Typography, Stack} from '@mui/material';
 import config from '../../../config.json'
@@ -84,8 +84,11 @@ const ReviewersTable = () => {
     return (
         <div className="inner_content">
         <div>  
-        <Typography sx={{ fontWeight: 700}} variant="h5">Reviewers</Typography>          
-        <Box sx={{display:'flex', justifyContent:'flex-end',alignItems:'center',my:1}}>
+        <Box className='sticky'>
+        <Typography sx={{ fontWeight: 700}} variant="h5">Reviewers</Typography> 
+        </Box>
+        <Paper sx={{p:2, my:3}}>    
+        <Stack direction='row' justifyContent='flex-end' sx={{mb:2}}>
             <FormControl sx={{width: '30ch' }} variant="outlined">
             <OutlinedInput
                 id="outlined-adornment-password"
@@ -105,7 +108,7 @@ const ReviewersTable = () => {
                 }
             />
             </FormControl>
-        </Box>
+        </Stack>
         <DataGrid
                 rows={reviewers}
                 columns={columns}
@@ -142,6 +145,7 @@ const ReviewersTable = () => {
                     )
                   }}
             />
+            </Paper>
             <NotificationBar status={status} setStatus={setStatus}/>
 
         </div>

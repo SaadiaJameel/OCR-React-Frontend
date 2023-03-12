@@ -64,11 +64,12 @@ const EntryDetails = () => {
     return (
             <div className="inner_content">
                 <div>  
-                    <div style={{position:'sticky', top:0, background:'white',zIndex:1}}>
+                    <div className="sticky">
                     <Typography sx={{ fontWeight: 700}} variant="h5">Tele Consultation Entry</Typography>                  
                     <Button component={Link} to='/manage/entries' size='small' startIcon={<ArrowBack/>} sx={{p:0}}>Go Back To Entries</Button>
                     </div>
-                    <Stack direction='row' spacing={2} alignItems='center' sx={{my:3}}>
+                    <Paper sx={{p:2, my:3}}>
+                    <Stack direction='row' spacing={2} alignItems='center'>
                         <AssignmentInd sx={{color:'black', width:'60px',height:'60px'}}/>
                         <Stack direction='column'>
                             <Tooltip title='Go to patients profile' arrow placement="right"><Typography variant='h5' color='Highlight' sx={{cursor:'pointer'}}>
@@ -93,9 +94,10 @@ const EntryDetails = () => {
                         }
                     </AvatarGroup>
 
-                    <Divider sx={{my:1}}/>
+                    </Paper>
+                    <Paper sx={{p:2, my:3}}>
              
-                    <Table  sx={{border: '1px solid lightgray', my:5}}>
+                    <Table  sx={{border: '1px solid lightgray'}}>
                         <TableBody>
                             <TableRow>
                                 <TableCell>Complaint:</TableCell>
@@ -111,6 +113,8 @@ const EntryDetails = () => {
                             </TableRow>
                         </TableBody>
                     </Table> 
+                    </Paper>
+                    <Paper sx={{p:2, my:3}}>
                     <Grid container spacing={2}>
                     {[...data].map((item, index) => (
                         <Grid item key={index} xs={4} md={3} lg={2}>
@@ -136,7 +140,9 @@ const EntryDetails = () => {
                         </Grid>
                     ))}
                     </Grid>
-                    <Stack sx={{my:5}} direction='column' spacing={1}>
+                    </Paper>
+                    <Paper sx={{p:2, my:3}}>
+                    <Stack direction='column' spacing={1}>
                         <Typography variant='body2'>Reviews:</Typography>
                     {
                         details.reviews.map((item,index)=>{
@@ -145,18 +151,19 @@ const EntryDetails = () => {
                                     <Avatar {...stringAvatar("name")}/>
                                     <ArrowLeft/>
                                     <Box>
-                                        <Typography><strong>Reviewers name</strong></Typography>
-                                        <Typography>provisional_diagnosis:</Typography>
-                                        <Typography>management_suggestions:</Typography>
-                                        <Typography>management_suggestions:</Typography>
-                                        <Typography>review_comment:</Typography>
-                                        <Typography>other_comments:</Typography>
+                                        <Typography variant='body2'><strong>Reviewers name</strong></Typography>
+                                        <Typography variant='body2'>provisional_diagnosis:</Typography>
+                                        <Typography variant='body2'>management_suggestions:</Typography>
+                                        <Typography variant='body2'>management_suggestions:</Typography>
+                                        <Typography variant='body2'>review_comment:</Typography>
+                                        <Typography variant='body2'>other_comments:</Typography>
                                     </Box>
                                 </Stack>
                             )
                         })
                     }
                     </Stack>
+                    </Paper>
                     <Dialog fullScreen open={openAnnotation} onClose={handleClose} TransitionComponent={Transition}>
                         <Canvas imageIndex={imageIndex} open={openAnnotation} setOpen={setOpenAnnotation} data={data} setData={setData} upload={false}/>
                     </Dialog>

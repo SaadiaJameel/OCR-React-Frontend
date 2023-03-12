@@ -1,4 +1,4 @@
-import {LinearProgress} from '@mui/material';
+import {LinearProgress, Typography} from '@mui/material';
 
 export function stringToColor(string) {
     let i, hash = 0;
@@ -48,12 +48,13 @@ export const PasswordStrengthIndicator=({password})=>{
     return(
         <>
         <LinearProgress variant="determinate" value={progress} color={progress<30?'error':progress<60?'warning':'success'}/>
-        <p>The password should satisfy the below constraints.</p>
+        <br/>
+        <Typography variant='body2'>The password should satisfy the below constraints.</Typography>
         <ul>
-            <li>Atleast 8 Character</li>
-            <li>Lowercase & Uppercase</li>
-            <li>Number (0-9)</li>
-            <li>Special Character (!@#$%^&*)</li>
+            <li><Typography variant='body2'>Atleast 8 Character</Typography></li>
+            <li><Typography variant='body2'>Lowercase & Uppercase</Typography></li>
+            <li><Typography variant='body2'>Number (0-9)</Typography></li>
+            <li><Typography variant='body2'>Special Character (!@#$%^&*)</Typography></li>
         </ul>
         </>
     )
