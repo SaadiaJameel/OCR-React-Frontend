@@ -1,5 +1,5 @@
 import { FilterList, Photo, Comment, MoreVert } from '@mui/icons-material';
-import { Avatar, AvatarGroup, Box, IconButton, Menu, MenuItem, Paper, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from '@mui/material';
+import { Avatar, AvatarGroup, Box, Hidden, IconButton, Menu, MenuItem, Paper, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';

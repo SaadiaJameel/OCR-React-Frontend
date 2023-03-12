@@ -12,6 +12,7 @@ import dayjs from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { age } from '../utils';
 
 const familyHistoryOptions = [
 'OSCC',
@@ -45,13 +46,13 @@ const riskFactors = [
     {habit: 'Alcohol', frequency:'once a week', duration:'34-38'},
     {habit: 'Betel', frequency:'twice a week', duration:'34-38'}
 ]
-const categoryOptions = [
-    {value: "Unknown", label: "Unknown"},
-    {value: "Healthy", label: "Healthy"},
-    {value: "Benign", label: "Benign"},
-    {value: "OPMD", label: "OPMD"},
-    {value: "OCA", label: "OCA"}
-]
+// const categoryOptions = [
+//     {value: "Unknown", label: "Unknown"},
+//     {value: "Healthy", label: "Healthy"},
+//     {value: "Benign", label: "Benign"},
+//     {value: "OPMD", label: "OPMD"},
+//     {value: "OCA", label: "OCA"}
+// ]
 
 const habitOptions = [
     {value: "Smoking", label: "Smoking"},
@@ -141,19 +142,19 @@ const EditableMultiSelection = ({disabled, value, setValue, name, options}) => (
 const PatientProfile = ({data}) => {
     const [status, setStatus] = useState({msg:"",severity:"success", open:false})
     const [loading, setLoading] = useState(false);
-    const [category, setCategory] = useState(data.category);
+    // const [category, setCategory] = useState(data.category);
     const [gender, setGender] = useState(data.gender);
     const [state, setState] = useState(0);
     const userData = useSelector(state => state.data);
     const [ editEnable, setEditEnable] = useState(true);
     const [number, setNumber] = useState(data.contact_no);
-    const [riskHabits, setRiskHabits] = useState(riskFactors);
+    const [riskHabits, setRiskHabits] = useState(data.risk_factors);
     const [habit, setHabit] = useState(habitOptions[0].value);
     const [frequency, setFrequency] = useState(frequencyOptions[0].value);
     const [duration, setDuration] = useState(durationOptions[0].value);
-    const [value, setValue] = useState(dayjs('2022-04-17'));
-    const [familyHistory, setFamilyHistory] = React.useState([]);
-    const [medicalHistory, setMedicalHistory] = React.useState([]);
+    const [value, setValue] = useState(dayjs(data.DOB));
+    const [familyHistory, setFamilyHistory] = React.useState(data.family_history);
+    const [medicalHistory, setMedicalHistory] = React.useState(data.medical_history);
 
     const handleChange = (newValue) => {
         setNumber(newValue)
@@ -174,22 +175,20 @@ const PatientProfile = ({data}) => {
         setRiskHabits(newList);
     }
 
-    const formRef = useRef();
-    
     const handleSave = (event)=>{
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        const age = formData.get('age');
+        const patient_name = formData.get('patient_name');
         const gender = formData.get('gender');
-        const smoking = formData.get('smoking')?true:false;
-        const betel = formData.get('betel')?true:false;
-        const alcohol = formData.get('alcohol')?true:false;
         const histo_diagnosis = formData.get('histo_diagnosis');
-        const category = formData.get('category');
+        const systemic_disease = formData.get('systemic_disease');
+        const contact_no = formData.get('contact_no');
         
         const updated = {
-            gender,age,histo_diagnosis,category,
-            risk_factors:{betel,alcohol,smoking}
+            patient_name,gender,DOB:new Date(value),histo_diagnosis,contact_no, systemic_disease,
+            family_history: familyHistory,
+            medical_history: medicalHistory,
+            risk_factors: riskHabits
         }
 
         setState(1);
@@ -228,14 +227,12 @@ const PatientProfile = ({data}) => {
                 <TableBody>
                     <TableRow>
                         <TableCell>ID:</TableCell>
-                        <TableCell sx={{py:0}}>
-                            <EditableText disabled={true} defaultValue={data.patient_id} name={'patient_id'}/>
-                        </TableCell>
+                        <TableCell sx={{py:0}}>{data.patient_id}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell>Name:</TableCell>
                         <TableCell sx={{py:0}}>
-                            <EditableText disabled={editEnable} defaultValue={data.patient_id} name={'patient_id'}/>
+                            <EditableText disabled={editEnable} defaultValue={data.patient_name} name={'patient_name'}/>
                         </TableCell>
                     </TableRow>
                     <TableRow>
@@ -251,9 +248,7 @@ const PatientProfile = ({data}) => {
                     </TableRow>
                     <TableRow>
                         <TableCell>Age:</TableCell>
-                        <TableCell sx={{py:0}}>
-                        <EditableText disabled={editEnable} defaultValue={data.age} name={'category'}/>
-                        </TableCell>
+                        <TableCell sx={{py:0}}>{age(value)}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell>Gender:</TableCell>
@@ -261,16 +256,16 @@ const PatientProfile = ({data}) => {
                         <EditableSelection disabled={editEnable} value={gender} name={'gender'} setValue={setGender} options={genderOptions}/>
                         </TableCell>
                     </TableRow>
-                    <TableRow>
+                    {/* <TableRow>
                         <TableCell>Category:</TableCell>
                         <TableCell sx={{py:0}}>
                         <EditableSelection disabled={editEnable} value={category} name={'category'} setValue={setCategory} options={categoryOptions}/>
                         </TableCell>
-                    </TableRow>
+                    </TableRow> */}
                     <TableRow>
                         <TableCell>Contact No:</TableCell>
                         <TableCell sx={{py:0}}>
-                        <MuiTelInput disabled={editEnable} value={number} onChange={handleChange} size='small' name='contactNo' placeholder='Phone Number' variant='standard' fullWidth
+                        <MuiTelInput disabled={editEnable} value={number} onChange={handleChange} size='small' name='contact_no' placeholder='Phone Number' variant='standard' fullWidth
                         sx={{
                             "& .MuiInputBase-input.Mui-disabled": {
                             WebkitTextFillColor: "#000000",
@@ -287,7 +282,7 @@ const PatientProfile = ({data}) => {
                         </TableCell>
                     </TableRow>
                     <TableRow>
-                        <TableCell>Hosto Diagnosis</TableCell>
+                        <TableCell>Histo Diagnosis</TableCell>
                         <TableCell sx={{py:0}}>
                         <EditableText disabled={editEnable} defaultValue={data.histo_diagnosis} name={'histo_diagnosis'}/>
                         </TableCell>
@@ -376,9 +371,7 @@ const PatientProfile = ({data}) => {
                     </TableRow>
                     <TableRow>
                         <TableCell>Created At</TableCell>
-                        <TableCell sx={{py:0}}>
-                        <EditableText disabled={true} defaultValue={(data.createdAt?.split("T"))[0]} name={'Created At'}/>
-                        </TableCell>
+                        <TableCell sx={{py:0}}>{(data.createdAt?.split("T"))[0]}</TableCell>
                     </TableRow>
                 </TableBody>
             </Table>

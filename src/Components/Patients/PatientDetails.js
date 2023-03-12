@@ -40,6 +40,7 @@ const PatientDetails = () => {
             'email': JSON.parse(sessionStorage.getItem("info")).email,
         }}
         ).then(res=>{
+            console.log(res.data)
             setData(res.data);
             setLoading(false);
         }).catch(err=>{
