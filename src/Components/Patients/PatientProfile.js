@@ -239,7 +239,7 @@ const PatientProfile = ({data}) => {
                         <TableCell>DOB:</TableCell>
                         <TableCell sx={{py:0}}>
                         <LocalizationProvider dateAdapter={AdapterDayjs} >
-                            <DatePicker value={value} onChange={(newValue) => setValue(newValue)} readOnly={editEnable}
+                            <DatePicker value={value} onChange={(newValue) => setValue(newValue)} readOnly={editEnable} disableOpenPicker={editEnable} format="DD-MM-YYYY"
                                 slots={{
                                     textField: BrowserInput,
                                 }} />

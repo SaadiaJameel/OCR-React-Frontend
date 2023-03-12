@@ -78,8 +78,8 @@ const PatientDetails = () => {
             <Stack direction='row' spacing={2} alignItems='center' sx={{my:3}}>
                 <Avatar {...stringAvatar("P", 60)} variant='rounded'/>
                 <Stack direction='column'>
-                    <Typography variant='h6'>Patients ID: {data.patient_id}</Typography>
-                    <Typography color='GrayText'>Category: {data.category}</Typography>
+                    <Typography variant='h6'>{data.patient_name}</Typography>
+                    <Typography color='GrayText'>{data.patient_id}</Typography>
                 </Stack>
             </Stack>
             <Box sx={{ width: '100%', typography: 'body1' }}>
