@@ -4,7 +4,6 @@ import './App.css';
 import LoginPage from './Pages/LoginPage';
 import NotFound from './Components/NotFound';
 import ProtectedRoute from './Components/ProtectedRoute';
-import PatientsPage from './Components/Patients/PatientsPage';
 import ImagesPage from './Pages/ImagesPage';
 import AdminPage from './Pages/AdminPage';
 import Manage from './Pages/Manage';
@@ -85,7 +84,7 @@ function App() {
             <Route index element={<Entries/>}/>
             <Route path='/manage/entries' element={<Entries/>}/>
             <Route path='/manage/entries/:id' element={<EntryDetails/>}/>
-            <Route path ='/manage/patients' element={<PatientsPage/>}>
+            <Route path ='/manage/patients' element={<Outlet/>}>
                 <Route  index element={<PatientsTable/>}></Route>
                 <Route  index path="/manage/patients/all" element={<PatientsTable/>}></Route>
                 <Route path="/manage/patients/:id" element={<PatientDetails/>}></Route>

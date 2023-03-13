@@ -1,20 +1,17 @@
-import React, { useEffect, useRef, useState} from 'react';
-import { Link, useNavigate, useParams} from 'react-router-dom';
+import React, { useEffect, useState} from 'react';
+import { Link, useParams} from 'react-router-dom';
 import { ArrowBack, LocalHospital } from '@mui/icons-material';
-import { Box, Stack, Avatar, Typography, TextField, FormControl, 
-     Skeleton, Divider, Button, Table, TableBody, TableCell, TableRow, FormControlLabel, FormLabel, RadioGroup, Radio, Checkbox, FormGroup} from '@mui/material';
+import { Box, Stack, Typography, Skeleton, Button} from '@mui/material';
 import { useSelector} from 'react-redux';
 import config from '../../../config.json'
 import axios from 'axios';
 import NotificationBar from '../../NotificationBar';
-import LoadingButton from '@mui/lab/LoadingButton';
 import View from './View';
 
 const HospiatalDetails = () => {
 
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
     const [data, setData] = useState({});
-    const [page, setPage] = useState("");
     const selectorData = useSelector(state => state.data);
     const [userData, setUserData] = useState(selectorData);
     const [loading, setLoading] = useState(true);
@@ -31,12 +28,12 @@ const HospiatalDetails = () => {
             setData(res.data);
             console.log(data)
             setLoading(false);
-            setPage("View")
         }).catch(err=>{
             if(err.response) showMsg(err.response.data.message, "error")
             else alert(err)
+            setLoading(false);
         })
-        setLoading(false);
+        
     },[])
 
     const showMsg = (msg, severity)=>{
@@ -73,13 +70,11 @@ const HospiatalDetails = () => {
                     <Typography variant='h6'>{"Hospital Name"}</Typography>
                 </Stack>
             </Stack>
-            {
-                page === "View" &&
-                <View data={data}/>
-            }
-            
+           
+            <View data={data}/>
+                        
             </>
-}
+            }
             <NotificationBar status={status} setStatus={setStatus}/>
         </div>
     </div>

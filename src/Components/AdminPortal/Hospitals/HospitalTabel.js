@@ -101,14 +101,14 @@ const HospitalTable = () => {
         <DataGrid
                 rows={data}
                 columns={columns}
-                pageSize={25}
+                pageSize={100}
                 autoHeight={true}
                 onRowClick={handleClick}
                 disableSelectionOnClick
-                rowsPerPageOptions={[25]}
+                rowsPerPageOptions={[100]}
                 experimentalFeatures={{ newEditingApi: true }}
                 getRowId={(row) =>  row._id}
-                hideFooter={true}
+                hideFooter={data.length < 25}
                 loading={loading}   // you need to set your boolean loading
 
                 filterModel={{

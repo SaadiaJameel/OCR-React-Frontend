@@ -91,7 +91,7 @@ const UploadPage = () => {
         });
 
         form.append('data',JSON.stringify(temp))
-
+        return;
         axios.post(`${config['path']}/user/patient/images/${id}`, form,
         {headers: {
             'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
@@ -136,13 +136,13 @@ const UploadPage = () => {
         <Box>
             <input hidden accept="image/png, image/jpeg" ref={hidenInput} multiple type="file" onChange={selectFiles}/>
             <Stack spacing={2} direction='row' sx={{mb:2}}>
-                <Button variant="contained" disabled={loading} onClick={handleSelection}>Add image</Button>  
-                <LoadingButton  variant="contained" disabled={selectedFiles.length===0} loading={loading} onClick={handleSubmit}> Upload </LoadingButton>
+                <Button variant='outlined' disabled={loading} onClick={handleSelection}>Add images</Button>  
+                {/* <LoadingButton  variant="contained" disabled={selectedFiles.length===0} loading={loading} onClick={handleSubmit}> Upload </LoadingButton> */}
             </Stack>
                     
             <Grid container spacing={2}>
             {[...data].map((item, index) => (
-                <Grid item key={index} xs={6} md={4} lg={3}>
+                <Grid item key={index} xs={6} md={3} lg={2}>
                     <div className='imageDiv'>
                         
                         <div className='grid_image' onClick={()=>handleDoubleClick(index)}>
@@ -161,9 +161,8 @@ const UploadPage = () => {
                             <IconButton onClick={()=>handleDelete(index)} size='small'><Delete fontSize='small'/></IconButton>
                         </Stack>
                         <Box>
-                            <Typography>Location: <b>{item.location}</b></Typography>
-                            <Typography>Clinical diagnosis: <b>{item.clinical_diagnosis}</b></Typography>
-                            <Typography>Lesions appear: <b>{item.lesions_appear.toString()}</b></Typography>
+                            <Typography variant='body2'>{item.clinical_diagnosis} <b>{item.location}</b></Typography>
+                            <Typography variant='body2'>Lesions appear: <b>{item.lesions_appear.toString()}</b></Typography>
                         </Box>
                         </Stack>
                     </div>

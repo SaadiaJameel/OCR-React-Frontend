@@ -13,7 +13,7 @@ import { useSelector} from 'react-redux';
 
 const ReviewersTable = () => {
 
-    const [request, setRequests] = useState([]);
+    const [reviewers, setReviewers] = useState([]);
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
     const [loading, setLoading] = useState(true);
     const [filt, setFilt] = useState('');
@@ -71,7 +71,7 @@ const ReviewersTable = () => {
             'email': JSON.parse(sessionStorage.getItem("info")).email,
         }}
         ).then(res=>{
-            setRequests(res.data)
+            setReviewers(res.data)
             setLoading(false);
         }).catch(err=>{
             if(err.response) showMsg(err.response.data.message, "error")
@@ -85,8 +85,7 @@ const ReviewersTable = () => {
         <div className="inner_content">
         <div>  
         <Typography sx={{ fontWeight: 700}} variant="h5">Reviewers</Typography>          
-        <Box sx={{display:'flex', justifyContent:'space-between',alignItems:'center',my:1}}>
-        <Button  variant='outlined'>Add New</Button>
+        <Box sx={{display:'flex', justifyContent:'flex-end',alignItems:'center',my:1}}>
             <FormControl sx={{width: '30ch' }} variant="outlined">
             <OutlinedInput
                 id="outlined-adornment-password"
@@ -108,10 +107,10 @@ const ReviewersTable = () => {
             </FormControl>
         </Box>
         <DataGrid
-                rows={request}
+                rows={reviewers}
                 columns={columns}
                 onRowClick={handleClick}
-                hideFooter={true}
+                hideFooter={reviewers.length < 100}
                 autoHeight={true}
                 disableSelectionOnClick
                 experimentalFeatures={{ newEditingApi: true }}

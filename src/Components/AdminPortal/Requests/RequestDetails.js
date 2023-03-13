@@ -193,9 +193,9 @@ const RequestDetails = () => {
                 sx={{px:2}}
                 onChange={handleRole}
             >
-                <FormControlLabel value="Admin" control={<Radio />} label="Admin" />
-                <FormControlLabel value="Reviewer" control={<Radio />} label="Reviewer" />
-                <FormControlLabel value="Recruiter" control={<Radio />} label="Recruiter" />
+                <FormControlLabel value="Admin" control={<Radio />} label={<Typography variant='body2' >Admin</Typography>} />
+                <FormControlLabel value="Reviewer" control={<Radio />} label={<Typography variant='body2' >Reviewer</Typography>} />
+                <FormControlLabel value="Recruiter" control={<Radio />} label={<Typography variant='body2' >Recruiter</Typography>} />
             </RadioGroup>
             </FormControl>
             { selected === 'Admin' &&
@@ -203,13 +203,13 @@ const RequestDetails = () => {
                 <FormLabel component="legend">Permisions</FormLabel>
                 <FormGroup>
                 <FormControlLabel control={<Checkbox checked={admin} onChange={handlePermissions} name="admin" />}
-                    label="Administrative work: Accept/Reject Login Requests, Add hospitals, Manage user accounts"
+                    label={<Typography variant='body2' >Accept/Reject Login Requests, Add hospitals, Manage user accounts</Typography>}
                 />
                 <FormControlLabel control={ <Checkbox checked={reviewer} onChange={handlePermissions} name="reviewer" /> }
-                    label="Review assigned consultation entries and add comments"
+                    label={<Typography variant='body2' >Review assigned consultation entries and add comments</Typography>}
                 />
                 <FormControlLabel control={<Checkbox checked={recruiter} onChange={handlePermissions} name="recruiter" />}
-                    label="Add patients and add consultation entries"
+                    label={<Typography variant='body2' >Add patients and add consultation entries</Typography>}
                 />
                 </FormGroup>
                 </FormControl>
@@ -219,10 +219,10 @@ const RequestDetails = () => {
                 <FormLabel component="legend">Permisions</FormLabel>
                 <FormGroup>
                 <FormControlLabel control={ <Checkbox checked={reviewer} onChange={handlePermissions} name="reviewer" /> }
-                    label="Review assigned consultation entries and add comments"
+                    label={<Typography variant='body2' >Review assigned consultation entries and add comments</Typography>}
                 />
                 <FormControlLabel control={<Checkbox checked={recruiter} onChange={handlePermissions} name="recruiter" />}
-                    label="Add patients and add consultation entries"
+                    label={<Typography variant='body2' >Add patients and add consultation entries</Typography>}
                 />
                 </FormGroup>
                 </FormControl>
@@ -232,7 +232,7 @@ const RequestDetails = () => {
                 <FormLabel component="legend">Permisions</FormLabel>
                 <FormGroup>
                 <FormControlLabel control={<Checkbox checked={recruiter} onChange={handlePermissions} name="recruiter" />}
-                    label="Add patients and add consultation entries"
+                    label={<Typography variant='body2' >Add patients and add consultation entries</Typography>}
                 />
                 </FormGroup>
                 </FormControl>
