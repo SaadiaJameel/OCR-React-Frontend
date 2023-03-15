@@ -27,18 +27,26 @@ const HospitalTable = () => {
         navigate(`/adminportal/hospitals/${params.row._id}`);
     };
 
+    const handleAddNew = () => {
+        navigate(`/adminportal/hospitals/new`);
+    };
+
     const columns = [
         {
           field: 'name',
           headerName: 'Hospitals',
-          sortable: false,
           flex: 1,
           disableColumnMenu: true,
         },
         {
-            field: 'details',
-            headerName: 'Details',
-            sortable: false,
+            field: 'city',
+            headerName: 'City',
+            flex: 1,
+            disableColumnMenu: true,
+        },
+        {
+            field: 'category',
+            headerName: 'Category',
             flex: 1,
             disableColumnMenu: true,
         }
@@ -74,8 +82,8 @@ const HospitalTable = () => {
         <Typography sx={{ fontWeight: 700}} variant="h5">Hospitals</Typography>    
 
         {/* <AddHospital setData={setData}/> */}
-        <Button sx={{mt:2}} variant='contained' >Add New</Button>
-        </Box>
+        <Button sx={{mt:2}} variant='contained' onClick={handleAddNew}>Add New</Button>
+        </Box> 
         
         <Paper sx={{p:2, my:3}}> 
         <Stack direction='row' justifyContent='flex-end' sx={{mb:2}}>
