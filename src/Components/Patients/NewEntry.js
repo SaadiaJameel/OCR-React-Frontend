@@ -1,9 +1,15 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import { Box, Stack, TextField, FormControl, MenuItem, Select, 
-    List, ListItem, IconButton, ListItemText, InputLabel, Button} from '@mui/material';
+    List, ListItem, IconButton, ListItemText, InputLabel, Button, ListItemAvatar, Avatar} from '@mui/material';
 import { Close, Done } from '@mui/icons-material';
 import UploadPage from './UploadPage';
 import UploadTests from './UploadTests';
+import dayjs from 'dayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import AssigneeDropdown from '../AssigneeDropDown';
+import { stringAvatar } from '../utils';
 
 const habitOptions = [
     {value: "Smoking", label: "Smoking"},
@@ -22,12 +28,21 @@ const frequencyOptions = [
 
 const NewEntry = ({data}) => {
     const [riskHabits, setRiskHabits] = useState([]);
+    const [assignee, setAssignee] = useState([]);
     const [habit, setHabit] = useState(habitOptions[0].value);
     const [frequency, setFrequency] = useState(frequencyOptions[0].value);
+    const [startTime, setStartTime] = useState(dayjs(new Date()));
+    const [endTime, setEndTime] = useState(dayjs(new Date()));
+    const formRef = useRef();
 
     const removeRisk = (item)=>{
         let newList = riskHabits.filter((habit)=> {return habit !== item})
         setRiskHabits(newList);
+    }
+
+    const removeAssignee = (item)=>{
+        let newList = assignee.filter((assignee)=> {return assignee !== item})
+        setAssignee(newList);
     }
 
     const handleAddRisk = ()=>{
@@ -36,15 +51,43 @@ const NewEntry = ({data}) => {
         setRiskHabits(newList);
     }
 
+    const handleSubmit = (event)=>{
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        const complaint = formData.get('complaint');
+        const findings = formData.get('findings');
+        const currentHabits = riskHabits;
+        const assignees = "";
+
+        const upload = {
+            complaint,findings,currentHabits,assignees
+        }
+
+        console.log(upload);
+    }
+
+
 
     return (
-        <Box component='form' my={3} >
-        <Stack spacing={2}>
-           <TextField fullWidth size='small' defaultValue={data.patient_id} name='patient_id' disabled label="Patient Id"  sx={{ "& .MuiInputBase-input.Mui-disabled": { WebkitTextFillColor: "#000000"}}}/> 
-           <TextField fullWidth size='small' defaultValue={data.patient_id} name='patient_name' disabled label="Patient name"  sx={{ "& .MuiInputBase-input.Mui-disabled": { WebkitTextFillColor: "#000000"}}}/> 
-           <TextField fullWidth size='small' name='complaints' label="presenting complaint"/> 
-           <TextField fullWidth size='small' name='findings' label="examination findings"/>
-           <Stack direction='row' spacing={1} alignItems='flex-end' >
+        <Box component='form' my={3} onSubmit={handleSubmit} ref={formRef} >
+        <Stack spacing={3}>
+            <Stack direction='row' spacing={2}>
+                <LocalizationProvider dateAdapter={AdapterDayjs} >
+                    <DateTimePicker format='DD/MM/YYYY HH:mm' label="Start Time"  value={startTime} onChange={(newValue) => setStartTime(newValue)}
+                     componentsProps={{ textField: { size: 'small', fullWidth:true  }}}
+                    />
+                </LocalizationProvider>
+
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DateTimePicker label="End Time" format='DD/MM/YYYY HH:mm' value={endTime} onChange={(newValue) => setEndTime(newValue)}
+                    componentsProps={{ textField: { size: 'small', fullWidth:true }}}
+                    />
+                </LocalizationProvider>
+            </Stack>
+           <TextField fullWidth size='small' name='complaint' multiline maxRows={4} label="presenting complaint"/> 
+           <TextField fullWidth size='small' name='findings' multiline maxRows={4} label="examination findings"/>
+
+           <Stack direction='row' spacing={2}>
            <FormControl fullWidth>
             <InputLabel id="habit-label" size='small' >Habit</InputLabel>
             <Select labelId='habit-label' size='small' label="Habit" value={habit} onChange={(e)=>setHabit(e.target.value)}>
@@ -61,7 +104,7 @@ const NewEntry = ({data}) => {
                 }
             </Select>
             </FormControl>
-            <IconButton onClick={handleAddRisk} ><Done color='success'/></IconButton>
+            <Button onClick={handleAddRisk} variant='outlined' color='inherit' >Add</Button>
             </Stack>
             {riskHabits.length > 0 && 
             <List sx={{border:'1px solid lightgray', borderRadius: 1, pl:2}}>
@@ -84,6 +127,36 @@ const NewEntry = ({data}) => {
                 })
             }
             </List>}
+            
+            
+            <AssigneeDropdown assignee={assignee} setAssignee={setAssignee}/>
+                
+
+            {assignee.length > 0 && 
+            <List sx={{border:'1px solid lightgray', borderRadius: 1, pl:2}}>
+            {
+                assignee.map((item, index)=>{
+                    return(
+                        <ListItem key={index} disablePadding
+                            secondaryAction={
+                                <IconButton edge="end" onClick={()=>removeAssignee(item)}>
+                                <Close fontSize='small' color='error' />
+                                </IconButton>
+                            }
+                        >
+                        <ListItemAvatar>
+                            <Avatar {...stringAvatar(item.username)}/>
+                        </ListItemAvatar>
+                        <ListItemText
+                            primary={item.username}
+                            secondary={item.reg_no} 
+                        />
+                        </ListItem>
+                    )
+                })
+            }
+            </List>}
+
             <Box sx={{border:'1px solid lightgray', borderRadius: 1, p:2}}>
                 <UploadPage/>
             </Box>
@@ -91,7 +164,7 @@ const NewEntry = ({data}) => {
                 <UploadTests/>
             </Box>
         </Stack>
-        <Button sx={{my:3}} variant='contained' >Save Entry</Button>
+        <Button sx={{my:3}} variant='contained' type='submit' >Save Entry</Button>
         </Box>
     );
 };

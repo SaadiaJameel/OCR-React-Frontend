@@ -65,18 +65,19 @@ const LoginPage =()=>{
         }, { withCredentials: true })
         .then(function (response) {
             var data = response.data
-            const object = {_id: data.others._id,username: data.others.username, email: data.others.email, roles: data.others.role, reg_no: data.others.reg_no, atoken: data.accessToken.token }
+            const object = {_id: data.others._id,username: data.others.username, email: data.others.email, role: data.others.role, availability:data.others.availability, permissions: data.others.permissions, reg_no: data.others.reg_no, atoken: data.accessToken.token }
             sessionStorage.setItem("info",JSON.stringify(object))
 
             dispatch(setUserData({
                 _id: data.others._id,
                 username: data.others.username,
                 email: data.others.email,
-                roles: data.others.role,
+                role: data.others.role,
+                permissions: data.others.permissions,
                 accessToken: data.accessToken,
                 reg_no: data.others.reg_no
               }))
-            if(response.data.others.role.includes(1)){
+            if(response.data.others.permissions.includes(100)){
                 navigate("/adminportal/requests");
             }else{
                 navigate("/manage/");

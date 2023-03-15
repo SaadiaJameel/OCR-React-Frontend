@@ -1,24 +1,40 @@
 import React, { useState, useEffect} from 'react';
-import {Box, Button, FormControl, IconButton, LinearProgress, OutlinedInput} from '@mui/material';
-import {TextField, InputAdornment, Skeleton} from '@mui/material';
+import {Box, FormControl, IconButton, LinearProgress, Menu, MenuItem, OutlinedInput, Paper} from '@mui/material';
+import { InputAdornment} from '@mui/material';
 import {Avatar, Typography, Stack} from '@mui/material';
 import config from '../../../config.json'
 import axios from 'axios';
 import NotificationBar from '../../NotificationBar';
 import { stringAvatar} from '../../utils';
 import { DataGrid } from '@mui/x-data-grid';
-import { Add, OpenInNew, Search } from '@mui/icons-material';
-import { Link, useNavigate } from 'react-router-dom';
+import { FilterList, Search } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 import { useSelector} from 'react-redux';
 
-const ReviewersTable = () => {
+const UsersTable = () => {
 
-    const [reviewers, setReviewers] = useState([]);
+    const [users, setUsers] = useState([]);
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
     const [loading, setLoading] = useState(true);
     const [filt, setFilt] = useState('');
+    const [filtOptions, setFiltOptions] = useState(["All"]);
+    const [role, setRole] = useState("All");
     const userData = useSelector(state => state.data);
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
     const navigate = useNavigate();
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleFilter = (name)=>{
+        setRole(name);
+        handleClose();
+    }
 
     const handleChange = (e) => {
         setFilt(e.target.value);
@@ -28,8 +44,8 @@ const ReviewersTable = () => {
         setStatus({msg, severity, open:true})
     }
 
-    const handleClick = (params) => {
-        navigate(`/adminportal/reviewers/${params.row._id}`)
+    const handleRowClick = (params) => {
+        navigate(`/adminportal/users/${params.row._id}`)
     };
 
     const columns = [
@@ -65,14 +81,34 @@ const ReviewersTable = () => {
 
         setLoading(true);
 
-        axios.get(`${config['path']}/admin/reviewers`,
+        axios.get(`${config['path']}/admin/users/role/${role}`,
         { headers: {
             'Authorization': `Bearer ${userData.accessToken.token}`,
             'email': JSON.parse(sessionStorage.getItem("info")).email,
         }}
         ).then(res=>{
-            setReviewers(res.data)
+            setUsers(res.data)
             setLoading(false);
+        }).catch(err=>{
+            if(err.response) showMsg(err.response.data.message, "error")
+            else alert(err)
+            
+        })
+    },[role])
+
+    useEffect(()=>{
+
+        axios.get(`${config['path']}/admin/roles`,
+        { headers: {
+            'Authorization': `Bearer ${userData.accessToken.token}`,
+            'email': JSON.parse(sessionStorage.getItem("info")).email,
+        }}
+        ).then(res=>{
+            var options = ["All"]
+            res.data.forEach(ele => {
+                options.push(ele.role)
+            });
+            setFiltOptions(options);
         }).catch(err=>{
             if(err.response) showMsg(err.response.data.message, "error")
             else alert(err)
@@ -84,8 +120,26 @@ const ReviewersTable = () => {
     return (
         <div className="inner_content">
         <div>  
-        <Typography sx={{ fontWeight: 700}} variant="h5">Reviewers</Typography>          
-        <Box sx={{display:'flex', justifyContent:'flex-end',alignItems:'center',my:1}}>
+        <Box className='sticky'>
+        <Typography sx={{ fontWeight: 700}} variant="h5">Users</Typography> 
+        </Box>
+        <Paper sx={{p:2, my:3}}>    
+        <Stack direction='row' justifyContent='space-between' sx={{mb:2}}>
+            <Stack direction='row' alignItems='center' spacing={1}>
+            <IconButton
+                    id="fade-button"
+                    aria-controls={open ? 'fade-menu' : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open ? 'true' : undefined}
+                    onClick={handleClick}
+            ><FilterList/></IconButton>
+            <Typography color='GrayText' variant='body2' >{role}</Typography>
+            </Stack>
+            
+             <Menu id="fade-menu" MenuListProps={{ 'aria-labelledby': 'fade-button'}} anchorEl={anchorEl} open={open} onClose={handleClose}>
+                {filtOptions.map((item,index)=>{ return(<MenuItem key={index} onClick={()=>handleFilter(item)}>{item}</MenuItem>)})}
+            </Menu>
+
             <FormControl sx={{width: '30ch' }} variant="outlined">
             <OutlinedInput
                 id="outlined-adornment-password"
@@ -105,12 +159,12 @@ const ReviewersTable = () => {
                 }
             />
             </FormControl>
-        </Box>
+        </Stack>
         <DataGrid
-                rows={reviewers}
+                rows={users}
                 columns={columns}
-                onRowClick={handleClick}
-                hideFooter={reviewers.length < 100}
+                onRowClick={handleRowClick}
+                hideFooter={users.length < 100}
                 autoHeight={true}
                 disableSelectionOnClick
                 experimentalFeatures={{ newEditingApi: true }}
@@ -129,7 +183,7 @@ const ReviewersTable = () => {
                 components={{
                     NoRowsOverlay: () => (
                       <Stack height="100%" alignItems="center" justifyContent="center">
-                        No Reviewers
+                        No {role==="All"?"Users":role}
                       </Stack>
                     ),
                     NoResultsOverlay: () => (
@@ -142,6 +196,7 @@ const ReviewersTable = () => {
                     )
                   }}
             />
+            </Paper>
             <NotificationBar status={status} setStatus={setStatus}/>
 
         </div>
@@ -149,4 +204,4 @@ const ReviewersTable = () => {
     );
 };;
 
-export default ReviewersTable;
+export default UsersTable;

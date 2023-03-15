@@ -1,7 +1,7 @@
 import React, { useEffect, useState} from 'react';
 import { Link, useParams} from 'react-router-dom';
 import { ArrowBack, LocalHospital } from '@mui/icons-material';
-import { Box, Stack, Typography, Skeleton, Button} from '@mui/material';
+import { Box, Stack, Typography, Skeleton, Button, Paper} from '@mui/material';
 import { useSelector} from 'react-redux';
 import config from '../../../config.json'
 import axios from 'axios';
@@ -19,19 +19,17 @@ const HospiatalDetails = () => {
 
     useEffect(()=>{
         setLoading(true);
-        axios.get(`${config['path']}/user/hospitals/${id}`,
+        axios.get(`${config['path']}/admin/hospitals/${id}`,
         { headers: {
             'Authorization': `Bearer ${userData.accessToken.token}`,
             'email': JSON.parse(sessionStorage.getItem("info")).email,
         }}
         ).then(res=>{
             setData(res.data);
-            console.log(data)
             setLoading(false);
         }).catch(err=>{
             if(err.response) showMsg(err.response.data.message, "error")
             else alert(err)
-            setLoading(false);
         })
         
     },[])
@@ -43,13 +41,13 @@ const HospiatalDetails = () => {
     return (
         <div className="inner_content">
         <div>
-            <Box>    
+            <Box className="sticky">    
             <Typography sx={{ fontWeight: 700}} variant="h5">Hospital</Typography>    
             
             <Button component={Link} to='/adminportal/hospitals' size='small' startIcon={<ArrowBack/>} sx={{p:0}}>Go Back To Hospitals</Button>
             </Box>  
             {loading?
-            <>
+            <Paper sx={{p:2, my:3}}>  
             <Stack direction='row' spacing={2} alignItems='center' sx={{my:1}}>
                 <Skeleton variant="rounded" width={60} height={60} />
                 <Stack direction='column'>
@@ -61,19 +59,18 @@ const HospiatalDetails = () => {
                 <Skeleton variant="rounded" height={40} />
                 <Skeleton variant="rounded" height={40} />
             </Stack>
-            </>
+            </Paper>
             :
-            <>
+            <Paper sx={{p:2, my:3}}>  
             <Stack direction='row' spacing={2} alignItems='center' sx={{mt:3}}>
                 <LocalHospital sx={{width:'60px',height:'60px'}} color='error'/>
                 <Stack direction='column'>
-                    <Typography variant='h6'>{"Hospital Name"}</Typography>
+                    <Typography variant='h6'>{data.name}</Typography>
                 </Stack>
             </Stack>
            
-            <View data={data}/>
-                        
-            </>
+            <View data={data}/> 
+            </Paper>
             }
             <NotificationBar status={status} setStatus={setStatus}/>
         </div>

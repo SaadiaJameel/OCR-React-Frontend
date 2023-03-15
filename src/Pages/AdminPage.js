@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText} from '@mui/material';
 import { NavLink, Outlet } from 'react-router-dom';
-import { AccountBox, Email, LocalHospital} from '@mui/icons-material';
+import { AccountBox, Email, LocalHospital, LockPerson} from '@mui/icons-material';
 
 const NavButton = ({path,startIcon,name}) => (
   <ListItem disablePadding component={NavLink} to={path}
@@ -26,8 +26,9 @@ const AdminPage = () => {
       <div className='sidebar'>
         <List disablePadding>
           <NavButton path={"/adminportal/requests"} startIcon={<Email/>} name={"Requests"}/> 
-          <NavButton path={"/adminportal/reviewers"} startIcon={<AccountBox/>} name={"Reviewers"}/> 
+          <NavButton path={"/adminportal/users"} startIcon={<AccountBox/>} name={"Users"}/> 
           <NavButton path={"/adminportal/hospitals"} startIcon={<LocalHospital/>} name={"Hospitals"}/> 
+          <NavButton path={"/adminportal/permissions"} startIcon={<LockPerson/>} name={"Permissions"}/> 
         </List>
       </div>
       <Box sx={{flexGrow:1}} className='content'>

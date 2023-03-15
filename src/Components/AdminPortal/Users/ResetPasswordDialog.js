@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, Stack, } from '@mui/material';
+import {Box, Button, Stack, } from '@mui/material';
 import { FormControl, InputLabel, InputAdornment, IconButton, OutlinedInput, Typography } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { PasswordStrengthIndicator, passwordStrength } from '../../utils';
@@ -62,10 +62,7 @@ export default function ResetPasswordDialog({user, setIsReset}) {
     }
 
   return (
-    <div style={{background:'#fbfbfb', padding:'5px', border:'1px solid lightgray', borderRadius:'3px', maxWidth:'600px'}}>
-        <Typography color='red'>WARNING: </Typography>
-        <Typography>Please note that after changing the password the user will no longer be able to log into the application using the current password.</Typography>
-        <br/>
+    <Box sx={{width:'100%'}}>
         <FormControl margin="normal" fullWidth  variant="outlined">
             <InputLabel required size='small' htmlFor="password">Password</InputLabel>
             <OutlinedInput required size='small' inputProps={{ maxLength: 30 }} id="password" type={showPassword ? 'text' : 'password'} label="Password" name="password"
@@ -85,6 +82,6 @@ export default function ResetPasswordDialog({user, setIsReset}) {
             <Button onClick={handleClose} color='inherit' variant='outlined' disabled={state !==0}>Cancel</Button>
         </Stack>
         <NotificationBar status={status} setStatus={setStatus}/>
-    </div>
+    </Box>
   );
 }

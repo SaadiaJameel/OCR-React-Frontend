@@ -5,10 +5,21 @@ import CircularProgress from '@mui/material/CircularProgress';
 import axios from 'axios';
 import config from '../config.json';
 
-export default function HospitalDropdown() {
+export default function AssigneeDropdown({assignee, setAssignee}) {
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
   const loading = open && options.length === 0;
+
+  const handleAddAssignee = (item)=>{
+    if(item === null) return;
+    let newList = assignee.filter((newAssignee)=> {return newAssignee.reg_no !== item.reg_no});
+    if(newList.length>=3){
+      newList.pop();
+    }
+
+    newList.unshift(item);
+    setAssignee(newList);
+  }
 
   React.useEffect(() => {
 
@@ -17,11 +28,13 @@ export default function HospitalDropdown() {
     }
 
     (async () => {
-    axios.get(`${config['path']}/user/hospitals`).then(resp =>{
+    axios.get(`${config['path']}/admin/reviewers`,
+    { headers: {
+      'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+      'email': JSON.parse(sessionStorage.getItem("info")).email,
+    }}
+    ).then(resp =>{
         setOptions(resp.data);
-        for(let i = 0; i < resp.data.length; i++){
-            options[i] = resp.data[i]['name']
-        }
     }).catch(function (error) {
         if(error.response){
             alert(error.response.data.message)
@@ -42,7 +55,6 @@ export default function HospitalDropdown() {
   return (
     <Autocomplete
       size='small'
-      id="asynchronous-demo"
       fullWidth
       open={open}
       onOpen={() => {
@@ -51,18 +63,17 @@ export default function HospitalDropdown() {
       onClose={() => {
         setOpen(false);
       }}
-      isOptionEqualToValue={(option, value) => option.name === value.name}
-      getOptionLabel={(option) => option.name}
+      isOptionEqualToValue={(option, value) => option.username === value.username}
+      getOptionLabel={(option) => option.username}
       options={options}
       loading={loading}
+      onChange={(e, value)=>handleAddAssignee(value)}
       renderInput={(params) => (
         <TextField
           size='small'
           {...params}
-          margin="normal"
-          name='hospital'
-          label="Hospital"
-          required
+          name='assignee'
+          label="Assign Reviewers"
           InputProps={{
             ...params.InputProps,
             endAdornment: (

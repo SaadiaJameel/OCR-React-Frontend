@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import Button from '@mui/material/Button';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
-import { DialogContent,DialogActions, TextField, Typography, Stack } from '@mui/material';
+import { DialogContent,DialogActions, TextField, Typography, Stack, Box } from '@mui/material';
 import config from '../../../config.json';
 import axios from 'axios';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -52,10 +52,9 @@ export default function DeleteHospitalDialog({hospital, setIsDelete}) {
 
 
   return (
-    <div style={{background:'#fbfbfb', padding:'5px'}}>
-        
+    <Box>
         <Typography color='red'>WARNING: </Typography>
-        <Typography>
+        <Typography variant='body2'>
         This action is irreversible and will permanently delete the hospital entry. Please proceed with caution.
         Enter the name: <strong>'{hospital.name}'</strong> to confirm the action.
         </Typography>
@@ -69,6 +68,6 @@ export default function DeleteHospitalDialog({hospital, setIsDelete}) {
             <Button onClick={handleClose} color='inherit' variant='outlined' disabled={state!==0}>Cancel</Button>
         </Stack>
         <NotificationBar status={status} setStatus={setStatus}/>
-    </div>
+    </Box>
   );
 }

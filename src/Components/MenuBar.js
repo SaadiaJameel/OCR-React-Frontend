@@ -50,26 +50,7 @@ function stringAvatar(name) {
   };
 }
 
-const displayRole = (role)=>{
-    let roleName = "";
-    switch(role[0]){
-      case 1:
-        roleName = "Admin"
-        break;
-      case 2:
-        roleName = "Reviewer"
-        break;
-      case 3:
-        roleName = "Clinician"
-        break;
-      default:
-        roleName = ""
-    }
-
-    return <Typography color='GrayText'>{roleName}</Typography>;
-}
-
-function MenuBar({roles,username, availability}) {
+function MenuBar({permissions,username, availability, roleName}) {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const open = Boolean(anchorElUser);
@@ -120,7 +101,7 @@ function MenuBar({roles,username, availability}) {
 			const res = await trySilentRefresh().then((data) => {
 				if (data) {
 					dispatch(setAccessToken(data.accessToken));
-          const object = {_id: data.ref._id,username: data.ref.username, email: data.ref.email, roles: data.ref.role, reg_no: data.ref.reg_no, atoken: data.accessToken.token }
+          const object = {_id: data.ref._id,username: data.ref.username, email: data.ref.email,availability: data.ref.availability, role: data.ref.role, permissions: data.body.permissions, reg_no: data.ref.reg_no, atoken: data.accessToken.token }
           sessionStorage.setItem("info",JSON.stringify(object))
 					return true;
 				}
@@ -190,7 +171,7 @@ function MenuBar({roles,username, availability}) {
                   </MenuItem>)
                 })
                 }
-                {roles.includes(1) && 
+                {permissions.includes(100) && 
                
                 MenuOptions.admin.map((item,index)=>{
                   return(<MenuItem key={index}>
@@ -207,7 +188,7 @@ function MenuBar({roles,username, availability}) {
                 <Button sx={{ my: 2, color: 'white', display: 'block', m:0}} component={NavLink} to="/review/entries"> 
                     Reviewer
                 </Button>
-                { roles.includes(1) &&
+                { permissions.includes(100) &&
                   <Button sx={{ my: 2, color: 'white', display: 'block', m:0}} color='secondary' component={NavLink} to="/adminportal/requests">
                     Admin
                 </Button>}
@@ -225,7 +206,7 @@ function MenuBar({roles,username, availability}) {
             color="inherit"
           >
             <Typography sx={{ m: 1, textTransform: 'none', display: { xs: 'none', sm: 'block'}}}>{username}</Typography>
-            { roles.includes(2)?
+            { permissions.includes(200)?
               <StyledBadge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot" color={availability?'success':'error'}>
                 <Avatar {...stringAvatar(username)}/>
               </StyledBadge>
@@ -272,7 +253,7 @@ function MenuBar({roles,username, availability}) {
       >
         <Box sx={{mx:3, my:1}}>
           <Typography><strong>{username}</strong></Typography>
-          {displayRole(roles)}
+          <Typography color='GrayText'>{roleName}</Typography>
         </Box>
         <Divider sx={{my:1}}/>
         <MenuItem sx={{width:'200px'}}>

@@ -1,14 +1,14 @@
 import React, { useState, useEffect} from 'react';
-import {Box, Button, FormControl, IconButton, InputBase, LinearProgress, OutlinedInput, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from '@mui/material';
-import {TextField, InputAdornment, Skeleton} from '@mui/material';
+import {Box, FormControl, IconButton, LinearProgress, OutlinedInput, Paper} from '@mui/material';
+import {InputAdornment} from '@mui/material';
 import {Avatar, Typography, Stack} from '@mui/material';
 import config from '../../../config.json'
 import axios from 'axios';
 import NotificationBar from '../../NotificationBar';
 import { stringAvatar} from '../../utils';
 import { DataGrid } from '@mui/x-data-grid';
-import { OpenInNew, Search } from '@mui/icons-material';
-import { Link, useNavigate } from 'react-router-dom';
+import { Search } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 import { useSelector} from 'react-redux';
 
 const RequestsTable = () => {
@@ -67,7 +67,7 @@ const RequestsTable = () => {
         setUserData(selectorData);
         axios.get(`${config['path']}/admin/requests`,
         { headers: {
-            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'Authorization': `Bearer ${userData.accessToken.token}`,
             'email': JSON.parse(sessionStorage.getItem("info")).email,
         }}
         ).then(res=>{
@@ -85,9 +85,11 @@ const RequestsTable = () => {
         <div className="inner_content">
         <div>
 
-        <Box>    
-        <Typography sx={{ fontWeight: 700}} variant="h5">Requests</Typography>    
-        <Box sx={{display:'flex', justifyContent:'flex-end',alignItems:'center',my:1}}>
+        <Box className='sticky'>    
+        <Typography sx={{ fontWeight: 700}} variant="h5">Requests</Typography> 
+        </Box>   
+        <Paper sx={{p:2, my:3}}> 
+        <Stack direction='row' justifyContent='flex-end' sx={{mb:2}} >
         <FormControl sx={{width: '30ch' }} variant="outlined">
           <OutlinedInput
             id="outlined-adornment-password"
@@ -107,8 +109,7 @@ const RequestsTable = () => {
             }
           />
         </FormControl>
-        </Box>
-        </Box>  
+        </Stack>
         <DataGrid
                 rows={request}
                 columns={columns}
@@ -145,6 +146,7 @@ const RequestsTable = () => {
                     )
                   }}
             />
+             </Paper>
             <NotificationBar status={status} setStatus={setStatus}/>
             </div>
         </div>

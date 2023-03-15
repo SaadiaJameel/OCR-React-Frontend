@@ -1,5 +1,5 @@
 import { FilterList, Photo, Comment, MoreVert } from '@mui/icons-material';
-import { Avatar, AvatarGroup, Box, IconButton, Menu, MenuItem, Paper, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from '@mui/material';
+import { Avatar, AvatarGroup, Box, Hidden, IconButton, Menu, MenuItem, Paper, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -77,8 +77,15 @@ const Entries = () => {
     return (
         <div className="inner_content">
         <div>
-            <div style={{position:'sticky', top:0, left:0, background:'white', width:'100%', zIndex:1}}>
+            <div className="sticky">
             <Typography sx={{ fontWeight: 700}} variant="h5">Entry</Typography> 
+            </div>
+
+            <Menu id="fade-menu" MenuListProps={{ 'aria-labelledby': 'fade-button'}} anchorEl={anchorEl} open={open} onClose={handleClose}>
+                {filtOptions.map((item,index)=>{ return(<MenuItem key={index} onClick={()=>handleFilter(item)}>{item}</MenuItem>)})}
+            </Menu>
+
+            <Paper sx={{p:2, my:3}}>
             <Stack direction='row' alignItems='center' spacing={1}>
                 <IconButton
                     id="fade-button"
@@ -90,13 +97,7 @@ const Entries = () => {
 
                 <Typography color='GrayText'>{value}</Typography>
             </Stack>
-            </div>
-
-            <Menu id="fade-menu" MenuListProps={{ 'aria-labelledby': 'fade-button'}} anchorEl={anchorEl} open={open} onClose={handleClose}>
-                {filtOptions.map((item,index)=>{ return(<MenuItem key={index} onClick={()=>handleFilter(item)}>{item}</MenuItem>)})}
-            </Menu>
-
-            <Table  sx={{border: '1px solid lightgray', mb:3}}>
+            <Table  sx={{border: '1px solid lightgray'}}>
                 {/* <TableHead>
                     <TableRow>
                         <TableCell>Created At</TableCell>
@@ -138,6 +139,7 @@ const Entries = () => {
                     }
                 </TableBody>
             </Table>
+            </Paper>
         </div>
         </div>
     );

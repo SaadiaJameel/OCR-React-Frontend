@@ -121,7 +121,7 @@ export default function AddNewPatient() {
 
   return (
     <div>
-    <Button variant='contained' size='small' endIcon={<PersonAdd/>} sx={{mt:2}} onClick={handleClickOpen}>Add New</Button>   
+    <Button variant='contained' sx={{mt:2}} onClick={handleClickOpen}>Add New</Button>   
     <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Add New Patient</DialogTitle>
         <DialogContent>
