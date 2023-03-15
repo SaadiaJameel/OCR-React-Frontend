@@ -11,8 +11,8 @@ import PatientsTable from './Components/Patients/PatientsTable';
 import PatientDetails from './Components/Patients/PatientDetails';
 import RequestsTable from './Components/AdminPortal/Requests/RequestsTable';
 import RequestDetails from './Components/AdminPortal/Requests/RequestDetails';
-import ReviewersTable from './Components/AdminPortal/Reviewers/ReviewersTable';
-import UserDetails from './Components/AdminPortal/Reviewers/UserDetails';
+import UsersTable from './Components/AdminPortal/Users/UsersTable';
+import UserDetails from './Components/AdminPortal/Users/UserDetails';
 import UserProfile from './Components/UserProfile';
 import ImageCropper from './Components/Crop/ImageCropper';
 import { useSelector, useDispatch } from 'react-redux';
@@ -79,9 +79,9 @@ function App() {
               <Route path='/adminportal/permissions/:id' element={<EditUserPermission/>}/>
             </Route>
 
-            <Route path='/adminportal/reviewers' element={<Outlet/>}>
-              <Route index element={<ReviewersTable/>}/>
-              <Route path='/adminportal/reviewers/:id' element={<UserDetails/>}/>
+            <Route path='/adminportal/users' element={<Outlet/>}>
+              <Route index element={<UsersTable/>}/>
+              <Route path='/adminportal/users/:id' element={<UserDetails/>}/>
             </Route>
 
             <Route path='/adminportal/hospitals' element={<HospitalTable/>} ></Route>

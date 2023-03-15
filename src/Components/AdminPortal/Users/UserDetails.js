@@ -2,34 +2,14 @@ import React, { useEffect, useRef, useState} from 'react';
 import { Link, useParams} from 'react-router-dom';
 import { ArrowBack } from '@mui/icons-material';
 import { Box, Stack, Avatar, Typography, Skeleton, Button, Divider, 
-         Table, TableBody, TableCell, TableRow, ButtonGroup, Paper} from '@mui/material';
+         Table, TableBody, TableCell, TableRow, Paper} from '@mui/material';
 import { stringAvatar } from '../../utils';
 import config from '../../../config.json'
 import axios from 'axios';
 import NotificationBar from '../../NotificationBar';
-import LoadingButton from '@mui/lab/LoadingButton';
 import ResetPasswordDialog from './ResetPasswordDialog';
 import DeleteUserDialog from './DeleteUserDialog';
 import { useSelector} from 'react-redux';
-
-const displayRole = (role)=>{
-    let roleName = "";
-    switch(role[0]){
-      case 1:
-        roleName = "Admin"
-        break;
-      case 2:
-        roleName = "Reviewer"
-        break;
-      case 3:
-        roleName = "Clinician"
-        break;
-      default:
-        roleName = ""
-    }
-
-    return <Typography color='GrayText'>{roleName}</Typography>;
-}
 
 const UserDetails = () => {
 
@@ -53,7 +33,7 @@ const UserDetails = () => {
         setLoading(true);
         axios.get(`${config['path']}/admin/users/${id}`,
         { headers: {
-            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'Authorization':  `Bearer ${userData.accessToken.token}`,
             'email': JSON.parse(sessionStorage.getItem("info")).email,
         }}
         ).then(res=>{
@@ -80,7 +60,7 @@ const UserDetails = () => {
           role: [role]
         },
         { headers: {
-            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'Authorization': `Bearer ${userData.accessToken.token}`,
             'email': JSON.parse(sessionStorage.getItem("info")).email,
         }}
         ).then(res=>{
@@ -104,9 +84,9 @@ const UserDetails = () => {
         <div className="inner_content">
         <div> 
         <Box className='sticky'>    
-            <Typography sx={{ fontWeight: 700}} variant="h5">Reviewers</Typography>    
+            <Typography sx={{ fontWeight: 700}} variant="h5">Users</Typography>    
         
-        <Button component={Link} to='/adminportal/reviewers' size='small' startIcon={<ArrowBack/>} sx={{p:0}}>Go Back To Reviewers</Button>
+        <Button component={Link} to='/adminportal/users' size='small' startIcon={<ArrowBack/>} sx={{p:0}}>Go Back To Users</Button>
         </Box>
         <Box sx={{my:3}}>            
             {loading?
@@ -160,7 +140,7 @@ const UserDetails = () => {
                     </TableRow>
                     <TableRow>
                         <TableCell>Role</TableCell>
-                        <TableCell>{displayRole(data.role)}</TableCell>
+                        <TableCell>{data.role}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell>Created at:</TableCell>

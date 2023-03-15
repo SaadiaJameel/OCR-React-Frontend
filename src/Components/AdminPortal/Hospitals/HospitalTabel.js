@@ -117,7 +117,7 @@ const HospitalTable = () => {
                 rowsPerPageOptions={[100]}
                 experimentalFeatures={{ newEditingApi: true }}
                 getRowId={(row) =>  row._id}
-                hideFooter={data.length < 25}
+                hideFooter={data.length < 100}
                 loading={loading}   // you need to set your boolean loading
 
                 filterModel={{

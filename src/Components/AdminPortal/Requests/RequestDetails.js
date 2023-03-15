@@ -1,48 +1,36 @@
 import React, { useEffect, useRef, useState} from 'react';
 import { Link, useNavigate, useParams} from 'react-router-dom';
-import { ArrowBack } from '@mui/icons-material';
-import { Box, Stack, Avatar, Typography, TextField, FormControl, 
-     Skeleton, Divider, Button, Table, TableBody, TableCell, TableRow, FormControlLabel, FormLabel, RadioGroup, Radio, Checkbox, FormGroup, Paper} from '@mui/material';
+import { ArrowBack, Help } from '@mui/icons-material';
+import { Box, Stack, Avatar, Typography, TextField,
+     Skeleton, Button, Table, TableBody, TableCell, TableRow, Paper, IconButton} from '@mui/material';
 import { stringAvatar } from '../../utils';
 import config from '../../../config.json'
 import axios from 'axios';
 import NotificationBar from '../../NotificationBar';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useSelector} from 'react-redux';
+import UserRolesDropdown from '../../UserRolesDropDown';
 
 const RequestDetails = () => {
 
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
+    const [ permissions, setPermissions] = useState({});
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(true);
+    const [role, setRole] = useState(null);
     const [state, setState] = useState(0);
     const formRef = useRef();
     const { id } = useParams();
     const navigate = useNavigate();
-    const userData = useSelector(state => state.data);
-    const [selected, setSelected] = React.useState("Recruiter");
-    const [permisions, setPermissions] = React.useState({
-        admin: false,
-        reviewer: false,
-        recruiter: false,
-    });
-    
-    const handlePermissions = (event) => {
-    setPermissions({
-        ...permisions,
-        [event.target.name]: event.target.checked,
-    });
-    };
-    
-    const { admin, reviewer, recruiter } = permisions;
-    const error = [admin, reviewer, recruiter].filter((v) => v).length === 0;
+    const userData = useSelector(state => state.data);    
+
 
     useEffect(()=>{
 
         setLoading(true);
         axios.get(`${config['path']}/admin/requests/${id}`,
         { headers: {
-            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'Authorization':  `Bearer ${userData.accessToken.token}`,
             'email': JSON.parse(sessionStorage.getItem("info")).email,
         }}
         ).then(res=>{
@@ -55,32 +43,22 @@ const RequestDetails = () => {
 
     },[])
 
-    const handleRole = (e)=>{
-        setSelected(e.target.value);
-        setPermissions({
-            admin: false,
-            reviewer: false,
-            recruiter: false,
-        })
-    }
-
     const handleAccept = ()=>{
 
         const formData = new FormData(formRef.current);
-        const reason = formData.get('reason');
 
-        const role = [];
-        if(permisions.admin) role.push(1);
-        if(permisions.reviewer) role.push(2);
-        if(permisions.recruiter) role.push(3);
+        if(formData.get('role')===""){
+            showMsg("Add a user role","error");
+            return
+        }
 
         setState(1);
 
         axios.post(`${config['path']}/admin/accept/${data._id}`,
         {
           username: data.username,
-          role: role,
-          reason: reason
+          role: formData.get('role'),
+          reason: formData.get('reason')
         },
         { headers: {
             'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
@@ -124,6 +102,26 @@ const RequestDetails = () => {
     const showMsg = (msg, severity)=>{
         setStatus({msg, severity, open:true})
     }
+
+    useEffect(()=>{
+        axios.get(`${config['path']}/admin/option/permissions`,
+        { headers: {
+            'Authorization':  `Bearer ${userData.accessToken.token}`,
+            'email': JSON.parse(sessionStorage.getItem("info")).email,
+        }}
+        ).then((res)=>{
+            var parsed_json = res.data.options;
+            var json_object = {};
+            for (var i = 0; i < parsed_json.length; i++) {
+            json_object[parsed_json[i].value] = parsed_json[i].label;
+            }
+            setPermissions(json_object);
+            
+        }).catch(err=>{
+            if(err.response) showMsg(err.response.data.message, "error")
+            else alert(err)
+        })
+    },[])
 
     return (
         <div className="inner_content">
@@ -185,64 +183,32 @@ const RequestDetails = () => {
             </Paper>
             <Paper sx={{p:2, my:3}}>
             <Box component="form" noValidate ref={formRef}>
-            <Stack direction='row' spacing={2} sx={{my:2}}>
-            <FormControl>
-            <FormLabel>User Role</FormLabel>
-            <RadioGroup
-                defaultValue="Recruiter"
-                name="radio-buttons-group"
-                onChange={handleRole}
-            >
-                <FormControlLabel value="Admin" control={<Radio />} label={<Typography variant='body2' >Admin</Typography>} />
-                <FormControlLabel value="Reviewer" control={<Radio />} label={<Typography variant='body2' >Reviewer</Typography>} />
-                <FormControlLabel value="Recruiter" control={<Radio />} label={<Typography variant='body2' >Recruiter</Typography>} />
-            </RadioGroup>
-            </FormControl>
-            { selected === 'Admin' &&
-                <FormControl required error={error} component="fieldset" variant="standard">
-                <FormLabel component="legend">Permisions</FormLabel>
-                <FormGroup>
-                <FormControlLabel control={<Checkbox checked={admin} onChange={handlePermissions} name="admin" />}
-                    label={<Typography variant='body2' >Accept/Reject Login Requests, Add hospitals, Manage user accounts</Typography>}
-                />
-                <FormControlLabel control={ <Checkbox checked={reviewer} onChange={handlePermissions} name="reviewer" /> }
-                    label={<Typography variant='body2' >Review assigned consultation entries and add comments</Typography>}
-                />
-                <FormControlLabel control={<Checkbox checked={recruiter} onChange={handlePermissions} name="recruiter" />}
-                    label={<Typography variant='body2' >Add patients and add consultation entries</Typography>}
-                />
-                </FormGroup>
-                </FormControl>
+            
+            <Stack direction='column' spacing={1}  my={2} justifyContent='center' alignItems='flex-end'>
+                <UserRolesDropdown setValue={setRole}/>
+                <Button component={Link} to='/adminportal/permissions/new' size='small' >Add New User Role?</Button>
+            </Stack>   
+
+            {
+                !(role == null) && 
+                
+                <Box sx={{border:'1px solid lightgray', borderRadius:1, p:2, my:2}}>
+                <Typography color='GrayText'>Permissions:</Typography>
+                {
+                role.permissions.map((p, i)=>{
+                    return(
+                        <Typography marginY={1} variant='body2' key={i}>{permissions[p]}</Typography>
+                    )
+                })
+                }
+                </Box>
+                
             }
-            { selected === 'Reviewer' &&
-                <FormControl required error={error} component="fieldset" variant="standard">
-                <FormLabel component="legend">Permisions</FormLabel>
-                <FormGroup>
-                <FormControlLabel control={ <Checkbox checked={reviewer} onChange={handlePermissions} name="reviewer" /> }
-                    label={<Typography variant='body2' >Review assigned consultation entries and add comments</Typography>}
-                />
-                <FormControlLabel control={<Checkbox checked={recruiter} onChange={handlePermissions} name="recruiter" />}
-                    label={<Typography variant='body2' >Add patients and add consultation entries</Typography>}
-                />
-                </FormGroup>
-                </FormControl>
-            }
-            { selected === 'Recruiter' &&
-                <FormControl required error={error} component="fieldset" variant="standard">
-                <FormLabel component="legend">Permisions</FormLabel>
-                <FormGroup>
-                <FormControlLabel control={<Checkbox checked={recruiter} onChange={handlePermissions} name="recruiter" />}
-                    label={<Typography variant='body2' >Add patients and add consultation entries</Typography>}
-                />
-                </FormGroup>
-                </FormControl>
-            }
-            </Stack>
-        
+
             <TextField label="Reason for Approval/Rejection (optional)" fullWidth multiline maxRows={4} name='reason' size='small' inputProps={{maxLength: 200}}/>
             
             <Stack direction='row' spacing={2} sx={{mt:3}}>
-                <LoadingButton onClick={handleAccept} loading={state=== 1} variant="contained" disabled={state!==0 || error}>Accept</LoadingButton>
+                <LoadingButton onClick={handleAccept} loading={state=== 1} variant="contained" disabled={state!==0}>Accept</LoadingButton>
                 <LoadingButton onClick={handleReject} loading={state === 2} variant="outlined" disabled={state!==0}>Reject</LoadingButton>
             </Stack>
             </Box>

@@ -1,7 +1,7 @@
-import React, { useEffect, useState} from 'react';
-import { Link, useParams} from 'react-router-dom';
+import React, { useState} from 'react';
+import { Link} from 'react-router-dom';
 import { ArrowBack, LocalHospital } from '@mui/icons-material';
-import { Box, Stack, Typography, Skeleton, Button, Paper, TextField} from '@mui/material';
+import { Box, Stack, Typography,Button, Paper, TextField} from '@mui/material';
 import { useSelector} from 'react-redux';
 import config from '../../../config.json'
 import axios from 'axios';

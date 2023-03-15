@@ -19,7 +19,7 @@ const HospiatalDetails = () => {
 
     useEffect(()=>{
         setLoading(true);
-        axios.get(`${config['path']}/user/hospitals/${id}`,
+        axios.get(`${config['path']}/admin/hospitals/${id}`,
         { headers: {
             'Authorization': `Bearer ${userData.accessToken.token}`,
             'email': JSON.parse(sessionStorage.getItem("info")).email,
@@ -30,7 +30,6 @@ const HospiatalDetails = () => {
         }).catch(err=>{
             if(err.response) showMsg(err.response.data.message, "error")
             else alert(err)
-            setLoading(false);
         })
         
     },[])

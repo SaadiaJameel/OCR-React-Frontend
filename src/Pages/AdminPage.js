@@ -26,7 +26,7 @@ const AdminPage = () => {
       <div className='sidebar'>
         <List disablePadding>
           <NavButton path={"/adminportal/requests"} startIcon={<Email/>} name={"Requests"}/> 
-          <NavButton path={"/adminportal/reviewers"} startIcon={<AccountBox/>} name={"Reviewers"}/> 
+          <NavButton path={"/adminportal/users"} startIcon={<AccountBox/>} name={"Users"}/> 
           <NavButton path={"/adminportal/hospitals"} startIcon={<LocalHospital/>} name={"Hospitals"}/> 
           <NavButton path={"/adminportal/permissions"} startIcon={<LockPerson/>} name={"Permissions"}/> 
         </List>

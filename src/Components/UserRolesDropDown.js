@@ -4,11 +4,14 @@ import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import axios from 'axios';
 import config from '../config.json';
+import { useSelector} from 'react-redux';
 
-export default function HospitalDropdown() {
+export default function UserRolesDropdown({setValue}) {
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
+  const userData = useSelector(state => state.data);
   const loading = open && options.length === 0;
+
 
   React.useEffect(() => {
 
@@ -17,11 +20,12 @@ export default function HospitalDropdown() {
     }
 
     (async () => {
-    axios.get(`${config['path']}/user/hospitals`).then(resp =>{
+    axios.get(`${config['path']}/admin/roles`,
+    { headers: {
+        'Authorization':  `Bearer ${userData.accessToken.token}`,
+        'email': JSON.parse(sessionStorage.getItem("info")).email,
+    }}).then(resp =>{
         setOptions(resp.data);
-        for(let i = 0; i < resp.data.length; i++){
-            options[i] = resp.data[i]['name']
-        }
     }).catch(function (error) {
         if(error.response){
             alert(error.response.data.message)
@@ -51,17 +55,17 @@ export default function HospitalDropdown() {
       onClose={() => {
         setOpen(false);
       }}
-      isOptionEqualToValue={(option, value) => option.name === value.name}
-      getOptionLabel={(option) => option.name}
+      onChange={(ev, val) => setValue(val)}
+      isOptionEqualToValue={(option, value) => option.role === value.role}
+      getOptionLabel={(option) => option.role}
       options={options}
       loading={loading}
       renderInput={(params) => (
         <TextField
           size='small'
           {...params}
-          margin="normal"
-          name='hospital'
-          label="Hospital"
+          name='role'
+          label="User Role"
           required
           InputProps={{
             ...params.InputProps,

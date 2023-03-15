@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Box, Button, CircularProgress, Stack, Typography, TextField, Table, TableBody, TableRow, TableCell} from '@mui/material';
-import { Cancel, Delete, Edit, Save } from '@mui/icons-material';
+import { Box, Button, CircularProgress, Stack, TextField, Table, TableBody, TableRow, TableCell} from '@mui/material';
+import {Delete, Edit} from '@mui/icons-material';
 import { MuiTelInput } from 'mui-tel-input';
 import axios from 'axios';
 import config from '../../../config.json'
@@ -58,8 +58,6 @@ const View = ({data}) => {
             contact_no: data.get('contactNo')
         }
 
-        console.log(tobesend);
-        return;
         setLoading(true);
         axios.post(`${config['path']}/admin/hospitals/update/${id}`, tobesend,
         { headers: {
