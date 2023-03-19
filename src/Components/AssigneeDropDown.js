@@ -1,13 +1,16 @@
-import * as React from 'react';
+import React, {useState} from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useSelector} from 'react-redux';
 import axios from 'axios';
 import config from '../config.json';
 
 export default function AssigneeDropdown({assignee, setAssignee}) {
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
+  const selectorData = useSelector(state => state.data);
+  const [userData, setUserData] = useState(selectorData);
   const loading = open && options.length === 0;
 
   const handleAddAssignee = (item)=>{
@@ -28,9 +31,9 @@ export default function AssigneeDropdown({assignee, setAssignee}) {
     }
 
     (async () => {
-    axios.get(`${config['path']}/admin/reviewers`,
+    axios.get(`${config['path']}/user/patient/reviewer/all`,
     { headers: {
-      'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+      'Authorization': `Bearer ${userData.accessToken.token}`,
       'email': JSON.parse(sessionStorage.getItem("info")).email,
     }}
     ).then(resp =>{

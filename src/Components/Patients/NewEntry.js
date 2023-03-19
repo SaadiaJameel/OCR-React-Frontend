@@ -1,15 +1,18 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { Box, Stack, TextField, FormControl, MenuItem, Select, 
     List, ListItem, IconButton, ListItemText, InputLabel, Button, ListItemAvatar, Avatar} from '@mui/material';
-import { Close, Done } from '@mui/icons-material';
-import UploadPage from './UploadPage';
-import UploadTests from './UploadTests';
+import { Close} from '@mui/icons-material';
 import dayjs from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import AssigneeDropdown from '../AssigneeDropDown';
 import { stringAvatar } from '../utils';
+import NotificationBar from '../NotificationBar';
+import { useSelector} from 'react-redux';
+import axios from 'axios';
+import config from '../../config.json';
+import { useParams } from 'react-router-dom';
 
 const habitOptions = [
     {value: "Smoking", label: "Smoking"},
@@ -26,14 +29,19 @@ const frequencyOptions = [
     {value: "Occasionally", label: "Occasionally"},
 ]
 
-const NewEntry = ({data}) => {
+const NewEntry = ({entryID, setEntryID, btnRef, setDone, setLoading}) => {
+    const [status, setStatus] = useState({msg:"",severity:"success", open:false});
+    const selectorData = useSelector(state => state.data);
+    const [userData, setUserData] = useState(selectorData);
     const [riskHabits, setRiskHabits] = useState([]);
     const [assignee, setAssignee] = useState([]);
     const [habit, setHabit] = useState(habitOptions[0].value);
     const [frequency, setFrequency] = useState(frequencyOptions[0].value);
     const [startTime, setStartTime] = useState(dayjs(new Date()));
     const [endTime, setEndTime] = useState(dayjs(new Date()));
-    const formRef = useRef();
+    const [errorStart, setErrorStart] = useState(null);
+    const [errorEnd, setErrorEnd] = useState(null);
+    const { id } = useParams();
 
     const removeRisk = (item)=>{
         let newList = riskHabits.filter((habit)=> {return habit !== item})
@@ -53,39 +61,77 @@ const NewEntry = ({data}) => {
 
     const handleSubmit = (event)=>{
         event.preventDefault();
+
+        setLoading(true);
         const formData = new FormData(event.currentTarget);
         const complaint = formData.get('complaint');
         const findings = formData.get('findings');
-        const currentHabits = riskHabits;
-        const assignees = "";
+        const current_habits = riskHabits;
 
-        const upload = {
-            complaint,findings,currentHabits,assignees
+        if(findings===""|| complaint===""|| errorStart !== null || errorEnd !== null){
+            showMsg("Please add required feilds","error");
+            return;
         }
 
-        console.log(upload);
+        const reviewers = []
+        assignee.forEach(element => {
+            reviewers.push(element._id)
+        });
+
+        const upload = {
+            start_time : new Date(startTime),
+            end_time : new Date(endTime),
+            complaint,findings,current_habits, reviewers
+        }
+
+        axios.post(`${config['path']}/user/entry/add/${id}`, upload,
+        {headers: {
+            'Authorization': `Bearer ${userData.accessToken.token}`,
+            'email': JSON.parse(sessionStorage.getItem("info")).email,
+        }}
+        ).then(res=>{
+            setEntryID(res.data._id);
+        }).catch(err=>{
+            if(err.response) showMsg(err.response.data?.message, "error")
+            else alert(err)
+        }).finally(()=>{
+            setLoading(false);
+        })  
     }
 
+    useEffect(()=>{
+        if(entryID !== null){
+            setDone(0);
+        }
+    },[entryID])
 
+    const showMsg = (msg, severity)=>{
+        setStatus({msg, severity, open:true})
+    }
 
     return (
-        <Box component='form' my={3} onSubmit={handleSubmit} ref={formRef} >
+        <>
+        <Box component='form' noValidate my={3} onSubmit={handleSubmit}>
         <Stack spacing={3}>
             <Stack direction='row' spacing={2}>
                 <LocalizationProvider dateAdapter={AdapterDayjs} >
                     <DateTimePicker format='DD/MM/YYYY HH:mm' label="Start Time"  value={startTime} onChange={(newValue) => setStartTime(newValue)}
+                     maxDate={dayjs()} minDate={dayjs().subtract(30, 'day')}
                      componentsProps={{ textField: { size: 'small', fullWidth:true  }}}
+                     onError={(newError) => setErrorStart(newError)}
                     />
                 </LocalizationProvider>
 
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DateTimePicker label="End Time" format='DD/MM/YYYY HH:mm' value={endTime} onChange={(newValue) => setEndTime(newValue)}
                     componentsProps={{ textField: { size: 'small', fullWidth:true }}}
+                    maxDate={dayjs()} minDate={dayjs().subtract(30, 'day')}
+                    onError={(newError) => setErrorEnd(newError)}
                     />
                 </LocalizationProvider>
             </Stack>
-           <TextField fullWidth size='small' name='complaint' multiline maxRows={4} label="presenting complaint"/> 
-           <TextField fullWidth size='small' name='findings' multiline maxRows={4} label="examination findings"/>
+           <TextField fullWidth required size='small' name='complaint' multiline maxRows={4} label="Presenting complaint"/> 
+           <TextField fullWidth required size='small' name='findings' multiline maxRows={4} label="Examination findings"/>
 
            <Stack direction='row' spacing={2}>
            <FormControl fullWidth>
@@ -157,15 +203,17 @@ const NewEntry = ({data}) => {
             }
             </List>}
 
-            <Box sx={{border:'1px solid lightgray', borderRadius: 1, p:2}}>
-                <UploadPage/>
+            {/* <Box sx={{border:'1px solid lightgray', borderRadius: 1, p:2}}>
+                <UploadPage entryID={entryID} hidenButton={hiddenButtonImage}/>
             </Box>
             <Box sx={{border:'1px solid lightgray', borderRadius: 1, p:2}}>
-                <UploadTests/>
-            </Box>
+                <UploadTests entryID={entryID} hidenButton={hiddenButtonReport}/>
+            </Box> */}
         </Stack>
-        <Button sx={{my:3}} variant='contained' type='submit' >Save Entry</Button>
+        <button hidden ref={btnRef} type='submit' >Save Entry</button>
         </Box>
+        <NotificationBar status={status} setStatus={setStatus}/>
+        </>
     );
 };
 

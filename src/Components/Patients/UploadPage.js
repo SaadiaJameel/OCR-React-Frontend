@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef} from 'react';
 import { Button, Typography, Grid, Box, Stack, Dialog, Slide,IconButton} from '@mui/material';
 import { Crop, Delete, Edit} from '@mui/icons-material';
 import Canvas from '../Annotation/Canvas';
@@ -7,17 +7,18 @@ import ImageCropper from '../Crop/ImageCropper';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import config from '../../config.json';
-import { LoadingButton } from '@mui/lab';
+import { useSelector} from 'react-redux';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const UploadPage = () => {
+const UploadPage = ({entryID, btnRef, setDone, setLoading}) => {
 
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
-    const [loading, setLoading] = useState(false);
+    const selectorData = useSelector(state => state.data);
+    const [userData, setUserData] = useState(selectorData);
     const [openAnnotation, setOpenAnnotation] = useState(false)
     const [openCrop, setOpenCrop] = useState(false)
     const [imageIndex, setImageIndex] = useState({});
@@ -55,7 +56,6 @@ const UploadPage = () => {
     };
 
     const handleSelection = ()=>{
-        //setLoading(true)
         hidenInput.current.click();
     }
 
@@ -74,13 +74,17 @@ const UploadPage = () => {
 
     const handleSubmit = ()=>{
 
+        if(selectedFiles.length===0){
+            showMsg("Please Select the images", "error");
+            return;
+        }
+
         setLoading(true);
 
         const temp =  data.map(item => ({...item}));
         temp.forEach(item =>{ 
             delete item.img;
-            item.email = JSON.parse(sessionStorage.getItem("info")).email;
-            item.patient_id = id;
+            item.telecon_entry_id = entryID;
         });
 
         var form = new FormData();
@@ -91,18 +95,18 @@ const UploadPage = () => {
         });
 
         form.append('data',JSON.stringify(temp))
-        return;
-        axios.post(`${config['path']}/user/patient/images/${id}`, form,
+       
+        axios.post(`${config['path']}/user/upload/images/${entryID}`, form,
         {headers: {
-            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'Authorization': `Bearer ${userData.accessToken.token}`,
             'Content-Type': 'multipart/form-data',
             'email': JSON.parse(sessionStorage.getItem("info")).email,
         }}
         ).then(res=>{
-            showMsg("Images Uploaded Successfully", "success")
             setSelectedFiles([]);
             setImageIndex(0);
             setData([]);
+            setDone(1);
         }).catch(err=>{
             if(err.response) showMsg(err.response.data.message, "error")
             else alert(err)
@@ -135,9 +139,9 @@ const UploadPage = () => {
         <div>       
         <Box>
             <input hidden accept="image/png, image/jpeg" ref={hidenInput} multiple type="file" onChange={selectFiles}/>
+            <button hidden ref={btnRef} onClick={handleSubmit}>Save</button>
             <Stack spacing={2} direction='row' sx={{mb:2}}>
-                <Button variant='outlined' disabled={loading} onClick={handleSelection}>Add images</Button>  
-                {/* <LoadingButton  variant="contained" disabled={selectedFiles.length===0} loading={loading} onClick={handleSubmit}> Upload </LoadingButton> */}
+                <Button variant='outlined' onClick={handleSelection}>Add images</Button>  
             </Stack>
                     
             <Grid container spacing={2}>

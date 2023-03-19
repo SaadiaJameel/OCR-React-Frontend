@@ -26,6 +26,7 @@ import UserPermissions from './Components/AdminPortal/Permissions/UserPermission
 import HospiatalNew from './Components/AdminPortal/Hospitals/HospitalNew';
 import NewUserPermission from './Components/AdminPortal/Permissions/NewUserPermission';
 import EditUserPermission from './Components/AdminPortal/Permissions/EditUserPermission';
+import PatientNew from './Components/Patients/PatientNew';
 
 
 
@@ -97,6 +98,7 @@ function App() {
             <Route path ='/manage/patients' element={<Outlet/>}>
                 <Route  index element={<PatientsTable/>}></Route>
                 <Route  index path="/manage/patients/all" element={<PatientsTable/>}></Route>
+                <Route  index path="/manage/patients/new" element={<PatientNew/>}></Route>
                 <Route path="/manage/patients/:id" element={<PatientDetails/>}></Route>
             </Route>
         </Route>

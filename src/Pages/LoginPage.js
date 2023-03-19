@@ -142,10 +142,11 @@ const LoginPage =()=>{
                 setSignup(false);
             })
             .catch(function (error) {
-                if(error.message){
-                    showMsg(error.message, "error")
+                console.log(error)
+                if(error.response?.data?.message){
+                    showMsg(error.response.data.message, "error")
                 }else{
-                    showMsg(error, "error")
+                    alert(error, "error")
                 }
             }).finally(()=>{
                 setLoading(false)
