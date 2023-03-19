@@ -65,6 +65,7 @@ const RequestDetails = () => {
             'email': JSON.parse(sessionStorage.getItem("info")).email,
         }}
         ).then(res=>{
+            showMsg(res.data.message, "success");
             navigate("/adminportal/requests");
         }).catch(err=>{
             if(err.response) showMsg(err.response.data.message, "error")

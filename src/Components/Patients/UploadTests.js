@@ -1,16 +1,18 @@
-import React, { useState, useRef } from 'react';
-import { Button, Typography, Grid, Box, Stack, Dialog, Slide,IconButton, List, ListItem, ListItemText} from '@mui/material';
-import { Close, Crop, Delete, Edit} from '@mui/icons-material';
+import React, { useState, useRef, useEffect } from 'react';
+import { Button, Box, Stack, IconButton, List, ListItem, ListItemText} from '@mui/material';
+import { Close} from '@mui/icons-material';
 import NotificationBar from '../NotificationBar';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import config from '../../config.json';
+import { useSelector} from 'react-redux';
 
-const UploadTests = () => {
+const UploadTests = ({entryID, btnRef, setDone, setLoading}) => {
 
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
-    const [loading, setLoading] = useState(false);
+    const selectorData = useSelector(state => state.data);
+    const [userData, setUserData] = useState(selectorData);
     const hidenInput = useRef();
     const { id } = useParams();
 
@@ -44,24 +46,38 @@ const UploadTests = () => {
 
     const handleSubmit = ()=>{
 
+        if(selectedFiles.length===0){
+            showMsg("Please Select the test reports", "error");
+            return;
+        }
+
         setLoading(true);
+
+        const temp =  [];
+        selectedFiles.forEach(item =>{ 
+            temp.push({
+                telecon_entry_id : entryID
+            })
+        });
 
         var form = new FormData();
         selectedFiles.forEach((report, index) => {
             var filename = id+"_"+ Date.now() + "_"+ index + "_" + report.name;
+            temp[index].report_name = filename;
             form.append('files', report, filename);
         });
 
-        return;
-        axios.post(`${config['path']}/user/patient/reports/${id}`, form,
+        form.append('data',JSON.stringify(temp))
+
+        axios.post(`${config['path']}/user/upload/reports/${entryID}`, form,
         {headers: {
-            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'Authorization': `Bearer ${userData.accessToken.token}`,
             'Content-Type': 'multipart/form-data',
             'email': JSON.parse(sessionStorage.getItem("info")).email,
         }}
         ).then(res=>{
-            showMsg("reports Uploaded Successfully", "success")
             setSelectedFiles([]);
+            setDone(2)
         }).catch(err=>{
             if(err.response) showMsg(err.response.data.message, "error")
             else alert(err)
@@ -78,9 +94,9 @@ const UploadTests = () => {
         <div>       
         <Box>
             <input hidden accept="application/pdf" ref={hidenInput} multiple type="file" onChange={selectFiles}/>
+            <button hidden ref={btnRef} onClick={handleSubmit}/>
             <Stack spacing={2} direction='row'>
-                <Button variant='outlined' disabled={loading} onClick={handleSelection}>Add Reports</Button>
-                {/* <LoadingButton  variant="contained" disabled={selectedFiles.length===0} loading={loading} onClick={handleSubmit}> Upload </LoadingButton> */}
+                <Button variant='outlined' onClick={handleSelection}>Add Reports</Button>
             </Stack>
                     
             <List disablePadding >

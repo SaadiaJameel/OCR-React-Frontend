@@ -81,7 +81,6 @@ const HospitalTable = () => {
         <Box className='sticky'>    
         <Typography sx={{ fontWeight: 700}} variant="h5">Hospitals</Typography>    
 
-        {/* <AddHospital setData={setData}/> */}
         <Button sx={{mt:2}} variant='contained' onClick={handleAddNew}>Add New</Button>
         </Box> 
         

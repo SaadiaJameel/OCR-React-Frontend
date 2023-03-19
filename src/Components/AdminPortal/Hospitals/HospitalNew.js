@@ -1,5 +1,5 @@
 import React, { useState} from 'react';
-import { Link} from 'react-router-dom';
+import { Link, useNavigate} from 'react-router-dom';
 import { ArrowBack, LocalHospital } from '@mui/icons-material';
 import { Box, Stack, Typography,Button, Paper, TextField} from '@mui/material';
 import { useSelector} from 'react-redux';
@@ -17,9 +17,14 @@ const HospiatalNew = () => {
     const [loading, setLoading] = useState(false);
     const [value, setValue] = useState('+94');
     const [name, setName] = useState("");
+    const navigate = useNavigate();
 
     const showMsg = (msg, severity)=>{
         setStatus({msg, severity, open:true})
+    }
+
+    const handleCancle = ()=>{
+        navigate("/adminportal/hospitals")
     }
 
     const handleSubmit = (event)=>{
@@ -77,7 +82,7 @@ const HospiatalNew = () => {
                 </Stack>
                 <Stack direction='row' spacing={2}>
                     <Button type='submit' variant='contained'>Save</Button>
-                    <Button type='submit' variant='outlined'>Cancle</Button>
+                    <Button variant='outlined' onClick={{handleCancle}}>Cancle</Button>
                 </Stack>
             </Box>
             </Paper>

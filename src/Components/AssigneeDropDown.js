@@ -1,17 +1,26 @@
-import * as React from 'react';
+import React, {useState} from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useSelector} from 'react-redux';
 import axios from 'axios';
 import config from '../config.json';
+import NotificationBar from './NotificationBar';
 
 export default function AssigneeDropdown({assignee, setAssignee}) {
+  const [status, setStatus] = React.useState({msg:"",severity:"success", open:false});
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
+  const selectorData = useSelector(state => state.data);
+  const [userData, setUserData] = useState(selectorData);
   const loading = open && options.length === 0;
 
   const handleAddAssignee = (item)=>{
     if(item === null) return;
+    if(assignee.length >= 3){
+      showMsg("Maximum number of reviewers is 3","error");
+      return;
+    }
     let newList = assignee.filter((newAssignee)=> {return newAssignee.reg_no !== item.reg_no});
     if(newList.length>=3){
       newList.pop();
@@ -21,6 +30,10 @@ export default function AssigneeDropdown({assignee, setAssignee}) {
     setAssignee(newList);
   }
 
+  const showMsg = (msg, severity)=>{
+    setStatus({msg, severity, open:true})
+  }
+
   React.useEffect(() => {
 
     if (!loading) {
@@ -28,18 +41,18 @@ export default function AssigneeDropdown({assignee, setAssignee}) {
     }
 
     (async () => {
-    axios.get(`${config['path']}/admin/reviewers`,
+    axios.get(`${config['path']}/user/patient/reviewer/all`,
     { headers: {
-      'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+      'Authorization': `Bearer ${userData.accessToken.token}`,
       'email': JSON.parse(sessionStorage.getItem("info")).email,
     }}
     ).then(resp =>{
         setOptions(resp.data);
     }).catch(function (error) {
         if(error.response){
-            alert(error.response.data.message)
+            alert(error.response?.data.message)
         }else{
-            alert(error)
+            alert(error?.message)
         }
     });
     })();
@@ -53,6 +66,7 @@ export default function AssigneeDropdown({assignee, setAssignee}) {
   }, [open]);
 
   return (
+    <>
     <Autocomplete
       size='small'
       fullWidth
@@ -86,6 +100,8 @@ export default function AssigneeDropdown({assignee, setAssignee}) {
         />
       )}
     />
+    <NotificationBar status={status} setStatus={setStatus}/>
+    </>
   );
 }
 

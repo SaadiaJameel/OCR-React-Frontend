@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState} from 'react';
 import NotificationBar from '../NotificationBar';
 import { Box, Stack, TextField, Button, FormControl, MenuItem, Select, Checkbox,
     Table, TableBody, TableRow, TableCell, CircularProgress, List, ListItem, IconButton, ListItemText, InputLabel, Typography} from '@mui/material';
@@ -15,8 +15,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { age } from '../utils';
 
 const familyHistoryOptions = [
-'OSCC',
-'Cancer excluding OSCC'
+    'OSCC',
+    'Cancer excluding OSCC'
 ];
 
 const medicalHistoryOptions = [
@@ -41,18 +41,6 @@ const genderOptions = [
     {value: "Female", label: "Female"},
     {value: "Male", label: "Male"}
 ]
-
-const riskFactors = [
-    {habit: 'Alcohol', frequency:'once a week', duration:'34-38'},
-    {habit: 'Betel', frequency:'twice a week', duration:'34-38'}
-]
-// const categoryOptions = [
-//     {value: "Unknown", label: "Unknown"},
-//     {value: "Healthy", label: "Healthy"},
-//     {value: "Benign", label: "Benign"},
-//     {value: "OPMD", label: "OPMD"},
-//     {value: "OCA", label: "OCA"}
-// ]
 
 const habitOptions = [
     {value: "Smoking", label: "Smoking"},
@@ -144,7 +132,6 @@ const PatientProfile = ({data}) => {
     const [loading, setLoading] = useState(false);
     // const [category, setCategory] = useState(data.category);
     const [gender, setGender] = useState(data.gender);
-    const [state, setState] = useState(0);
     const userData = useSelector(state => state.data);
     const [ editEnable, setEditEnable] = useState(true);
     const [number, setNumber] = useState(data.contact_no);
@@ -191,21 +178,21 @@ const PatientProfile = ({data}) => {
             risk_factors: riskHabits
         }
 
-        setState(1);
+        setLoading(true);
 
         axios.post(`${config['path']}/user/patient/update/${data._id}`, updated,
         { headers: {
-            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'Authorization': `Bearer ${userData.accessToken.token}`,
             'email': JSON.parse(sessionStorage.getItem("info")).email,
         }}
         ).then(res=>{
             showMsg("Patient details updated successfully", "success");
-            window.location.reload(false);
+            setEditEnable(!editEnable)
         }).catch(err=>{
             if(err.response) showMsg(err.response.data.message, "error")
             else alert(err)
         }).finally(()=>{
-            setState(0);
+            setLoading(false);
         })
 
     }
@@ -218,9 +205,9 @@ const PatientProfile = ({data}) => {
     return (
         <div>
          <Stack direction='row' spacing={2} justifyContent='flex-end'>
-            <Button variant='outlined' endIcon={<Edit/>} onClick={() => setEditEnable(!editEnable)}
+            <Button variant='contained' endIcon={<Edit/>} onClick={() => setEditEnable(!editEnable)}
             style={{ display: !(editEnable) ? 'none' : undefined }}>Edit</Button>
-            <Button style={{ display: editEnable ? 'none' : undefined }} variant='outlined' onClick={onCancel}>Cancel</Button>
+            <Button style={{ display: editEnable ? 'none' : undefined }} variant='contained' onClick={onCancel}>Cancel</Button>
         </Stack>
         <Box component="form" noValidate onSubmit={handleSave} sx={{ mt: 1 }}>
             <Table  sx={{border: '1px solid lightgray'}}>
@@ -311,7 +298,7 @@ const PatientProfile = ({data}) => {
                         {
                             !editEnable &&
                             <Box>
-                                <Stack direction='row' spacing={1} alignItems='center' sx={{py:1}} >
+                                <Stack direction='row' spacing={1} sx={{py:1}} >
                                 <FormControl fullWidth>
                                 <InputLabel id="habbit-label" variant='standard' >Habbit</InputLabel>
                                 <Select labelId="habbit-label" variant='standard' label="Habit" value={habit} onChange={(e)=>setHabit(e.target.value)}>
@@ -321,7 +308,7 @@ const PatientProfile = ({data}) => {
                                 </Select>
                                 </FormControl>
 
-                                <IconButton size='small' onClick={handleAddRisk} ><Done color='success'/></IconButton>
+                                <Button size='small' color='inherit' variant='outlined' onClick={handleAddRisk} >Add</Button>
                                 </Stack>
 
                                 <Stack direction='row' spacing={1}>

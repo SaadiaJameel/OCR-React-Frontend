@@ -9,8 +9,8 @@ import axios from 'axios';
 import { useSelector} from 'react-redux';
 import PatientProfile from './PatientProfile';
 import NotificationBar from '../NotificationBar';
-import NewEntry from './NewEntry';
 import PatientsEntries from './PatientsEntries';
+import LinearStepper from './LinearStepper';
 
 
 const PatientDetails = () => {
@@ -36,7 +36,7 @@ const PatientDetails = () => {
         setLoading(true);
         axios.get(`${config['path']}/user/patient/${id}`,
         { headers: {
-            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'Authorization': `Bearer ${userData.accessToken.token}`,
             'email': JSON.parse(sessionStorage.getItem("info")).email,
         }}
         ).then(res=>{
@@ -84,15 +84,15 @@ const PatientDetails = () => {
             </Stack>
             <Box sx={{ width: '100%', typography: 'body1' }}>
             <TabContext value={value}>
-                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <TabList onChange={handleChange} aria-label="lab API tabs example" variant='fullWidth' sx={{background:'#fbfbfb'}}>
-                    <Tab disableRipple label="Profile" value="1" />
+                <Box sx={{ borderBottom: 1, borderColor: 'divider'}}>
+                <TabList onChange={handleChange} aria-label="lab API tabs example" variant='standard'>
+                    <Tab disableRipple label="Profile" value="1"/>
                     <Tab disableRipple label="Add New Entry" value="2" />
                     <Tab disableRipple label="All Entries" value="3" />
                 </TabList>
                 </Box>
                 <TabPanel value="1" sx={{px:0}}><PatientProfile data={data}/></TabPanel>
-                <TabPanel value="2" sx={{px:0}}><NewEntry data={data}/></TabPanel>
+                <TabPanel value="2" sx={{px:0}}><LinearStepper data={data}/></TabPanel>
                 <TabPanel value="3" sx={{px:0}}><PatientsEntries/></TabPanel>
             </TabContext>
             </Box>
