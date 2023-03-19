@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowBack, ArrowLeft, AssignmentInd, Edit, People} from '@mui/icons-material';
-import { Avatar, AvatarGroup, Paper, Tooltip, Typography , Stack, Box, Divider, Grid, Slide, Dialog, IconButton, Button, Table, TableRow, TableCell, TableBody, Skeleton, ListItem, ListItemText, List} from '@mui/material';
+import { Add, ArrowBack, ArrowLeft, AssignmentInd, Close, Edit, People} from '@mui/icons-material';
+import { Avatar, AvatarGroup, Paper, Tooltip, Typography , Stack, Box, Divider, Grid, Slide, Dialog, IconButton, Button, Table, TableRow, TableCell, TableBody, Skeleton, ListItem, ListItemText, List, ListItemAvatar} from '@mui/material';
 import { stringAvatar } from '../utils';
 import image from '../../Assets/noImage.jpg'
 import { styled } from '@mui/material/styles';
@@ -11,6 +11,8 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import config from '../../config.json';
 import NotificationBar from '../NotificationBar';
+import AssigneeDropdown from '../AssigneeDropDown';
+import { LoadingButton } from '@mui/lab';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -43,16 +45,18 @@ const Item = styled(Paper)(({ theme }) => ({
     textAlign: 'center',
     color: theme.palette.text.secondary,
   }));
+
 const EntryDetails = () => {
     
     const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
     const selectorData = useSelector(state => state.data);
     const [userData, setUserData] = useState(selectorData);
     const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
     const [openAnnotation, setOpenAnnotation] = useState(false)
-    const [openCrop, setOpenCrop] = useState(false);
-    const [openDelete, setOpenDelete] = useState(false);
     const [imageIndex, setImageIndex] = useState({});
+    const [addReviewer, setAddReviewer] = useState(false);
+    const [assignee, setAssignee] = useState([]);
     const [data, setData] = useState(null);
     const { id } = useParams();
 
@@ -63,11 +67,48 @@ const EntryDetails = () => {
 
     const handleClose = () => {
         setOpenAnnotation(false);
-        setOpenCrop(false);
     };
 
-    useEffect(()=>{
-        setLoading(true);
+    const removeAssignee = (item)=>{
+        let newList = assignee.filter((assignee)=> {return assignee !== item})
+        setAssignee(newList);
+    }
+
+    const saveReviewers = ()=>{
+
+
+        var reviewers = []
+        assignee.forEach(reviewer => {
+            reviewers.push(reviewer._id)
+        });
+
+
+        setSaving(true);
+
+        axios.post(`${config['path']}/user/entry/reviewer/${id}`,
+        { reviewers },
+        {
+            headers: {
+                'Authorization': `Bearer ${userData.accessToken.token}`,
+                'email': JSON.parse(sessionStorage.getItem("info")).email,
+            },
+            withCredentials: true
+        }).then(res=>{
+            setSaving(false);
+            setAddReviewer(false);
+            loadData();
+            showMsg("Reveiwers assigned successfuly!","success");
+        }).catch(err=>{
+            if(err.response) showMsg(err.response.data?.message, "error")
+            else alert(err.message)
+        }).finally(()=>{
+            setSaving(false)
+        })
+
+    }
+
+
+    const loadData = ()=>{
         axios.get(`${config['path']}/user/entry/get/${id}`,{
             headers: {
                 'Authorization': `Bearer ${userData.accessToken.token}`,
@@ -76,12 +117,17 @@ const EntryDetails = () => {
             withCredentials: true
         }).then(res=>{
             setData(res.data);
-            console.log(res.data)
+            setAssignee(res.data.reviewers)
             setLoading(false);
         }).catch(err=>{
             if(err.response) showMsg(err.response.data?.message, "error")
             else alert(err.message)
         })
+    }
+
+    useEffect(()=>{
+        setLoading(true);
+        loadData();
     },[])
 
     const showMsg = (msg, severity)=>{
@@ -134,11 +180,54 @@ const EntryDetails = () => {
                                 return(<Tooltip title={reviewer.username} placement="bottom-start" arrow  key={index}><Avatar {...stringAvatar(reviewer.username)}/></Tooltip>)
                             })
                         }
+                        
+                        <Avatar sx={{ bgcolor: 'transparent' }}>
+                            <IconButton onClick={()=>setAddReviewer(!addReviewer)}><Add/></IconButton> 
+                        </Avatar>
+                        
                     </AvatarGroup>
 
                     </Paper>
+
+                    {
+                    addReviewer &&
                     <Paper sx={{p:2, my:3}}>
-             
+
+                    <AssigneeDropdown assignee={assignee} setAssignee={setAssignee}/>
+                
+                    {assignee.length > 0 && 
+                    <List sx={{border:'1px solid lightgray', borderRadius: 1, pl:2}}>
+                    {
+                        assignee.map((item, index)=>{
+                            return(
+                                <ListItem key={index} disablePadding
+                                    secondaryAction={
+                                        <IconButton edge="end" onClick={()=>removeAssignee(item)}>
+                                        <Close fontSize='small' color='error' />
+                                        </IconButton>
+                                    }
+                                >
+                                <ListItemAvatar>
+                                    <Avatar {...stringAvatar(item.username)}/>
+                                </ListItemAvatar>
+                                <ListItemText
+                                    primary={item.username}
+                                    secondary={item.reg_no} 
+                                />
+                                </ListItem>
+                            )
+                        })
+                    }
+                    </List>}
+
+                    <Stack direction='row' spacing={2} my={2}>
+                        <LoadingButton loading={saving} variant='contained' onClick={saveReviewers}>Save</LoadingButton>
+                        <Button disabled={saving} variant='outlined' onClick={()=>setAddReviewer(false)} >Cancle</Button>
+                    </Stack>
+                    </Paper>
+                    }
+
+                    <Paper sx={{p:2, my:3}}>
                     <Table  sx={{border: '1px solid lightgray'}}>
                         <TableBody>
                             <TableRow>

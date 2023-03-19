@@ -34,7 +34,6 @@ const NewEntry = ({entryID, setEntryID, btnRef, setDone, setLoading}) => {
     const selectorData = useSelector(state => state.data);
     const [userData, setUserData] = useState(selectorData);
     const [riskHabits, setRiskHabits] = useState([]);
-    const [assignee, setAssignee] = useState([]);
     const [habit, setHabit] = useState(habitOptions[0].value);
     const [frequency, setFrequency] = useState(frequencyOptions[0].value);
     const [startTime, setStartTime] = useState(dayjs(new Date()));
@@ -46,11 +45,6 @@ const NewEntry = ({entryID, setEntryID, btnRef, setDone, setLoading}) => {
     const removeRisk = (item)=>{
         let newList = riskHabits.filter((habit)=> {return habit !== item})
         setRiskHabits(newList);
-    }
-
-    const removeAssignee = (item)=>{
-        let newList = assignee.filter((assignee)=> {return assignee !== item})
-        setAssignee(newList);
     }
 
     const handleAddRisk = ()=>{
@@ -73,15 +67,10 @@ const NewEntry = ({entryID, setEntryID, btnRef, setDone, setLoading}) => {
             return;
         }
 
-        const reviewers = []
-        assignee.forEach(element => {
-            reviewers.push(element._id)
-        });
-
         const upload = {
             start_time : new Date(startTime),
             end_time : new Date(endTime),
-            complaint,findings,current_habits, reviewers
+            complaint,findings,current_habits
         }
 
         axios.post(`${config['path']}/user/entry/add/${id}`, upload,
@@ -167,35 +156,6 @@ const NewEntry = ({entryID, setEntryID, btnRef, setDone, setLoading}) => {
                         <ListItemText
                             primary={item.habit}
                             secondary={item.frequency} 
-                        />
-                        </ListItem>
-                    )
-                })
-            }
-            </List>}
-            
-            
-            <AssigneeDropdown assignee={assignee} setAssignee={setAssignee}/>
-                
-
-            {assignee.length > 0 && 
-            <List sx={{border:'1px solid lightgray', borderRadius: 1, pl:2}}>
-            {
-                assignee.map((item, index)=>{
-                    return(
-                        <ListItem key={index} disablePadding
-                            secondaryAction={
-                                <IconButton edge="end" onClick={()=>removeAssignee(item)}>
-                                <Close fontSize='small' color='error' />
-                                </IconButton>
-                            }
-                        >
-                        <ListItemAvatar>
-                            <Avatar {...stringAvatar(item.username)}/>
-                        </ListItemAvatar>
-                        <ListItemText
-                            primary={item.username}
-                            secondary={item.reg_no} 
                         />
                         </ListItem>
                     )

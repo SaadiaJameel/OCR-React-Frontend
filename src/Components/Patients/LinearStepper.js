@@ -107,7 +107,7 @@ export default function LinearStepper() {
         <Paper square elevation={0} sx={{ p: 3 }}>
           <Typography>Entry is added successfully!</Typography>
           <Button variant='contained' onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
-            Check the Entry
+            Assign Reviewers
           </Button>
         </Paper>
       )}

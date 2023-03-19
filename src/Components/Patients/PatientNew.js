@@ -97,7 +97,7 @@ const PatientNew = () => {
     const [value, setValue] = useState('');
     const [familyHistory, setFamilyHistory] = useState([]);
     const [medicalHistory, setMedicalHistory] =  useState([]);
-    const [file, setFile] =  useState([]);
+    const [file, setFile] =  useState(null);
     const [error, setError] =  useState(null);
     const navigate = useNavigate();
     const hidenInput = useRef();
