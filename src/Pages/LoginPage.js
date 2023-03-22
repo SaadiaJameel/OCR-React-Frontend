@@ -11,14 +11,8 @@ import { useNavigate } from "react-router-dom";
 import NotificationBar from '../Components/NotificationBar';
 import { useDispatch } from 'react-redux';
 import { setUserData } from '../Reducers/userDataSlice';
-import Dropdown from 'react-dropdown';
-import Select from "react-dropdown-select";
-import 'react-dropdown/style.css';
-import './style.css';
-import MuiPhoneNumber from 'material-ui-phone-number';
-
-
-var hospital = null;
+import HospitalDropdown from '../Components/HospitalDropDown';
+import { MuiTelInput } from 'mui-tel-input';
 
 const LoginPage =()=>{
 
@@ -27,34 +21,18 @@ const LoginPage =()=>{
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [showSignupPassword, setShowSignupPassword] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [status, setStatus] = useState({msg:"",severity:"success", open:false}) 
+    const [status, setStatus] = useState({msg:"",severity:"success", open:false});
+    const [value, setValue] = useState('+94');
 
-    const options = [];
-
-    axios.get(`${config['path']}/user/hospitals`).then(resp =>{
-        for(let i = 0; i < resp.data.length; i++){
-            options[i] = resp.data[i]['name']
-        }
-    }).catch(function (error) {
-        if(error.response){
-            showMsg(error.response.data.message, "error")
-        }else{
-            alert(error)
-        }
-    });
- 
     const navigate = useNavigate();
     
+    const handleChange = (newValue) => {
+        setValue(newValue)
+      }
+
     const showMsg = (msg, severity)=>{
         setStatus({msg, severity, open:true})
     }
-    
-    const [value,setValue]=useState('');
-    const handleSelect=(e)=>{
-        hospital = e.value;
-        setValue(e);
-    }
-    
 
     const dispatch = useDispatch();
     const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -87,21 +65,22 @@ const LoginPage =()=>{
         }, { withCredentials: true })
         .then(function (response) {
             var data = response.data
-            const object = {_id: data.others._id,username: data.others.username, email: data.others.email, roles: data.others.role, reg_no: data.others.reg_no, atoken: data.accessToken.token }
+            const object = {_id: data.others._id,username: data.others.username, email: data.others.email, role: data.others.role, availability:data.others.availability, permissions: data.others.permissions, reg_no: data.others.reg_no, atoken: data.accessToken.token }
             sessionStorage.setItem("info",JSON.stringify(object))
 
             dispatch(setUserData({
                 _id: data.others._id,
                 username: data.others.username,
                 email: data.others.email,
-                roles: data.others.role,
+                role: data.others.role,
+                permissions: data.others.permissions,
                 accessToken: data.accessToken,
                 reg_no: data.others.reg_no
               }))
-            if(response.data.others.role.includes(1)){
+            if(response.data.others.permissions.includes(100)){
                 navigate("/adminportal/requests");
             }else{
-                navigate("/manage/images");
+                navigate("/manage/");
             }
         })
         .catch(function (error) {
@@ -119,19 +98,13 @@ const LoginPage =()=>{
     const handleSignUpSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        
+
         if(data.get('signup email')==="" || data.get('regNo')==="" 
         || data.get('signup password')==="" || data.get('confirm password')===""
-        || data.get('username')==="" || data.get('telephoneNo').length <= 4){
+        || data.get('username')==="" || data.get('contactNo').length <= 4 || data.get('hospital')===""){
             showMsg("Cannot leave required fields empty","error")
             return
         }
-
-        if(hospital == null){
-            showMsg("Select a hospital (again)","error")
-            return
-        }
-
 
         if(!/\S+@\S+\.\S+/.test(data.get("signup email"))){
             showMsg("Invalid email address","error")
@@ -161,18 +134,19 @@ const LoginPage =()=>{
                 email: data.get('signup email'),
                 reg_no: data.get('regNo'),
                 password: data.get('signup password'),
-                hospital: hospital,
-                contact_no: data.get('telephoneNo')
+                hospital: data.get('hospital'),
+                contact_no: data.get('contactNo')
             })
             .then(function (response) {
                 showMsg(response.data.message, "success")
                 setSignup(false);
             })
             .catch(function (error) {
-                if(error.message){
-                    showMsg(error.message, "error")
+                console.log(error)
+                if(error.response?.data?.message){
+                    showMsg(error.response.data.message, "error")
                 }else{
-                    showMsg(error, "error")
+                    alert(error, "error")
                 }
             }).finally(()=>{
                 setLoading(false)
@@ -186,29 +160,20 @@ const LoginPage =()=>{
             {
                 singup?
                 <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square container justify="flex-end" alignItems="center">
-                    <Box sx={{ my: 8, mx: 4, p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                    <Box sx={{mx: 4, p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                         <Avatar sx={{ m: 1, bgcolor: 'primary.main' }} alt="Oral" src={logo}/>
                         <Typography component="h1" variant="h5"> Sign up </Typography>
 
                         <Box component="form" noValidate onSubmit={handleSignUpSubmit} sx={{ mt: 1 }}>
 
                         <TextField margin="normal" size='small' inputProps={{ maxLength: 100}} required fullWidth id="email" label="Email Address" name="signup email" autoFocus/>
-                        <TextField margin="normal" size='small' inputProps={{ maxLength: 100}} required fullWidth id="username" label="User Name" name="username"/>
-                        <TextField margin="normal" size='small' inputProps={{ maxLength: 100}} required fullWidth id="regNo" label="Register No" name="regNo"/>
-                        <p></p>
-                        <div>
-                        <MuiPhoneNumber
-                            required
-                            name='telephoneNo'
-                            defaultCountry={'lk'}
-                            onChange={(c, t) => {
-                            return true;
-                            }}
-                        />
-                        <p></p>
-                        </div> 
-                        <Dropdown margin="normal" size='small' options={options} name='hospital' placeholder="Select a hospital *" onChange={handleSelect} required={true} />
+                        <TextField margin="normal" size='small' inputProps={{ maxLength: 100}} required fullWidth id="username" label="Full Name" name="username"/>
+                        <TextField margin="normal" size='small' inputProps={{ maxLength: 100}} required fullWidth id="regNo" label="SLMC Registration Number" name="regNo"/>
                         
+                        <MuiTelInput value={value} onChange={handleChange} size='small' name='contactNo' placeholder='Phone Number' margin="normal" fullWidth/>
+
+                        {/* <Dropdown margin="normal" size='small' options={options} name='hospital' placeholder="Select a hospital *" onChange={handleSelect} required={true} /> */}
+                        <HospitalDropdown/>
 
                         <FormControl margin="normal" fullWidth  variant="outlined">
                         <InputLabel required size='small' htmlFor="signup password">Password</InputLabel>
@@ -248,7 +213,7 @@ const LoginPage =()=>{
                 </Grid>
                 :
                 <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square container justify="flex-end" alignItems="center">
-                    <Box sx={{ my: 8, mx: 4, p:2, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                    <Box sx={{mx: 4, p:2, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                         <Avatar sx={{ m: 1, bgcolor: 'primary.main' }} alt="Oral" src={logo}/>
                         <Typography component="h1" variant="h5"> Sign in </Typography>
                         

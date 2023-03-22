@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState} from 'react';
 import { Link, useParams} from 'react-router-dom';
 import { ArrowBack, AccountBox, AddAPhoto, Image} from '@mui/icons-material';
-import { Box, Stack, Avatar, Typography, Skeleton,Tab} from '@mui/material';
+import { Box, Stack, Avatar, Typography, Skeleton,Tab, Button, Paper} from '@mui/material';
 import {TabContext,TabList,TabPanel} from '@mui/lab';
 import { stringAvatar } from '../utils';
 import config from '../../config.json'
@@ -9,22 +9,19 @@ import axios from 'axios';
 import { useSelector} from 'react-redux';
 import PatientProfile from './PatientProfile';
 import NotificationBar from '../NotificationBar';
-import UploadPage from './UploadPage';
-import PatientImages from './PatientImages';
-
-const tempdata = {_id: '63c771ab19fa3b752054d449', patient_id: 'P1', risk_factors: {smoking: false, betel: false, alcohol: true}, age: 28, gender: '',updatedAt
-: "2023-01-18T04:12:27.061Z",createdAt : "2023-01-18T04:12:27.061Z",histo_diagnosis: "", category: "Unknown"}
+import PatientsEntries from './PatientsEntries';
+import LinearStepper from './LinearStepper';
 
 
 const PatientDetails = () => {
 
   
-    const [data, setData] = useState(tempdata);
-    const [loading, setLoading] = useState(false);
+    const [data, setData] = useState({});
+    const [loading, setLoading] = useState(true);
     const [value, setValue] = React.useState('1');
     const [status, setStatus] = useState({msg:"",severity:"success", open:false});
     const { id } = useParams();
-    const userData = useSelector(state => state.userData.data);
+    const userData = useSelector(state => state.data);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -39,7 +36,7 @@ const PatientDetails = () => {
         setLoading(true);
         axios.get(`${config['path']}/user/patient/${id}`,
         { headers: {
-            'Authorization': 'BEARER '+ JSON.parse(sessionStorage.getItem("info")).atoken,
+            'Authorization': `Bearer ${userData.accessToken.token}`,
             'email': JSON.parse(sessionStorage.getItem("info")).email,
         }}
         ).then(res=>{
@@ -54,14 +51,15 @@ const PatientDetails = () => {
 
    
     return (
-        <Box sx={{my:3}}>
-            <Stack direction='row' sx={{my:1}} >
-            <ArrowBack fontSize='small' color='action'/>
-            <Link to='/manage/patients'><Typography fontSize='small' color='GrayText'>Go back to Patients</Typography></Link>
-            </Stack>
-            
+        <div className="inner_content">
+        <div>
+        <div className="sticky">
+            <Typography sx={{ fontWeight: 700}} variant="h5">Patients</Typography> 
+            <Button component={Link} to='/manage/patients' size='small' startIcon={<ArrowBack/>} sx={{p:0}}>Go Back To Patients</Button>
+        </div>
+                
             {loading?
-            <>
+            <Paper sx={{p:2, my:3}}>
             <Stack direction='row' spacing={2} alignItems='center' sx={{my:3}}>
                 <Skeleton variant="rounded" width={60} height={60} />
                 <Stack direction='column'>
@@ -73,35 +71,37 @@ const PatientDetails = () => {
                 <Skeleton variant="rounded" height={40} width={600}/>
                 <Skeleton variant="rounded" height={40} width={600}/>
             </Stack>
-            </>
+            </Paper>
             :
             <>
+            <Paper sx={{p:2, my:3}}>  
             <Stack direction='row' spacing={2} alignItems='center' sx={{my:3}}>
                 <Avatar {...stringAvatar("P", 60)} variant='rounded'/>
                 <Stack direction='column'>
-                    <Typography variant='h6'>Patients ID: {data.patient_id}</Typography>
-                    <Typography color='GrayText'>Category: {data.category}</Typography>
+                    <Typography variant='h6'>{data.patient_name}</Typography>
+                    <Typography color='GrayText'>{data.patient_id}</Typography>
                 </Stack>
             </Stack>
             <Box sx={{ width: '100%', typography: 'body1' }}>
             <TabContext value={value}>
-                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <TabList onChange={handleChange} aria-label="lab API tabs example">
-                    <Tab icon={<AccountBox fontSize='small'/>}  disableRipple label="Profile" value="1" />
-                    <Tab icon={<Image fontSize='small'/>} disableRipple label="Images" value="2" />
-                    <Tab icon={<AddAPhoto fontSize='small'/>} disableRipple label="Upload" value="3" />
+                <Box sx={{ borderBottom: 1, borderColor: 'divider'}}>
+                <TabList onChange={handleChange} aria-label="lab API tabs example" variant='standard'>
+                    <Tab disableRipple label="Profile" value="1"/>
+                    <Tab disableRipple label="Add New Entry" value="2" />
+                    <Tab disableRipple label="All Entries" value="3" />
                 </TabList>
                 </Box>
                 <TabPanel value="1" sx={{px:0}}><PatientProfile data={data}/></TabPanel>
-                <TabPanel value="2" sx={{px:0}}><PatientImages/></TabPanel>
-                <TabPanel value="3" sx={{px:0}}><UploadPage/></TabPanel>
+                <TabPanel value="2" sx={{px:0}}><LinearStepper data={data}/></TabPanel>
+                <TabPanel value="3" sx={{px:0}}><PatientsEntries/></TabPanel>
             </TabContext>
             </Box>
-
+            </Paper>
             </>
 }
             <NotificationBar status={status} setStatus={setStatus}/>
-        </Box>
+        </div>
+    </div>
     );
 };
 

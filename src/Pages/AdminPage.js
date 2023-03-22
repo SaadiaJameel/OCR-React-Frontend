@@ -1,39 +1,40 @@
 import * as React from 'react';
-import {Box, Button, Stack} from '@mui/material';
+import {Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText} from '@mui/material';
 import { NavLink, Outlet } from 'react-router-dom';
-import { AccountBox, Email } from '@mui/icons-material';
+import { AccountBox, Email, LocalHospital, LockPerson} from '@mui/icons-material';
 
+const NavButton = ({path,startIcon,name}) => (
+  <ListItem disablePadding component={NavLink} to={path}
+    style={({ isActive }) => ({
+          color: isActive ? '#000' : '#000',
+          background: isActive ? '#f5f5f5' : '#fff',
+        })}
+  >
+    <ListItemButton>
+      <ListItemIcon>
+        {startIcon}
+      </ListItemIcon>
+      <ListItemText primary={name}/>
+    </ListItemButton>
+  </ListItem>
+)
 
 const AdminPage = () => {
 
   return (
-    <div className='body'>
-    <Box sx={{ bgcolor: 'background.paper', display: 'flex', flexDirection:'row'}}>
+    <Box className="content_wrapper">
       <div className='sidebar'>
-        <Stack direction='column' spacing={1} color='GrayText'>
-          <Button component={NavLink} to="/adminportal/requests" startIcon={<Email/>} 
-          sx={{ my: 2, display: 'flex', justifyContent: "flex-start", m:0}}
-          style={({ isActive }) => ({
-              color: isActive ? '#000' : '#000',
-              background: isActive ? '#f5f5f5' : '#fff',
-            })}>
-            Requests
-          </Button>     
-          <Button component={NavLink} to="/adminportal/reviewers" startIcon={<AccountBox/>} 
-          sx={{ my: 2, display: 'flex', justifyContent: "flex-start", m:0}}
-          style={({ isActive }) => ({
-              color: isActive ? '#000' : '#000',
-              background: isActive ? '#f5f5f5' : '#fff',
-            })}>
-            Reviewers
-          </Button>     
-        </Stack>
+        <List disablePadding>
+          <NavButton path={"/adminportal/requests"} startIcon={<Email/>} name={"Requests"}/> 
+          <NavButton path={"/adminportal/users"} startIcon={<AccountBox/>} name={"Users"}/> 
+          <NavButton path={"/adminportal/hospitals"} startIcon={<LocalHospital/>} name={"Hospitals"}/> 
+          <NavButton path={"/adminportal/permissions"} startIcon={<LockPerson/>} name={"Permissions"}/> 
+        </List>
       </div>
       <Box sx={{flexGrow:1}} className='content'>
         <Outlet/>
       </Box>
     </Box>
-    </div>
   );
 }
 

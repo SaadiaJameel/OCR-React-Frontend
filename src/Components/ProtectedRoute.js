@@ -9,9 +9,9 @@ import ClipLoader from 'react-spinners/ClipLoader';
 const ProtectedRoute = ({allowed, children}) => {
     
     const info = JSON.parse(sessionStorage.getItem("info"))
-    const roles = info? info["roles"]: []
+    const permissions = info? info["permissions"]: []
     const user = info? info["username"]: null
-    const userData = useSelector(state => state.userData.data);
+    const userData = useSelector(state => state.data);
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState(true);
 
@@ -20,12 +20,14 @@ const ProtectedRoute = ({allowed, children}) => {
         setIsLoading(true);
 		const res = async() => {
             await trySilentRefresh().then((data) => {
+                console.log(data)
                 if (data) {
                     dispatch(setUserData({
                         _id: data.ref._id,
                         username: data.ref.username,
                         email: data.ref.email,
-                        roles: data.ref.role,
+                        role: data.body.role,
+                        permissions: data.body.permissions,
                         accessToken: data.accessToken,
                         reg_no: data.ref.reg_no
                       }))
@@ -36,13 +38,13 @@ const ProtectedRoute = ({allowed, children}) => {
 	}, []);
 
     if(!user) return <Navigate to="/login" replace />;
-    else if(! roles.find(role => allowed.includes(role))) return <Navigate to="/notfound" replace />;
+    else if(! permissions.find(p => allowed.includes(p))) return <Navigate to="/notfound" replace />;
 
 
     if (isLoading){
         return(
             <>
-            <MenuBar roles={roles} username={user}/>
+            <MenuBar permissions={permissions} username={user} roleName={info?.role}/>
             <div
             style={{
                 display: 'flex',
@@ -56,12 +58,14 @@ const ProtectedRoute = ({allowed, children}) => {
         )
     }else{
         return (
-            <>
-            <MenuBar roles={roles} username={user}/>
-            <div>
+            <div className='main'>
+            <div className='main_menu'>
+                <MenuBar permissions={permissions} username={user} roleName={info?.role} availability={info?.availability}/>
+            </div>
+            <div className='main_content'>
                 {children}
             </div>
-            </>
+            </div>
         );
     }
 };

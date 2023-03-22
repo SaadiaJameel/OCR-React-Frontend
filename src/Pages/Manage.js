@@ -1,38 +1,37 @@
 import * as React from 'react';
-import {Box, Button, Stack} from '@mui/material';
+import {Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText} from '@mui/material';
 import { NavLink, Outlet } from 'react-router-dom';
-import { Photo, People } from '@mui/icons-material';
+import { People, ViewList } from '@mui/icons-material';
+
+const NavButton = ({path,startIcon,name}) => (
+    <ListItem disablePadding component={NavLink} to={path}
+    style={({ isActive }) => ({
+          background: isActive ? '#f5f5f5' : '#fff',
+        })}
+    >
+      <ListItemButton>
+        <ListItemIcon>
+          {startIcon}
+        </ListItemIcon>
+        <ListItemText primary={name} />
+      </ListItemButton>
+    </ListItem>
+)
 
 const Manage = () => {
   
   return (
-    <div className='body'>
-    <Box sx={{ bgcolor: 'background.paper', display: 'flex', flexDirection:'row'}}>
+    <Box className="content_wrapper">
       <div className='sidebar'>
-        <Stack direction='column' spacing={1}>
-          <Button component={NavLink} to="/manage/images" startIcon={<Photo/>} 
-          sx={{ my: 2, display: 'flex', justifyContent: "flex-start", m:0}}
-          style={({ isActive }) => ({
-              color: isActive ? '#000' : '#000',
-              background: isActive ? '#f5f5f5' : '#fff',
-            })}>
-            Images
-          </Button>   
-          <Button component={NavLink} to="/manage/patients" startIcon={<People/>} 
-          sx={{ my: 2, display: 'flex', justifyContent: "flex-start", m:0}}
-          style={({ isActive }) => ({
-              color: isActive ? '#000' : '#000',
-              background: isActive ? '#f5f5f5' : '#fff',
-            })}>
-            Patients
-          </Button>   
-        </Stack>
+        <List disablePadding>
+          <NavButton path={"/manage/patients"} startIcon={<People color='action'/>} name={"Patients"}/> 
+          <NavButton path={"/manage/entries"} startIcon={<ViewList color='action'/>} name={"Entries"}/> 
+        </List>
       </div>
       <Box sx={{flexGrow:1}} className='content'>
         <Outlet/>
       </Box>
     </Box>
-    </div>
   );
 }
 

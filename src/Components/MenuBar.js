@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import{ AppBar, Menu,Container,Avatar,MenuItem, Divider} from '@mui/material';
-import{ Box,Toolbar,IconButton,Typography, Button} from '@mui/material';
+import{ Box,Toolbar,IconButton,Typography, Button, Switch, Badge} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
 import logo from '../Assets/logo.svg';
@@ -11,6 +11,20 @@ import { useSelector, useDispatch } from 'react-redux';
 import { trySilentRefresh } from '../utils/authUtils';
 import {setAccessToken } from '../Reducers/userDataSlice';
 import { AccountBox, LogoutOutlined} from '@mui/icons-material';
+import { styled } from '@mui/material/styles';
+import colors from './ColorPalete';
+import MenuOptions from '../MenuItems.json';
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    boxShadow: `0 0 0 2px ${colors.primary.main}`,
+  },
+  "& .MuiBadge-dot": {
+    height: 8,
+    minWidth: 8,
+    borderRadius: 10
+  }
+}));
 
 function stringToColor(string) {
   let i, hash = 0;
@@ -36,32 +50,13 @@ function stringAvatar(name) {
   };
 }
 
-const displayRole = (role)=>{
-    let roleName = "";
-    switch(role[0]){
-      case 1:
-        roleName = "Admin"
-        break;
-      case 2:
-        roleName = "Reviewer"
-        break;
-      case 3:
-        roleName = "Clinician"
-        break;
-      default:
-        roleName = ""
-    }
-
-    return <Typography fontSize='small' color='GrayText'>{roleName}</Typography>;
-}
-
-function MenuBar({roles,username}) {
+function MenuBar({permissions,username, availability, roleName}) {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const open = Boolean(anchorElUser);
   const open2 = Boolean(anchorElNav);
 
-  const userData = useSelector(state => state.userData.data);
+  const userData = useSelector(state => state.data);
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
@@ -106,7 +101,7 @@ function MenuBar({roles,username}) {
 			const res = await trySilentRefresh().then((data) => {
 				if (data) {
 					dispatch(setAccessToken(data.accessToken));
-          const object = {_id: data.ref._id,username: data.ref.username, email: data.ref.email, roles: data.ref.role, reg_no: data.ref.reg_no, atoken: data.accessToken.token }
+          const object = {_id: data.ref._id,username: data.ref.username, email: data.ref.email,availability: data.ref.availability, role: data.ref.role, permissions: data.body.permissions, reg_no: data.ref.reg_no, atoken: data.accessToken.token }
           sessionStorage.setItem("info",JSON.stringify(object))
 					return true;
 				}
@@ -124,11 +119,11 @@ function MenuBar({roles,username}) {
     <AppBar position="fixed">
       <Container maxWidth="xl" >
         <Toolbar disableGutters>
-            <Typography variant="h5" noWrap component="div" sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}>
+            <Typography variant="h5" noWrap component="div" sx={{ mr: 2, display: { xs: 'none', sm: 'flex' } }}>
                 <img src={logo} alt="logo" style={{width: '100%', height : "30px"}} />
             </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', sm: 'none' } }}>
             <IconButton onClick={handleOpenNavMenu} size="large" aria-controls={open2 ? 'nav-menu' : undefined} aria-haspopup="true" aria-expanded={open2 ? 'true' : undefined} color="inherit">
                 <MenuIcon />
             </IconButton>
@@ -169,23 +164,33 @@ function MenuBar({roles,username}) {
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
-                <MenuItem>
-                  <Typography textAlign="center"><Link to="/manage/images" replace>Manage</Link></Typography>
-                </MenuItem>
-                {roles.includes(1) && 
-                <MenuItem>
-                  <Typography textAlign="center"><Link to="/adminportal/requests" replace>Admin Portal</Link></Typography>
-                </MenuItem>}
+              {
+                MenuOptions.recruiter.map((item,index)=>{
+                  return(<MenuItem key={index}>
+                    <Typography textAlign="center"><Link to={item.path} replace>{item.name}</Link></Typography>
+                  </MenuItem>)
+                })
+                }
+                {permissions.includes(100) && 
+               
+                MenuOptions.admin.map((item,index)=>{
+                  return(<MenuItem key={index}>
+                    <Typography textAlign="center"><Link to={item.path} replace>{item.name}</Link></Typography>
+                  </MenuItem>)
+                })               
+                }
                               
           </Menu>
-         
-            <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex'}}}>
-                <Button sx={{ my: 2, color: 'white', display: 'block', m:0}} component={NavLink} to="/manage/images"> 
-                    Manage
+            <Box sx={{ flexGrow: 0, display: { xs: 'none', sm: 'flex'}}}>
+                <Button sx={{ my: 2, color: 'white', display: 'block', m:0}} component={NavLink} to="/manage/patients"> 
+                    Recruiter
                 </Button>
-                { roles.includes(1) &&
+                <Button sx={{ my: 2, color: 'white', display: 'block', m:0}} component={NavLink} to="/review/entries"> 
+                    Reviewer
+                </Button>
+                { permissions.includes(100) &&
                   <Button sx={{ my: 2, color: 'white', display: 'block', m:0}} color='secondary' component={NavLink} to="/adminportal/requests">
-                    Admin Portal
+                    Admin
                 </Button>}
             </Box>
 
@@ -200,8 +205,15 @@ function MenuBar({roles,username}) {
             aria-expanded={open ? 'true' : undefined}
             color="inherit"
           >
-            <Typography sx={{ m: 1, textTransform: 'none'}}>{username}</Typography>
-            <Avatar {...stringAvatar(username)}/>
+            <Typography sx={{ m: 1, textTransform: 'none', display: { xs: 'none', sm: 'block'}}}>{username}</Typography>
+            { permissions.includes(200)?
+              <StyledBadge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot" color={availability?'success':'error'}>
+                <Avatar {...stringAvatar(username)}/>
+              </StyledBadge>
+              :
+              <Avatar {...stringAvatar(username)}/>
+            }
+
           </Button>
       </Box>
       <Menu
@@ -239,9 +251,9 @@ function MenuBar({roles,username}) {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <Box sx={{mx:3}}>
-          <Typography>{username}</Typography>
-          {displayRole(roles)}
+        <Box sx={{mx:3, my:1}}>
+          <Typography><strong>{username}</strong></Typography>
+          <Typography color='GrayText'>{roleName}</Typography>
         </Box>
         <Divider sx={{my:1}}/>
         <MenuItem sx={{width:'200px'}}>

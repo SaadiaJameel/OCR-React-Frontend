@@ -19,7 +19,7 @@ export default function ChangePasswordDialog({user}) {
     const [Npassword, setNPassword] = useState("");
     const [state, setState] = useState(0);
     const [status, setStatus] = useState({msg:"",severity:"success", open:false});
-    const userData = useSelector(state => state.userData.data);
+    const userData = useSelector(state => state.data);
    
     const handleClickOpen = () => {
         setOpen(true);
@@ -115,7 +115,7 @@ export default function ChangePasswordDialog({user}) {
         <PasswordStrengthIndicator password={Npassword}/>
         </DialogContent>
         <DialogActions>
-            <LoadingButton size="small" onClick={handleReset} loading={state === 1} variant="contained" disabled={!confirm || state !==0}>Reset Password</LoadingButton>
+            <LoadingButton onClick={handleReset} loading={state === 1} variant="contained" disabled={!confirm || state !==0}>Reset Password</LoadingButton>
             <Button onClick={handleClose} color='inherit' variant='outlined' disabled={state !==0}>Cancel</Button>
             </DialogActions>
         </Dialog>
